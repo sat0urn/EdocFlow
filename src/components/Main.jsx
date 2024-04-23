@@ -1,7 +1,7 @@
-import About from "./MainParts/About";
-import Advantage from "./MainParts/Advantage";
-import Contact from "./MainParts/Contact";
-import Service from "./MainParts/Service";
+import About from "./MainPage/About";
+import Advantage from "./MainPage/Advantage";
+import Contact from "./MainPage/Contact";
+import Service from "./MainPage/Service";
 
 export default function Main() {
   return (
