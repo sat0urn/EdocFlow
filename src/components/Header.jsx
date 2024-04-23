@@ -51,7 +51,7 @@ function Header() {
               className="btn btn-primary"
               style={{ width: '120px' }}
             >
-              Sign-up
+              Sign Up
             </button>
           </Link>
         </div>

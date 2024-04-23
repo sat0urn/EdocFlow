@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 function SignIn() {
   return (
-    <section className="d-flex justify-content-center vh-100">
+    <section className="d-flex vh-100">
       <div className="container-fluid">
         <div className="row h-100">
           <div className="col-md-6 my-auto">
