@@ -10,7 +10,7 @@ function Contact() {
               <h1 className="fw-bold mb-4">
                 Question left?
               </h1>
-              <p>
+              <p className="small opacity-75">
                 Leave your contact information and your question in the form and submit it. Our manager will contact you soon.
               </p>
             </div>
