@@ -17,17 +17,17 @@ function Header() {
             </a>
           </li>
           <li>
-            <a href="#" className="nav-link px-2 link-dark">
+            <a href="#service" className="nav-link px-2 link-dark">
               Services
             </a>
           </li>
           <li>
-            <a href="#" className="nav-link px-2 link-dark">
+            <a href="#advantage" className="nav-link px-2 link-dark">
               Advantages
             </a>
           </li>
           <li>
-            <a href="#" className="nav-link px-2 link-dark">
+            <a href="#contact" className="nav-link px-2 link-dark">
               Contact Us
             </a>
           </li>
