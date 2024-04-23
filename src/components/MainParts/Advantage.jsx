@@ -1,7 +1,7 @@
 function Advantage() {
   return (
     <section
-      id="advtantage"
+      id="advantage"
       className="d-flex justify-content-center align-items-center vh-100"
       style={{ backgroundColor: '#1E1E1E' }}
     >
