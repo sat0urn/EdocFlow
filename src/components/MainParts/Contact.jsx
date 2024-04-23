@@ -1,3 +1,5 @@
-export default function Contact() {
+function Contact() {
 
 }
+
+export default Contact

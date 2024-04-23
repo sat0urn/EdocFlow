@@ -6,7 +6,7 @@ function Advantage() {
       style={{ backgroundColor: '#1E1E1E' }}
     >
       <div className="container">
-        <div className="text-start mb-4">
+        <div className="text-center mb-4">
           <h1 className="fw-bold text-white">
             Our <span style={{ color: '#407BFF' }}>Advantages</span>
           </h1>
