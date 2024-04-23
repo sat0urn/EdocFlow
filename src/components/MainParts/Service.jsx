@@ -8,7 +8,7 @@ function Service() {
     <section
       id="service"
       className="d-flex justify-content-center align-items-center vh-100">
-      <div className="service--container container">
+      <div className="container">
         <div className="text-start mb-4">
           <h1 className="fw-bold">
             Our <span style={{ color: '#407BFF' }}>Services</span>
