@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-
 function SignUp() {
   return (
     <section className="d-flex justify-content-center vh-100">
