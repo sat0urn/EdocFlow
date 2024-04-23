@@ -1,0 +1,23 @@
+#about {
+  background-color: #1E1E1E;
+}
+
+.about--container {
+  width: 80%;
+}
+
+.about--row {}
+
+.about--col_1 {
+  margin: auto 0;
+  color: white;
+}
+
+.about--col_2 {
+  text-align: end;
+}
+
+.about--col_1_btns {
+  margin-top: 3rem;
+  width: 75%;
+}
