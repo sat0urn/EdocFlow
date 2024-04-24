@@ -3,16 +3,13 @@ import advantageData from "./data/advantageData"
 
 function Advantage() {
 
-  const advantages = advantageData.map((adv) => {
-    return <AdvantageP
-      key={adv.id}
-      bgColor={adv.bgColor}
-      textColor={adv.textColor}
-      title={adv.title}
-      text={adv.text}
-      icon={adv.icon}
-      borderOn={adv.borderOn}
-    />
+  const advantages = advantageData.map((item) => {
+    return (
+      <AdvantageP
+        key={item.id}
+        {...item}
+      />
+    )
   })
 
   return (

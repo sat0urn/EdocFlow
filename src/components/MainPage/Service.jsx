@@ -3,14 +3,13 @@ import serviceData from "./data/serviceData"
 
 function Service() {
 
-  const services = serviceData.map(service => {
-    return <ServiceP
-      key={service.id}
-      img={service.img}
-      title={service.title}
-      desc={service.desc}
-      btnText={service.btnText}
-    />
+  const services = serviceData.map(item => {
+    return (
+      <ServiceP
+        key={item.id}
+        {...item}
+      />
+    )
   })
 
   return (

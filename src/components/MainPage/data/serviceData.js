@@ -1,7 +1,7 @@
-import ServicePic1 from "../../../pictures/service_pics/service1.png"
-import ServicePic2 from "../../../pictures/service_pics/service2.png"
-import ServicePic3 from "../../../pictures/service_pics/service3.png"
-import ServicePic4 from "../../../pictures/service_pics/service4.png"
+import ServicePic1 from "../../../assets/service_pics/service1.png"
+import ServicePic2 from "../../../assets/service_pics/service2.png"
+import ServicePic3 from "../../../assets/service_pics/service3.png"
+import ServicePic4 from "../../../assets/service_pics/service4.png"
 
 export default [{
     id: 0,
