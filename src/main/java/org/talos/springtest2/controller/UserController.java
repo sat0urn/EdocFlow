@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.talos.springtest2.dto.UserLoginDto;
 import org.talos.springtest2.dto.UserRegistrationDto;
+import org.talos.springtest2.responses.LoginMessage;
 import org.talos.springtest2.service.UserService;
 
 @RestController
@@ -31,9 +32,10 @@ public class UserController {
 
     }
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto)
+    public ResponseEntity<?> login(@RequestBody UserLoginDto userLoginDto)
     {
-        System.out.println(userLoginDto);
-        return ResponseEntity.ok("User connected successfully");
+        LoginMessage loginResponse = userService.loginUser(userLoginDto);
+
+        return ResponseEntity.ok(loginResponse);
     }
 }
