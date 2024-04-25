@@ -1,5 +1,6 @@
 package org.talos.springtest2.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -7,16 +8,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.talos.springtest2.dto.UserLoginDto;
 import org.talos.springtest2.dto.UserRegistrationDto;
+import org.talos.springtest2.service.UserService;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    private UserService userService;
+    @Autowired
+    public UserController(UserService userService)
+    {
+        this.userService = userService;
+    }
 
     @PostMapping("/registration")
-    public ResponseEntity<String> registration(@RequestBody UserRegistrationDto userRegistrationDto)
+    public String registration(@RequestBody UserRegistrationDto userRegistrationDto)
     {
         System.out.println(userRegistrationDto);
-        return ResponseEntity.ok("User registration completed successfully");
+        String id = userService.registrateUser(userRegistrationDto);
+        return id;
+
+
 
     }
     @PostMapping("/login")
