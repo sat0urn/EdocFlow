@@ -1,9 +1,9 @@
 function Profile() {
   return (
-    <section className="vh-100">
+    <section className="vh-100 container-fluid">
       <div className="row h-100">
         <div className="col-2">
-          <div className="d-flex h-100 flex-column flex-shrink-0 p-4" style={{ width: '250px' }}>
+          <div className="d-flex flex-column flex-shrink-0 p-4" style={{ width: '250px' }}>
             <h6
               className="fw-bold ps-3"
               style={
@@ -70,7 +70,6 @@ function Profile() {
           </div>
         </div>
         <div className="col-10 bg-light">
-
           <div className="d-flex flex-row justify-content-end mt-4 me-4">
             <a
               href=""
@@ -98,7 +97,9 @@ function Profile() {
                 }>
                   Your documents
                 </h1>
-                <p className="text-secondary">Select one or more that you want to review</p>
+                <p className="text-secondary">
+                  Select one or more that you want to review
+                </p>
               </div>
               <div className="col-8 mt-auto">
                 <div className="input-group mb-3 w-25">
