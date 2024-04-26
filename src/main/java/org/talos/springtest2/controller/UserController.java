@@ -2,40 +2,34 @@ package org.talos.springtest2.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.talos.springtest2.dto.UserLoginDto;
 import org.talos.springtest2.dto.UserRegistrationDto;
 import org.talos.springtest2.responses.LoginMessage;
+import org.talos.springtest2.responses.RegistrationResponse;
 import org.talos.springtest2.service.UserService;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
-    private UserService userService;
+    private final UserService userService;
+
     @Autowired
-    public UserController(UserService userService)
-    {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @PostMapping("/registration")
-    public String registration(@RequestBody UserRegistrationDto userRegistrationDto)
-    {
+    public ResponseEntity<?> registration(@RequestBody UserRegistrationDto userRegistrationDto) {
         System.out.println(userRegistrationDto);
-        String id = userService.registrateUser(userRegistrationDto);
-        return id;
-
-
-
+        RegistrationResponse registrateUser = userService.registrateUser(userRegistrationDto);
+        return ResponseEntity.ok(registrateUser);
     }
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserLoginDto userLoginDto)
-    {
-        LoginMessage loginResponse = userService.loginUser(userLoginDto);
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserLoginDto userLoginDto) {
+        LoginMessage loginResponse = userService.loginUser(userLoginDto);
         return ResponseEntity.ok(loginResponse);
     }
 }

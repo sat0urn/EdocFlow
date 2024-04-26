@@ -10,6 +10,7 @@ import org.talos.springtest2.dto.UserRegistrationDto;
 import org.talos.springtest2.entity.User;
 import org.talos.springtest2.repository.UserRepository;
 import org.talos.springtest2.responses.LoginMessage;
+import org.talos.springtest2.responses.RegistrationResponse;
 
 import java.util.Optional;
 
@@ -18,30 +19,35 @@ public class UserService {
     private UserRepository userRepository;
     private Converter converter;
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    UserService(UserRepository userRepository,Converter converter,PasswordEncoder passwordEncoder)
-    {
 
+    @Autowired
+    UserService(UserRepository userRepository, Converter converter, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.converter = converter;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public String registrateUser(UserRegistrationDto userRegistrationDto) {
-        userRegistrationDto.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword()));
-        User user = converter.convertUserDtoToUser(userRegistrationDto);
-        userRepository.save(user);
-        return user.getId();
+    public RegistrationResponse registrateUser(UserRegistrationDto userRegistrationDto) {
+        User checkUser = userRepository.findUserByEmail(userRegistrationDto.getEmail());
+        if (checkUser == null) {
+            userRegistrationDto.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword()));
+            User user = converter.convertUserDtoToUser(userRegistrationDto);
+            userRepository.save(user);
+            return new RegistrationResponse(user.getId(), true);
+        } else {
+            return new RegistrationResponse("User already exists with such Email", false);
+        }
     }
+
     public LoginMessage loginUser(UserLoginDto loginDTO) {
-        User employee1 = userRepository.findUserByEmail(loginDTO.getEmail());
-        if (employee1 != null) {
+        User user = userRepository.findUserByEmail(loginDTO.getEmail());
+        if (user != null) {
             String password = loginDTO.getPassword();
-            String encodedPassword = employee1.getPassword();
-            Boolean isPwdRight = passwordEncoder.matches(password, encodedPassword);
+            String encodedPassword = user.getPassword();
+            boolean isPwdRight = passwordEncoder.matches(password, encodedPassword);
             if (isPwdRight) {
-                Optional<User> user = userRepository.findDistinctByEmailAndPassword(loginDTO.getEmail(), encodedPassword);
-                if (user.isPresent()) {
+                Optional<User> userOptional = userRepository.findDistinctByEmailAndPassword(loginDTO.getEmail(), encodedPassword);
+                if (userOptional.isPresent()) {
                     return new LoginMessage("Login Success", true);
                 } else {
                     return new LoginMessage("Login Failed", false);
@@ -49,7 +55,7 @@ public class UserService {
             } else {
                 return new LoginMessage("password Not Match", false);
             }
-        }else {
+        } else {
             return new LoginMessage("Email not exits", false);
         }
     }
