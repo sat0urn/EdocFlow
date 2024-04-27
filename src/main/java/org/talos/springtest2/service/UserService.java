@@ -41,6 +41,7 @@ public class UserService {
 
     public LoginMessage loginUser(UserLoginDto loginDTO) {
         User user = userRepository.findUserByEmail(loginDTO.getEmail());
+        System.out.println(user);
         if (user != null) {
             String password = loginDTO.getPassword();
             String encodedPassword = user.getPassword();
