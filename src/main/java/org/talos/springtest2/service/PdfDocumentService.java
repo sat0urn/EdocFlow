@@ -20,7 +20,6 @@ public class PdfDocumentService {
     }
 
     public List<PDFDocument> getAllPdfDocuments() {
-        System.out.println("ok");
         return pdfDocumentRepository.findAll();
     }
 }

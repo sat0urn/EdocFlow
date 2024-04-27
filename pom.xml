@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.talos</groupId>
-    <artifactId>spring-test2</artifactId>
+    <artifactId>server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>spring-test2</name>
-    <description>spring-test2</description>
+    <name>spring-server</name>
+    <description>spring-server</description>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -48,11 +48,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>1.5</version>
         </dependency>
 
     </dependencies>
