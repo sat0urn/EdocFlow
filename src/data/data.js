@@ -3,6 +3,13 @@ import ServicePic2 from "../assets/service_pics/service2.png"
 import ServicePic3 from "../assets/service_pics/service3.png"
 import ServicePic4 from "../assets/service_pics/service4.png"
 
+import EmplContract from "../assets/pdfs/Employment_Contract.pdf"
+import LeaseAgree from "../assets/pdfs/Lease_Agreement.pdf"
+import LoanAgree from "../assets/pdfs/Loan_Agreement.pdf"
+import NonDiscAgree from "../assets/pdfs/Non_Disclosure_Agreement.pdf"
+import SalesContract from "../assets/pdfs/Sales_Contract.pdf"
+import ServiceAgree from "../assets/pdfs/Service_Agreement.pdf"
+
 export const advantageData = [{
     id: 0,
     bgColor: '#151516',
@@ -86,5 +93,37 @@ export const serviceData = [{
     title: "Managing Electronic Documents",
     desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur placerat posuere. Vestibulum tempor venenatis mauris vel pellentesque. Mauris blandit eros non orci mattis sodales. Donec eleifend arcu sit amet commodo varius",
     btnText: "manage documents"
+  }
+]
+
+export const templates = [{
+    id: 0,
+    pdf: EmplContract,
+    title: 'Employment_Contract'
+  },
+  {
+    id: 1,
+    pdf: LeaseAgree,
+    title: 'Lease_Agreement'
+  },
+  {
+    id: 2,
+    pdf: LoanAgree,
+    title: 'Loan_Agreement'
+  },
+  {
+    id: 3,
+    pdf: NonDiscAgree,
+    title: 'Non_Disclosure_Agreement'
+  },
+  {
+    id: 4,
+    pdf: SalesContract,
+    title: 'Sales_Contract'
+  },
+  {
+    id: 5,
+    pdf: ServiceAgree,
+    title: 'Service_Agreement'
   }
 ]

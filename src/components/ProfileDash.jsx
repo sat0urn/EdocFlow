@@ -1,19 +1,15 @@
-import { pdfjs } from 'react-pdf';
 import { useState, useEffect } from 'react'
-import pdfFile from '../assets/pdfs/Employment_Contract.pdf'
+import empContract from '../assets/pdfs/Employment_Contract.pdf'
+import { templates } from '../data/data';
 import PDFViewer from './PDFViewer';
-import PDFEditor from './PDFEditor';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 import { upload } from '../http/docsApi'
-
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.js",
-  import.meta.url
-).toString();
+import PDFEditor from './PDFEditor';
 
 function ProfileDash() {
   const [originalPdfBytes, setOriginalPdfBytes] = useState(null);
   const [updatedPdfBytes, setUpdatedPdfBytes] = useState(null);
+  const [pdfFile, setPdfFile] = useState(empContract)
   const [formData, setFormData] = useState({
     contractNo: '',
     date: '',
@@ -40,10 +36,11 @@ function ProfileDash() {
 
   // Call this function when the component mounts or when you need to load a new PDF
   useEffect(() => {
-    loadPdf();
-  }, [])
+    loadPdf()
+  }, [pdfFile])
 
   const updatePdf = async (updatedFormData) => {
+    console.log(1, pdfFile);
     const pdfDoc = await PDFDocument.load(originalPdfBytes);
     const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
     const pages = pdfDoc.getPages();
@@ -90,7 +87,6 @@ function ProfileDash() {
   // Handlers for input changes
   const handleInputChange = async (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
     const updatedFormData = { ...formData, [name]: value };
     setFormData(updatedFormData);
     await updatePdf(updatedFormData);
@@ -117,13 +113,39 @@ function ProfileDash() {
     }
   };
 
+  const handleSelectChange = async (e) => {
+    setFormData({
+      contractNo: '',
+      date: '',
+      fullName: '',
+      companyName: '',
+      position: '',
+      salary: '',
+      responsibilites: '',
+      startDate: '',
+      signDateCompany: '',
+      signDateEmployee: ''
+    })
+    setPdfFile(e.target.value)
+  };
+
   return (
     <div className="row">
       <div className="col-6">
-        <div className="card border-0 rounded-4 shadow-sm p-5">
+        <div className="card border-0 rounded-4 shadow-sm p-5 ms-auto">
+          <select className='form-select mb-4' value={pdfFile} onChange={handleSelectChange}>
+            {templates.map(template =>
+            (<option
+              key={template.id}
+              value={template.pdf}
+            >
+              {template.title}
+            </option>)
+            )}
+          </select>
           <div
             className="card rounded-5"
-            style={{ height: '550px' }}
+            style={{ height: '500px' }}
           >
             <PDFViewer pdfBytes={updatedPdfBytes || originalPdfBytes} />
           </div>
@@ -131,13 +153,10 @@ function ProfileDash() {
       </div>
       <div className="col-6">
         <form
-          className="w-50 me-auto overflow-y-auto"
+          className="w-50 ms-4 overflow-y-auto"
           style={{ height: '600px' }}
         >
-          <PDFEditor
-            formData={formData}
-            handleInputChange={handleInputChange}
-          />
+          <PDFEditor formData={formData} handleInputChange={handleInputChange} />
           <button
             onClick={savePdfToDatabase}
             className="btn btn-primary w-100 rounded-4"
