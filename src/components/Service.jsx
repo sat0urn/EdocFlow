@@ -1,5 +1,5 @@
 import ServiceP from "./ServiceP"
-import serviceData from "./data/serviceData"
+import { serviceData } from "../data/data"
 
 function Service() {
 

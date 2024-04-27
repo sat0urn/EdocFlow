@@ -1,7 +1,9 @@
-import AboutPic from "../../assets/about_pic.png"
-import { Link } from 'react-router-dom'
+import AboutPic from "../assets/about_pic.png"
+import { useNavigate } from 'react-router-dom'
 
 export default function About() {
+  const navigate = useNavigate()
+
   return (
     <section
       id="about"
@@ -23,20 +25,20 @@ export default function About() {
               Digital solutions to manage, sign and exchange documents online. jdfnjdn dnvjidfngji gndjifgndfg dfgjd fgndjong gdnjig
             </p>
             <div className="btn-group w-75 mt-3" role="group">
-              <Link to='/login' className="w-100 me-3">
-                <button
-                  type="button"
-                  className="btn btn-outline-primary w-100">
-                  Login
-                </button>
-              </Link>
-              <Link to='/register' className="w-100">
-                <button
-                  type="button"
-                  className="btn btn-primary w-100">
-                  Sign-up
-                </button>
-              </Link>
+              <button
+                type="button"
+                className="btn btn-outline-primary w-100 me-3"
+                onClick={() => { navigate('/login') }}
+              >
+                Login
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary w-100"
+                onClick={() => { navigate('/register') }}
+              >
+                Sign-up
+              </button>
             </div>
           </div>
           <div className="col-md-6 text-end">

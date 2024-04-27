@@ -1,6 +1,26 @@
-import { Link } from 'react-router-dom'
+import { useContext, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { AuthContext } from '../context'
+import { login } from '../http/userApi'
 
 function SignIn() {
+  const navigate = useNavigate()
+  const { setIsAuth } = useContext(AuthContext)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const signIn = async (e) => {
+    e.preventDefault()
+    const response = await login(email, password)
+    if (response.data.status) {
+      setIsAuth(true)
+      localStorage.setItem('auth', 'true')
+      navigate('/profile')
+    } else {
+      alert(response.data.message)
+    }
+  }
+
   return (
     <section className="d-flex vh-100">
       <div className="container-fluid">
@@ -10,7 +30,7 @@ function SignIn() {
               <div className="text-primary mb-5">
                 <h1 className="fw-bolder">Hi, Welcome Back!</h1>
               </div>
-              <form>
+              <form onSubmit={signIn}>
                 <div className="mb-4">
                   <label
                     htmlFor="exampleInputEmail1"
@@ -23,7 +43,10 @@ function SignIn() {
                     className="form-control p-3 rounded-4"
                     id="exampleInputEmail1"
                     aria-describedby="emailHelp"
-                    placeholder="Email or username" />
+                    placeholder="Email or username"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                  />
                 </div>
                 <div className="mb-4">
                   <label
@@ -47,7 +70,10 @@ function SignIn() {
                     type="password"
                     className="form-control p-3 rounded-4"
                     id="exampleInputPassword1"
-                    placeholder="Password" />
+                    placeholder="Password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                  />
                 </div>
                 <button
                   type="submit"
