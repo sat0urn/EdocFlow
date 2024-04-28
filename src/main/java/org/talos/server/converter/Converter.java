@@ -1,8 +1,8 @@
-package org.talos.springtest2.converter;
+package org.talos.server.converter;
 
 import org.springframework.stereotype.Component;
-import org.talos.springtest2.dto.UserRegistrationDto;
-import org.talos.springtest2.entity.User;
+import org.talos.server.dto.UserRegistrationDto;
+import org.talos.server.entity.User;
 
 @Component
 public class Converter {

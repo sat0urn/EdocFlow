@@ -1,8 +1,8 @@
-package org.talos.springtest2.repository;
+package org.talos.server.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-import org.talos.springtest2.entity.User;
+import org.talos.server.entity.User;
 
 import java.util.Optional;
 

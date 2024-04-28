@@ -1,4 +1,4 @@
-package org.talos.springtest2.dto;
+package org.talos.server.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

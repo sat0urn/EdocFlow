@@ -1,17 +1,17 @@
-package org.talos.springtest2.controller;
+package org.talos.server.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.talos.springtest2.dto.UserLoginDto;
-import org.talos.springtest2.dto.UserRegistrationDto;
-import org.talos.springtest2.responses.LoginMessage;
-import org.talos.springtest2.responses.RegistrationResponse;
-import org.talos.springtest2.service.UserService;
+import org.talos.server.dto.UserLoginDto;
+import org.talos.server.dto.UserRegistrationDto;
+import org.talos.server.responses.LoginMessage;
+import org.talos.server.responses.RegistrationResponse;
+import org.talos.server.service.UserService;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin("*")
 public class UserController {
     private final UserService userService;
 
@@ -22,7 +22,6 @@ public class UserController {
 
     @PostMapping("/registration")
     public ResponseEntity<?> registration(@RequestBody UserRegistrationDto userRegistrationDto) {
-        System.out.println(userRegistrationDto);
         RegistrationResponse registrateUser = userService.registrateUser(userRegistrationDto);
         return ResponseEntity.ok(registrateUser);
     }

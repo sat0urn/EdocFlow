@@ -1,16 +1,16 @@
-package org.talos.springtest2.service;
+package org.talos.server.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.talos.springtest2.converter.Converter;
-import org.talos.springtest2.dto.UserLoginDto;
-import org.talos.springtest2.dto.UserRegistrationDto;
-import org.talos.springtest2.entity.User;
-import org.talos.springtest2.repository.UserRepository;
-import org.talos.springtest2.responses.LoginMessage;
-import org.talos.springtest2.responses.RegistrationResponse;
+import org.talos.server.converter.Converter;
+import org.talos.server.dto.UserLoginDto;
+import org.talos.server.dto.UserRegistrationDto;
+import org.talos.server.entity.User;
+import org.talos.server.repository.UserRepository;
+import org.talos.server.responses.LoginMessage;
+import org.talos.server.responses.RegistrationResponse;
 
 import java.util.Optional;
 
@@ -33,6 +33,7 @@ public class UserService {
             userRegistrationDto.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword()));
             User user = converter.convertUserDtoToUser(userRegistrationDto);
             userRepository.save(user);
+            System.out.println("Successful registration!!!");
             return new RegistrationResponse(user.getId(), true);
         } else {
             return new RegistrationResponse("User already exists with such Email", false);
@@ -48,6 +49,7 @@ public class UserService {
             if (isPwdRight) {
                 Optional<User> userOptional = userRepository.findDistinctByEmailAndPassword(loginDTO.getEmail(), encodedPassword);
                 if (userOptional.isPresent()) {
+                    System.out.println("Successful login!!!");
                     return new LoginMessage("Login Success", true);
                 } else {
                     return new LoginMessage("Login Failed", false);

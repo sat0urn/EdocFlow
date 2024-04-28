@@ -1,10 +1,9 @@
-package org.talos.springtest2.dto;
+package org.talos.server.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.data.annotation.Id;
 
 @Data
 @AllArgsConstructor

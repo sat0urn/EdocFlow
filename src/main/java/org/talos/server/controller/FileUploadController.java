@@ -1,15 +1,15 @@
-package org.talos.springtest2.controller;
+package org.talos.server.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.talos.springtest2.entity.PDFDocument;
-import org.talos.springtest2.service.PdfDocumentService;
+import org.talos.server.entity.PDFDocument;
+import org.talos.server.service.PdfDocumentService;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin("*")
 @RestController
 public class FileUploadController {
 

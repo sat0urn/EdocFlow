@@ -1,9 +1,9 @@
-package org.talos.springtest2.service;
+package org.talos.server.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.talos.springtest2.entity.PDFDocument;
-import org.talos.springtest2.repository.PDFDocumentRepository;
+import org.talos.server.entity.PDFDocument;
+import org.talos.server.repository.PDFDocumentRepository;
 
 import java.util.List;
 
