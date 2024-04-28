@@ -5,3 +5,7 @@ Running app through `docker` & `docker-compose`
 ```shell
 docker-compose up
 ```
+#### After some changes in project, use `--build`
+```shell
+docker-compose up --build
+```
