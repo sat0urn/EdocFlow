@@ -1,41 +1,38 @@
-import { BrowserRouter } from 'react-router-dom'
+import {BrowserRouter} from 'react-router-dom'
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import AppRouter from './components/AppRouter'
-import { AuthContext } from './context/index'
-import { useState, useEffect } from 'react'
+import {AuthContext} from './context/index'
+import {useContext, useEffect, useState} from 'react'
 import Loader from './components/Loader'
+import {observer} from "mobx-react-lite";
+import {check} from "./http/userApi.js"
 
-function App() {
-  const [isAuth, setIsAuth] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+const App = observer(() => {
+    const {user} = useContext(AuthContext)
+    const [isLoading, setIsLoading] = useState(true)
 
-  console.log(isLoading)
+    useEffect(() => {
+        check().then(data => {
+            console.log("check")
+            user.setUser(data)
+            user.setIsAuth(true)
+        }).finally(() =>
+            setIsLoading(false)
+        )
+    }, [])
 
-  useEffect(() => {
-    if (localStorage.getItem('auth')) {
-      setIsAuth(true)
+    if (isLoading) {
+        return <Loader/>
     }
-    setIsLoading(false)
-  }, [])
 
-  if (isLoading) {
-    return <Loader />
-  }
-
-  return (
-    <AuthContext.Provider value={{
-      isAuth,
-      setIsAuth,
-      isLoading
-    }}>
-      <BrowserRouter>
-        <Header />
-        <AppRouter />
-        <Footer />
-      </BrowserRouter>
-    </AuthContext.Provider>
-  )
-}
+    return (
+        <BrowserRouter>
+            <Header/>
+            <AppRouter/>
+            <Footer/>
+        </BrowserRouter>
+    )
+})
 
 export default App

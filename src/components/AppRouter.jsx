@@ -1,41 +1,40 @@
-import { Route, Routes } from 'react-router-dom'
-import { privateRoutes, publicRoutes } from '../router/routes'
-import { useContext } from 'react'
-import { AuthContext } from '../context/index'
+import {Route, Routes} from 'react-router-dom'
+import {privateRoutes, publicRoutes} from '../router/routes'
+import {useContext} from 'react'
+import {AuthContext} from '../context/index'
 import Profile from '../pages/Profile'
 import Layout from './Layout'
+import {observer} from "mobx-react-lite";
 
-function AppRouter() {
-  const { isAuth } = useContext(AuthContext)
+const AppRouter = observer(() => {
+    const {user} = useContext(AuthContext)
 
-  return (
-    isAuth
-      ?
-      <Routes>
-        <Route path='/' element={<Profile />} >
-          {privateRoutes.map(route =>
-            <Route
-              key={route.id}
-              path={route.path}
-              element={route.element}
-            />
-          )}
-          <Route />
-        </Route>
-      </Routes>
-      :
-      <Routes>
-        <Route path='/' element={<Layout />} >
-          {publicRoutes.map(route =>
-            <Route
-              key={route.id}
-              path={route.path}
-              element={route.element}
-            />
-          )}
-        </Route>
-      </Routes>
-  )
-}
+    return (
+        <Routes>
+            {user.isAuth
+                ?
+                <Route path='/' element={<Profile/>}>
+                    {privateRoutes.map(({id, path, element}) =>
+                        <Route
+                            key={id}
+                            path={path}
+                            element={element}
+                        />
+                    )}
+                    <Route/>
+                </Route>
+                :
+                <Route path='/' element={<Layout/>}>
+                    {publicRoutes.map(({id, path, element}) =>
+                        <Route
+                            key={id}
+                            path={path}
+                            element={element}
+                        />
+                    )}
+                </Route>}
+        </Routes>
+    )
+})
 
 export default AppRouter
