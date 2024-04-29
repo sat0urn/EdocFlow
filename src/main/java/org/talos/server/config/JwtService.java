@@ -5,6 +5,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.talos.server.entity.User;
@@ -16,9 +19,15 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@PropertySource("classpath:application.properties")
 public class JwtService {
 
-    private static final String SECRET_KEY = "ae3c3134d7b415033998038c3219c6e435f2ecd9b2f3a147da9a5b51f623e7aa";
+    private static String SECRET_KEY;
+
+    @Autowired
+    public JwtService(@Value("${JWT_SECRET_KEY}") String secretKey) {
+        SECRET_KEY = secretKey;
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
