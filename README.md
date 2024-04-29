@@ -10,7 +10,7 @@ and be careful on using right `host` name for docker (also in [application.prope
 ```shell
 docker-compose up
 ```
-#### After some changes in project, use `--build`
+#### If you changed something, use `--build`
 ```shell
 docker-compose up --build
 ```
