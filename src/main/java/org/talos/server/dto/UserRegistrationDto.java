@@ -11,8 +11,8 @@ import lombok.ToString;
 @ToString
 public class UserRegistrationDto {
     private String email;
-    private String name;
-    private String surName;
+    private String firstName;
+    private String lastName;
     private Long phoneNumber;
     private String password;
     private String country;

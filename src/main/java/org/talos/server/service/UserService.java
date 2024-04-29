@@ -1,64 +1,101 @@
 package org.talos.server.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
+import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.talos.server.converter.Converter;
+import org.talos.server.config.JwtService;
 import org.talos.server.dto.UserLoginDto;
 import org.talos.server.dto.UserRegistrationDto;
+import org.talos.server.entity.Role;
 import org.talos.server.entity.User;
 import org.talos.server.repository.UserRepository;
-import org.talos.server.responses.LoginMessage;
-import org.talos.server.responses.RegistrationResponse;
+import org.talos.server.responses.AuthenticationResponse;
 
-import java.util.Optional;
+import java.util.Date;
+import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    private UserRepository userRepository;
-    private Converter converter;
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    UserService(UserRepository userRepository, Converter converter, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.converter = converter;
-        this.passwordEncoder = passwordEncoder;
-    }
+    public AuthenticationResponse registrateUser(UserRegistrationDto userRegistrationDto) {
+        var checkUser = userRepository.findUserByEmail(userRegistrationDto.getEmail());
+        if (checkUser.isEmpty()) {
+            var user = User.builder()
+                    .firstName(userRegistrationDto.getFirstName())
+                    .lastName(userRegistrationDto.getLastName())
+                    .phoneNumber(userRegistrationDto.getPhoneNumber())
+                    .country(userRegistrationDto.getCountry())
+                    .city(userRegistrationDto.getCity())
+                    .email(userRegistrationDto.getEmail())
+                    .password(passwordEncoder.encode(userRegistrationDto.getPassword()))
+                    .role(Role.USER)
+                    .build();
 
-    public RegistrationResponse registrateUser(UserRegistrationDto userRegistrationDto) {
-        User checkUser = userRepository.findUserByEmail(userRegistrationDto.getEmail());
-        if (checkUser == null) {
-            userRegistrationDto.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword()));
-            User user = converter.convertUserDtoToUser(userRegistrationDto);
             userRepository.save(user);
-            System.out.println("Successful registration!!!");
-            return new RegistrationResponse(user.getId(), true);
+
+            var jwtToken = jwtService.generateToken(Map.of(
+                    "first_name", user.getFirstName(),
+                    "last_name", user.getLastName(),
+                    "phone_number", user.getPhoneNumber(),
+                    "country", user.getCountry(),
+                    "city", user.getCity(),
+                    "role", user.getRole()
+            ), user);
+
+            return AuthenticationResponse.builder()
+                    .token(jwtToken)
+                    .build();
         } else {
-            return new RegistrationResponse("User already exists with such Email", false);
+            return AuthenticationResponse.builder()
+                    .token("")
+                    .build();
         }
     }
 
-    public LoginMessage loginUser(UserLoginDto loginDTO) {
-        User user = userRepository.findUserByEmail(loginDTO.getEmail());
-        if (user != null) {
-            String password = loginDTO.getPassword();
-            String encodedPassword = user.getPassword();
-            boolean isPwdRight = passwordEncoder.matches(password, encodedPassword);
-            if (isPwdRight) {
-                Optional<User> userOptional = userRepository.findDistinctByEmailAndPassword(loginDTO.getEmail(), encodedPassword);
-                if (userOptional.isPresent()) {
-                    System.out.println("Successful login!!!");
-                    return new LoginMessage("Login Success", true);
-                } else {
-                    return new LoginMessage("Login Failed", false);
-                }
-            } else {
-                return new LoginMessage("password Not Match", false);
-            }
+    public AuthenticationResponse loginUser(UserLoginDto loginDTO) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginDTO.getEmail(),
+                        loginDTO.getPassword()
+                )
+        );
+
+        var user = userRepository.findUserByEmail(loginDTO.getEmail())
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("User not found")
+                );
+
+        var jwtToken = jwtService.generateToken(Map.of(
+                "first_name", user.getFirstName(),
+                "last_name", user.getLastName(),
+                "phone_number", user.getPhoneNumber(),
+                "country", user.getCountry(),
+                "city", user.getCity(),
+                "role", user.getRole()
+        ), user);
+
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
+
+    public AuthenticationResponse isTokenExpired(String authHeader) {
+        String token = authHeader.substring(7);
+        boolean isExpired = jwtService.extractClaim(token, Claims::getExpiration).before(new Date());
+
+        if (isExpired) {
+            return new AuthenticationResponse("");
         } else {
-            return new LoginMessage("Email not exits", false);
+            return new AuthenticationResponse(token);
         }
     }
 }

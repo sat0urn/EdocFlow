@@ -1,15 +1,18 @@
-FROM maven:3.8.5-openjdk-17
+FROM maven:3.8.5-openjdk-17 AS builder
 
 WORKDIR /app
 
 COPY pom.xml .
+COPY src/ src/
 
-RUN mvn dependency:go-offline
+RUN mvn clean package -DskipTests
 
-COPY . .
+FROM openjdk:17-slim
 
-RUN mvn clean install
+WORKDIR /app
+
+COPY --from=builder /app/target/server-0.0.1-SNAPSHOT.jar /app/server.jar
 
 EXPOSE 8080
 
-CMD ["mvn", "spring-boot:run"]
+CMD ["java", "-jar", "server.jar"]

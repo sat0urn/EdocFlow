@@ -1,20 +1,20 @@
 package org.talos.server.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.talos.server.entity.PDFDocument;
-import org.talos.server.service.PdfDocumentService;
+import org.talos.server.service.PDFDocumentService;
 
 import java.util.List;
 
-@CrossOrigin("*")
 @RestController
+@CrossOrigin("*")
+@RequiredArgsConstructor
 public class FileUploadController {
 
-    @Autowired
-    private PdfDocumentService pdfDocumentService;
+    private final PDFDocumentService pdfDocumentService;
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(
@@ -31,8 +31,8 @@ public class FileUploadController {
 
     @GetMapping("/documents")
     public ResponseEntity<List<PDFDocument>> getAllDocuments() {
-        List<PDFDocument> documents = pdfDocumentService.getAllPdfDocuments();
-        return ResponseEntity.ok(documents);
+        List<PDFDocument> PDFDocuments = pdfDocumentService.getAllPdfDocuments();
+        return ResponseEntity.ok(PDFDocuments);
     }
 
 }

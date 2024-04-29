@@ -7,7 +7,6 @@ import org.talos.server.entity.User;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends MongoRepository<User,String> {
-    User findUserByEmail(String email);
-    Optional<User> findDistinctByEmailAndPassword(String email, String encodedPassword);
+public interface UserRepository extends MongoRepository<User, String> {
+    Optional<User> findUserByEmail(String email);
 }

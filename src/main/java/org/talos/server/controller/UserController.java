@@ -1,34 +1,41 @@
 package org.talos.server.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.talos.server.dto.UserLoginDto;
 import org.talos.server.dto.UserRegistrationDto;
-import org.talos.server.responses.LoginMessage;
-import org.talos.server.responses.RegistrationResponse;
+import org.talos.server.responses.AuthenticationResponse;
 import org.talos.server.service.UserService;
 
 @RestController
 @RequestMapping("/user")
 @CrossOrigin("*")
+@RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
     @PostMapping("/registration")
-    public ResponseEntity<?> registration(@RequestBody UserRegistrationDto userRegistrationDto) {
-        RegistrationResponse registrateUser = userService.registrateUser(userRegistrationDto);
-        return ResponseEntity.ok(registrateUser);
+    public ResponseEntity<AuthenticationResponse> registration(
+            @RequestBody UserRegistrationDto userRegistrationDto
+    ) {
+        return ResponseEntity.ok(userService.registrateUser(userRegistrationDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserLoginDto userLoginDto) {
-        LoginMessage loginResponse = userService.loginUser(userLoginDto);
-        return ResponseEntity.ok(loginResponse);
+    public ResponseEntity<AuthenticationResponse> login(
+            @RequestBody UserLoginDto userLoginDto
+    ) {
+        return ResponseEntity.ok(userService.loginUser(userLoginDto));
+    }
+
+    @GetMapping("/auth")
+    public ResponseEntity<AuthenticationResponse> auth(
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        return ResponseEntity.ok(userService.isTokenExpired(authHeader));
     }
 }
