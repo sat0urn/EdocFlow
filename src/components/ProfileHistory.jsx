@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react"
+import {useState, useEffect, useContext} from "react"
 import { fetchDocuments } from "../http/docsApi";
+import {observer} from "mobx-react-lite";
+import {AuthContext} from "../context/index.js";
 
-function ProfileHistory() {
+const ProfileHistory = observer(() => {
+  const {user} = useContext(AuthContext)
   const [documents, setDocuments] = useState([])
 
   useEffect(() => {
     const fetchDocs = async () => {
       try {
         const response = await fetchDocuments()
-        console.log(response.data[0].name);
         setDocuments(response.data);
       } catch (error) {
         console.error('Error fetching documents', error);
@@ -104,10 +106,10 @@ function ProfileHistory() {
                     {doc.name}
                   </th>
                   <td className="text-secondary">
-                    20.01.2024
+                    {new Date().toDateString()}
                   </td>
                   <td className="text-secondary">
-                    Aruzhan
+                    {user.user.firstName} {user.user.lastName}
                   </td>
                   <td className="text-secondary">
                     Waiiting for signing
@@ -120,6 +122,6 @@ function ProfileHistory() {
       </div>
     </div>
   )
-}
+})
 
 export default ProfileHistory

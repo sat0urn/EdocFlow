@@ -1,5 +1,5 @@
 import {useContext} from "react"
-import Logo from "../assets/logo.png"
+import logo from "../assets/logo.png"
 import {Link, useNavigate} from 'react-router-dom'
 import {AuthContext} from "../context"
 import {observer} from "mobx-react-lite";
@@ -20,7 +20,7 @@ const Header = observer(() => {
                 <Link
                     to='/'
                     className="d-flex align-items-end col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
-                    <img src={Logo} width="80px" alt=""/>
+                    <img src={logo} width="80px" alt=""/>
                     <h6>Electronic Document Management system</h6>
                 </Link>
 

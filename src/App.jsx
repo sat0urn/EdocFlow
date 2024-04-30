@@ -14,7 +14,6 @@ const App = observer(() => {
 
     useEffect(() => {
         check().then(data => {
-            console.log("check")
             user.setUser(data)
             user.setIsAuth(true)
         }).finally(() =>

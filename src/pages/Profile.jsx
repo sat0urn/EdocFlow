@@ -1,6 +1,11 @@
 import { Link, Outlet } from "react-router-dom"
+import {observer} from "mobx-react-lite";
+import {useContext} from "react";
+import {AuthContext} from "../context/index.js";
 
-function Profile() {
+const Profile = observer(() => {
+  const {user} = useContext(AuthContext)
+
   return (
     <section className="vh-100 container-fluid">
       <div className="row h-100">
@@ -74,7 +79,10 @@ function Profile() {
           </div>
         </div>
         <div className="col-10 bg-light">
-          <div className="d-flex flex-row justify-content-end mt-4 me-5">
+          <div className="d-flex flex-row align-items-center justify-content-end mt-4 me-5">
+            <span className="me-2 fw-bold">
+              {user.user.sub} / {user.user.firstName} {user.user.lastName}
+            </span>
             <a
               href=""
               className="bg-white rounded-circle shadow-lg me-2"
@@ -95,6 +103,6 @@ function Profile() {
       </div>
     </section >
   )
-}
+})
 
 export default Profile

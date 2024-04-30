@@ -9,8 +9,8 @@ const SignUp = observer(() => {
     const {user} = useContext(AuthContext)
 
     const [email, setEmail] = useState('')
-    const [name, setName] = useState('')
-    const [surName, setSurName] = useState('')
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
     const [password, setPassword] = useState('')
     const [country, setCountry] = useState('')
@@ -19,10 +19,9 @@ const SignUp = observer(() => {
 
     const signUp = async (e) => {
         e.preventDefault()
-
         if (email !== '' &&
-            name !== '' &&
-            surName !== '' &&
+            firstName !== '' &&
+            lastName !== '' &&
             phoneNumber !== '' &&
             password !== '' &&
             country !== '' &&
@@ -31,8 +30,8 @@ const SignUp = observer(() => {
             try {
                 const data = await registration(
                     email,
-                    name,
-                    surName,
+                    firstName,
+                    lastName,
                     phoneNumber,
                     password,
                     country,
@@ -42,7 +41,7 @@ const SignUp = observer(() => {
                 user.setUser(data)
                 navigate('/profile')
             } catch (e) {
-                alert(e.response.data.message)
+                alert(e)
             }
         } else {
             alert('Empty field')
@@ -71,12 +70,12 @@ const SignUp = observer(() => {
                                                 First Name
                                             </label>
                                             <input
+                                                type="text"
                                                 className="form-control p-3 rounded-4"
                                                 id="exampleInputFirstName1"
-                                                aria-describedby="emailHelp"
                                                 placeholder="First Name"
-                                                value={name}
-                                                onChange={e => setName(e.target.value)}
+                                                value={firstName}
+                                                onChange={e => setFirstName(e.target.value)}
                                             />
                                         </div>
                                     </div>
@@ -89,12 +88,12 @@ const SignUp = observer(() => {
                                                 Last Name
                                             </label>
                                             <input
+                                                type="text"
                                                 className="form-control p-3 rounded-4"
                                                 id="exampleInputLastName1"
-                                                aria-describedby="emailHelp"
                                                 placeholder="Last Name"
-                                                value={surName}
-                                                onChange={e => setSurName(e.target.value)}
+                                                value={lastName}
+                                                onChange={e => setLastName(e.target.value)}
                                             />
                                         </div>
                                     </div>
@@ -110,44 +109,26 @@ const SignUp = observer(() => {
                                         type="email"
                                         className="form-control p-3 rounded-4"
                                         id="exampleInputEmail1"
-                                        aria-describedby="emailHelp"
                                         placeholder="Email Address"
                                         value={email}
                                         onChange={e => setEmail(e.target.value)}
                                     />
                                 </div>
-                                <div className="row mb-2">
-                                    <div className="col-md-6">
-                                        <label
-                                            htmlFor="exampleInputBirth1"
-                                            className="form-label opacity-75"
-                                        >
-                                            Birth Date
-                                        </label>
-                                        <input
-                                            type="date"
-                                            className="form-control p-3 rounded-4"
-                                            id="exampleInputBirth1"
-                                            aria-describedby="emailHelp"
-                                            placeholder="Birth Date"/>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <label
-                                            htmlFor="exampleInputPhone1"
-                                            className="form-label opacity-75"
-                                        >
-                                            Phone Number
-                                        </label>
-                                        <input
-                                            type="number"
-                                            className="form-control p-3 rounded-4"
-                                            id="exampleInputPhone1"
-                                            aria-describedby="emailHelp"
-                                            placeholder="Phone Number"
-                                            value={phoneNumber}
-                                            onChange={e => setPhoneNumber(e.target.value)}
-                                        />
-                                    </div>
+                                <div className="mb-2">
+                                    <label
+                                        htmlFor="exampleInputPhone1"
+                                        className="form-label opacity-75"
+                                    >
+                                        Phone Number
+                                    </label>
+                                    <input
+                                        type="number"
+                                        className="form-control p-3 rounded-4"
+                                        id="exampleInputPhone1"
+                                        placeholder="Phone Number"
+                                        value={phoneNumber}
+                                        onChange={e => setPhoneNumber(e.target.value)}
+                                    />
                                 </div>
                                 <div className="row mb-2">
                                     <div className="col-md-6">
@@ -155,13 +136,12 @@ const SignUp = observer(() => {
                                             htmlFor="exampleInputCountry1"
                                             className="form-label opacity-75"
                                         >
-                                            Contry
+                                            Country
                                         </label>
                                         <input
-                                            type="name"
+                                            type="text"
                                             className="form-control p-3 rounded-4"
                                             id="exampleInputCountry1"
-                                            aria-describedby="emailHelp"
                                             placeholder="Country"
                                             value={country}
                                             onChange={e => setCountry(e.target.value)}
@@ -175,10 +155,9 @@ const SignUp = observer(() => {
                                             City
                                         </label>
                                         <input
-                                            type="name"
+                                            type="text"
                                             className="form-control p-3 rounded-4"
                                             id="exampleInputCity1"
-                                            aria-describedby="emailHelp"
                                             placeholder="City"
                                             value={city}
                                             onChange={e => setCity(e.target.value)}
@@ -196,7 +175,6 @@ const SignUp = observer(() => {
                                         type="password"
                                         className="form-control p-3 rounded-4"
                                         id="exampleInputPassword1"
-                                        aria-describedby="emailHelp"
                                         placeholder="Password"
                                         value={password}
                                         onChange={e => setPassword(e.target.value)}

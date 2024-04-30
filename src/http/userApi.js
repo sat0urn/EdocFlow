@@ -3,8 +3,8 @@ import {jwtDecode} from "jwt-decode";
 
 export const registration = async (
     email,
-    name,
-    surName,
+    firstName,
+    lastName,
     phoneNumber,
     password,
     country,
@@ -13,8 +13,8 @@ export const registration = async (
     const {data} = await $host.post(
         '/user/registration', {
             email,
-            name,
-            surName,
+            firstName,
+            lastName,
             phoneNumber,
             password,
             country,
@@ -24,7 +24,10 @@ export const registration = async (
     return jwtDecode(data.token)
 }
 
-export const login = async (email, password) => {
+export const login = async (
+    email,
+    password
+) => {
     const {data} = await $host.post(
         '/user/login', {
             email,

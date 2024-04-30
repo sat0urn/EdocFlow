@@ -18,7 +18,7 @@ const SignIn = observer(() => {
             user.setUser(data)
             navigate('/profile')
         } catch (e) {
-            alert(e.response.data.message)
+            alert("Wrong credentials: " + e)
         }
     }
 

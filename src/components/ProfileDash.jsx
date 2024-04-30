@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react'
+import {useState, useEffect, useContext} from 'react'
 import empContract from '../assets/pdfs/Employment_Contract.pdf'
 import { templates } from '../data/data';
 import PDFViewer from './PDFViewer';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 import { upload } from '../http/docsApi'
 import PDFEditor from './PDFEditor';
+import {observer} from "mobx-react-lite";
+import {AuthContext} from "../context/index.js";
 
-function ProfileDash() {
+const ProfileDash = () => {
   const [originalPdfBytes, setOriginalPdfBytes] = useState(null);
   const [updatedPdfBytes, setUpdatedPdfBytes] = useState(null);
   const [pdfFile, setPdfFile] = useState(empContract)
@@ -40,7 +42,6 @@ function ProfileDash() {
   }, [pdfFile])
 
   const updatePdf = async (updatedFormData) => {
-    console.log(1, pdfFile);
     const pdfDoc = await PDFDocument.load(originalPdfBytes);
     const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
     const pages = pdfDoc.getPages();
@@ -99,14 +100,12 @@ function ProfileDash() {
         type: 'application/pdf'
       }
     );
-
     const formDataPdf = new FormData();
-    formDataPdf.append('name', 'updated-document.pdf')
+    formDataPdf.append('name', pdfFile.substring(pdfFile.lastIndexOf("/") + 1, pdfFile.length - 4))
     formDataPdf.append('file', blob);
 
     try {
       const response = await upload(formDataPdf)
-
       console.log(response.data);
     } catch (error) {
       console.error(error.response);
