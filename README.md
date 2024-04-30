@@ -8,11 +8,11 @@ and be careful on using right `host` name for docker (also in [application.prope
 
 #### Use `docker-compose` command
 ```shell
-docker-compose up
+docker-compose up -d
 ```
 #### If you changed something, use `--build`
 ```shell
-docker-compose up --build
+docker-compose up -d --build
 ```
 
 ### TECHNOLOGY STACK USED: 
@@ -21,6 +21,6 @@ docker-compose up --build
 - MongoDB
 - Docker
 
-### SECURED WITH
+### SECURED WITH:
 - Spring-Security
 - JWT
