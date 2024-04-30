@@ -11,7 +11,8 @@ export const registration = async (
     city
 ) => {
     const {data} = await $host.post(
-        '/user/registration', {
+        '/user/registration',
+        {
             email,
             firstName,
             lastName,
@@ -29,7 +30,8 @@ export const login = async (
     password
 ) => {
     const {data} = await $host.post(
-        '/user/login', {
+        '/user/login',
+        {
             email,
             password
         })

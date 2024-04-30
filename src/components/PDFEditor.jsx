@@ -4,7 +4,7 @@ function PDFEditor({ formData, handleInputChange }) {
       {
         Object.entries(formData).map(([key, value]) => {
           return (
-            <div key={key} className="mb-2" >
+            <div key={key}>
               <label
                 className="form-label opacity-75"
               >
@@ -13,7 +13,7 @@ function PDFEditor({ formData, handleInputChange }) {
               <input
                 type="text"
                 name={key}
-                className="form-control rounded-4"
+                className="form-control form-control-sm rounded-4"
                 value={value}
                 onChange={handleInputChange}
               />

@@ -7,18 +7,17 @@ const Profile = observer(() => {
   const {user} = useContext(AuthContext)
 
   return (
-    <section className="vh-100 container-fluid">
+    <section className="container-fluid">
       <div className="row h-100">
         <div className="col-2">
-          <div className="d-flex flex-column flex-shrink-0 p-4" style={{ width: '250px' }}>
+          <div
+              className="d-flex flex-column flex-shrink-0 vh-100 p-4"
+              style={{ width: '250px' }}
+          >
             <h6
               className="fw-bold ps-3"
-              style={
-                {
-                  color: '#407BFF',
-                  marginTop: '40%'
-                }
-              }>
+              style={{color: '#407BFF', marginTop: '40%'}}
+            >
               General
             </h6>
             <ul className="nav nav-pills flex-column my-3">
