@@ -1,20 +1,15 @@
-package org.talos.server.entity;
+package org.talos.server.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-
-import java.util.Date;
+import lombok.ToString;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PDFDocument {
-    @Id
-    private String id;
+@ToString
+public class PDFDocumentDto {
     private String name;
     private byte[] fileData;
     private String createdTime;

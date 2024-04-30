@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.talos.server.dto.PDFDocumentDto;
 import org.talos.server.entity.PDFDocument;
 import org.talos.server.service.PDFDocumentService;
 
@@ -19,12 +20,21 @@ public class FileUploadController {
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(
             @RequestParam("name") String name,
-            @RequestParam("file") MultipartFile file,
+            @RequestParam("fileData") MultipartFile fileData,
+            @RequestParam("createdTime") String createdTime,
+            @RequestParam("status") String status,
             @RequestHeader("Authorization") String authHeader
     ) {
         try {
-            byte[] content = file.getBytes();
-            pdfDocumentService.saveUserPdf(name, content, authHeader);
+            pdfDocumentService.saveUserPdf(
+                    new PDFDocumentDto(
+                            name,
+                            fileData.getBytes(),
+                            createdTime,
+                            status
+                    ),
+                    authHeader
+            );
             return ResponseEntity.ok("File uploaded successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Could not upload the file: " + e.getMessage());

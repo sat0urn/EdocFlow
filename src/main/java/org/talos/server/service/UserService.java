@@ -49,7 +49,6 @@ public class UserService {
                     "phoneNumber", user.getPhoneNumber(),
                     "country", user.getCountry(),
                     "city", user.getCity(),
-                    "documents", user.getDocuments(),
                     "role", user.getRole()
             ), user);
 
@@ -82,7 +81,6 @@ public class UserService {
                 "phoneNumber", user.getPhoneNumber(),
                 "country", user.getCountry(),
                 "city", user.getCity(),
-                "documents", user.getDocuments(),
                 "role", user.getRole()
         ), user);
 
