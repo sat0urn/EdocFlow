@@ -36,6 +36,7 @@ public class UserService {
                     .country(userRegistrationDto.getCountry())
                     .city(userRegistrationDto.getCity())
                     .email(userRegistrationDto.getEmail())
+                    .documents(userRegistrationDto.getDocuments())
                     .password(passwordEncoder.encode(userRegistrationDto.getPassword()))
                     .role(Role.USER)
                     .build();
@@ -43,11 +44,12 @@ public class UserService {
             userRepository.save(user);
 
             var jwtToken = jwtService.generateToken(Map.of(
-                    "first_name", user.getFirstName(),
-                    "last_name", user.getLastName(),
-                    "phone_number", user.getPhoneNumber(),
+                    "firstName", user.getFirstName(),
+                    "lastName", user.getLastName(),
+                    "phoneNumber", user.getPhoneNumber(),
                     "country", user.getCountry(),
                     "city", user.getCity(),
+                    "documents", user.getDocuments(),
                     "role", user.getRole()
             ), user);
 
@@ -75,11 +77,12 @@ public class UserService {
                 );
 
         var jwtToken = jwtService.generateToken(Map.of(
-                "first_name", user.getFirstName(),
-                "last_name", user.getLastName(),
-                "phone_number", user.getPhoneNumber(),
+                "firstName", user.getFirstName(),
+                "lastName", user.getLastName(),
+                "phoneNumber", user.getPhoneNumber(),
                 "country", user.getCountry(),
                 "city", user.getCity(),
+                "documents", user.getDocuments(),
                 "role", user.getRole()
         ), user);
 

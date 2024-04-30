@@ -19,19 +19,23 @@ public class FileUploadController {
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(
             @RequestParam("name") String name,
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("file") MultipartFile file,
+            @RequestHeader("Authorization") String authHeader
+    ) {
         try {
             byte[] content = file.getBytes();
-            PDFDocument pdfDocument = pdfDocumentService.savePdf(name, content);
-            return ResponseEntity.ok("File uploaded successfully: " + pdfDocument.getId());
+            pdfDocumentService.saveUserPdf(name, content, authHeader);
+            return ResponseEntity.ok("File uploaded successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Could not upload the file: " + e.getMessage());
         }
     }
 
     @GetMapping("/documents")
-    public ResponseEntity<List<PDFDocument>> getAllDocuments() {
-        List<PDFDocument> PDFDocuments = pdfDocumentService.getAllPdfDocuments();
+    public ResponseEntity<List<PDFDocument>> getAllDocuments(
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        List<PDFDocument> PDFDocuments = pdfDocumentService.listUserDocuments(authHeader);
         return ResponseEntity.ok(PDFDocuments);
     }
 

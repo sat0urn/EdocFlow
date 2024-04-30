@@ -19,15 +19,10 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-@PropertySource("classpath:application.properties")
 public class JwtService {
 
-    private static String SECRET_KEY;
-
-    @Autowired
-    public JwtService(@Value("${JWT_SECRET_KEY}") String secretKey) {
-        SECRET_KEY = secretKey;
-    }
+    @Value("${JWT_SECRET_KEY}")
+    private String SECRET_KEY;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -37,12 +32,8 @@ public class JwtService {
             String token,
             Function<Claims, T> claimsResolver
     ) {
-        try {
-            final Claims claims = extractAllClaims(token);
-            return claimsResolver.apply(claims);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Invalid JWT token", e);
-        }
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
     }
 
     public String generateToken(User userDetails) {
