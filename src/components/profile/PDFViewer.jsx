@@ -30,7 +30,7 @@ function PDFViewer({pdfBytes}) {
         <Document
             file={pdfUrl}
             onLoadSuccess={onDocumentLoadSuccess}
-            className='rounded-5 my-5'
+            className='card rounded-5 border-black'
         >
             {Array.from(
                 new Array(numPages),
@@ -38,6 +38,7 @@ function PDFViewer({pdfBytes}) {
                     <Page
                         key={`page_${index + 1}`}
                         pageNumber={index + 1}
+                        className="my-5 rounded-5"
                         renderTextLayer={false}
                         renderAnnotationLayer={false}
                     />

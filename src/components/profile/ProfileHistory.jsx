@@ -1,7 +1,7 @@
 import {useContext, useEffect, useMemo, useState} from "react"
-import {fetchDocuments} from "../http/docsApi";
+import {fetchDocuments} from "../../http/docsApi.js";
 import {observer} from "mobx-react-lite";
-import {AuthContext} from "../context/index.js";
+import {AuthContext} from "../../context/index.js";
 
 const ProfileHistory = observer(() => {
     const {user} = useContext(AuthContext)
@@ -71,11 +71,11 @@ const ProfileHistory = observer(() => {
                 <table className="table table-bordered m-4 w-auto">
                     <thead className="text-center">
                     <tr>
-                        <th scope="col" className="text-start" style={{color: '#407BFF'}}>Name</th>
-                        <th scope="col" style={{color: '#407BFF'}}>Date</th>
-                        <th scope="col" style={{color: '#407BFF'}}>Responsible</th>
-                        <th scope="col" style={{color: '#407BFF'}}>Status</th>
-                        <th scope="col" style={{color: '#407BFF'}}>PDF</th>
+                        <th scope="col" className="text-start text-primary">Name</th>
+                        <th scope="col" className="text-primary">Date</th>
+                        <th scope="col" className="text-primary">Responsible</th>
+                        <th scope="col" className="text-primary">Status</th>
+                        <th scope="col" className="text-primary">PDF</th>
                     </tr>
                     </thead>
                     <tbody className="text-center">

@@ -1,5 +1,5 @@
-import AdvantageP from "./AdvantageP"
-import { advantageData } from "../data/data"
+import AdvantageP from "./AdvantageP.jsx"
+import { advantageData } from "../../data/data.js"
 
 function Advantage() {
 

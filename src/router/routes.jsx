@@ -4,8 +4,8 @@ import SignIn from "../pages/SignIn"
 import SignUp from "../pages/SignUp"
 import Recover from "../pages/Recover"
 import Reset from "../pages/Reset"
-import ProfileHistory from "../components/ProfileHistory"
-import ProfileDash from "../components/ProfileDash"
+import ProfileHistory from "../components/profile/ProfileHistory.jsx"
+import ProfileDash from "../components/profile/ProfileDash.jsx"
 
 export const publicRoutes = [
   {

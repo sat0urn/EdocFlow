@@ -1,10 +1,10 @@
 import {useEffect, useState} from 'react'
-import empContract from '../assets/pdfs/Employment_Contract.pdf'
-import {templates} from '../data/data';
-import PDFViewer from './PDFViewer';
+import empContract from '../../assets/pdfs/Employment_Contract.pdf'
+import {templates} from '../../data/data.js';
+import PDFViewer from './PDFViewer.jsx';
 import {PDFDocument, rgb, StandardFonts} from 'pdf-lib'
-import {upload} from '../http/docsApi'
-import PDFEditor from './PDFEditor';
+import {upload} from '../../http/docsApi.js'
+import PDFEditor from './PDFEditor.jsx';
 
 const ProfileDash = () => {
     const [originalPdfBytes, setOriginalPdfBytes] = useState(null);
@@ -91,28 +91,6 @@ const ProfileDash = () => {
         await updatePdf(updatedFormData);
     };
 
-    const savePdfToDatabase = async () => {
-        const blob = new Blob(
-            [updatedPdfBytes],
-            {
-                type: 'application/pdf'
-            }
-        );
-
-        const formDataPdf = new FormData();
-        formDataPdf.append('name', pdfFile.substring(pdfFile.lastIndexOf("/") + 1, pdfFile.length - 4))
-        formDataPdf.append('fileData', blob);
-        formDataPdf.append('createdTime', (new Date()).toISOString().split('T')[0])
-        formDataPdf.append('status', 'pending')
-
-        try {
-            const response = await upload(formDataPdf)
-            console.log(response.data);
-        } catch (error) {
-            console.error(error.response);
-        }
-    };
-
     const handleSelectChange = async (e) => {
         setFormData({
             contractNo: '',
@@ -131,10 +109,15 @@ const ProfileDash = () => {
 
     return (
         <div className="row my-5">
-            <div className="col-8">
-                <div className="card border-0 rounded-4 shadow-sm w-75 ms-auto p-5">
+            <div className="col-7">
+                <div className="card border-0 rounded-4 shadow-sm p-5">
+
+                    <h2 className={"text-primary"}>
+                        Document: {pdfFile.substring(pdfFile.lastIndexOf("/") + 1, pdfFile.length - 4)}
+                    </h2>
+
                     <select
-                        className='form-select mb-4'
+                        className='form-select my-4'
                         value={pdfFile}
                         onChange={handleSelectChange}
                     >
@@ -149,21 +132,18 @@ const ProfileDash = () => {
                             )
                         )}
                     </select>
-                    <div className="card rounded-5">
-                        <PDFViewer pdfBytes={updatedPdfBytes || originalPdfBytes}/>
-                    </div>
+                    <PDFViewer
+                        pdfBytes={updatedPdfBytes || originalPdfBytes}
+                    />
                 </div>
             </div>
-            <div className="col-4">
-                <form className="w-50">
-                    <PDFEditor formData={formData} handleInputChange={handleInputChange}/>
-                    <button
-                        onClick={savePdfToDatabase}
-                        className="btn btn-primary w-100 rounded-4 mt-3"
-                    >
-                        Save
-                    </button>
-                </form>
+            <div className="col-5 align-self-center">
+                <PDFEditor
+                    formData={formData}
+                    handleInputChange={handleInputChange}
+                    updatedPdfBytes={updatedPdfBytes}
+                    pdfFile={pdfFile}
+                />
             </div>
         </div>
     )
