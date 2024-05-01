@@ -1,11 +1,11 @@
 import axios from 'axios'
 
 const $authHost = axios.create({
-    baseURL: 'http://localhost:8080/'
+    baseURL: 'https://edoc-flow-api.onrender.com/'
 })
 
 const $host = axios.create({
-    baseURL: 'http://localhost:8080/'
+    baseURL: 'https://edoc-flow-api.onrender.com/'
 })
 
 const authInterceptor = config => {
