@@ -17,12 +17,14 @@ import org.talos.server.responses.AuthenticationResponse;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
@@ -98,5 +100,14 @@ public class UserService {
         } else {
             return new AuthenticationResponse(token);
         }
+    }
+
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+
+    }
+
+    public void updateUser(User existingUser) {
+        userRepository.save(existingUser);
     }
 }
