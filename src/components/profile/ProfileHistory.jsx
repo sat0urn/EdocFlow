@@ -81,7 +81,7 @@ const ProfileHistory = observer(() => {
                     <tbody className="text-center">
                     {getSearchedDocuments.map((doc, index) => {
                         return (
-                            <tr key={index}>
+                            <tr key={index} className={"align-middle"}>
                                 <th className="text-secondary text-start" scope="row">
                                     {doc.name}
                                 </th>

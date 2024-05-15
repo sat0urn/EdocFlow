@@ -1,41 +1,25 @@
 import {useEffect, useState} from 'react'
 import empContract from '../../assets/pdfs/Employment_Contract.pdf'
-import {templates} from '../../data/data.js';
+import {allDocFormData} from "../../data/docFormData.js";
 import PDFViewer from './PDFViewer.jsx';
 import {PDFDocument, rgb, StandardFonts} from 'pdf-lib'
-import {upload} from '../../http/docsApi.js'
 import PDFEditor from './PDFEditor.jsx';
 
 const ProfileDash = () => {
     const [originalPdfBytes, setOriginalPdfBytes] = useState(null);
     const [updatedPdfBytes, setUpdatedPdfBytes] = useState(null);
     const [pdfFile, setPdfFile] = useState(empContract)
-    const [formData, setFormData] = useState({
-        contractNo: '',
-        date: '',
-        fullName: '',
-        companyName: '',
-        position: '',
-        salary: '',
-        responsibilites: '',
-        startDate: '',
-        signDateCompany: '',
-        signDateEmployee: ''
-    });
+    const [pdfTitle, setPdfTitle] = useState(allDocFormData[0].title)
+    const [pdfPositions, setPdfPositions] = useState(allDocFormData[0].positions)
+    const [formData, setFormData] = useState(allDocFormData[0].data);
 
-    const loadPdf = async () => {
-        // Fetch the PDF from a server or generate it
-        const response = await fetch(pdfFile);
-
-        // Replace with your PDF fetch URL
-        const buffer = await response.arrayBuffer();
-
-        // Set the PDF bytes into state
-        setOriginalPdfBytes(buffer.slice(0));
-    }
-
-    // Call this function when the component mounts or when you need to load a new PDF
     useEffect(() => {
+        const loadPdf = async () => {
+            const response = await fetch(pdfFile);
+            const buffer = await response.arrayBuffer();
+            setOriginalPdfBytes(buffer.slice(0));
+        }
+
         loadPdf()
     }, [pdfFile])
 
@@ -46,10 +30,8 @@ const ProfileDash = () => {
         const firstPage = pages[0];
 
         // Iterate over all fields and add their text to the PDF
-        Object.entries(updatedFormData).forEach(([key, value]) => {
+        Object.entries(updatedFormData).forEach(([key, {value}]) => {
             if (value) {
-                // The position where the text is drawn should depend on the key
-                // You need to map the field names to their positions on the PDF
                 const position = getPositionForKey(key);
                 firstPage.drawText(value, {
                     x: position.x,
@@ -65,85 +47,74 @@ const ProfileDash = () => {
         setUpdatedPdfBytes(newPdfBytes);
     }
 
-    // Function to return the correct position for each field
     const getPositionForKey = (key) => {
-        // You will need to define these positions based on your PDF structure
-        const positions = {
-            contractNo: {x: 375, y: 796},
-            date: {x: 250, y: 698},
-            fullName: {x: 400, y: 698},
-            companyName: {x: 75, y: 670},
-            position: {x: 95, y: 627},
-            salary: {x: 88, y: 585},
-            responsibilites: {x: 89, y: 541},
-            startDate: {x: 318, y: 500},
-            signDateCompany: {x: 258, y: 386},
-            signDateEmployee: {x: 319, y: 343}
-        };
-        return positions[key] || {x: 0, y: 0};
+        return pdfPositions[key] || {x: 0, y: 0};
     };
 
-    // Handlers for input changes
     const handleInputChange = async (e) => {
         const {name, value} = e.target;
-        const updatedFormData = {...formData, [name]: value};
+        const updatedFormData = {...formData, [name]: {['value']: value}};
         setFormData(updatedFormData);
         await updatePdf(updatedFormData);
     };
 
     const handleSelectChange = async (e) => {
-        setFormData({
-            contractNo: '',
-            date: '',
-            fullName: '',
-            companyName: '',
-            position: '',
-            salary: '',
-            responsibilites: '',
-            startDate: '',
-            signDateCompany: '',
-            signDateEmployee: ''
-        })
-        setPdfFile(e.target.value)
+        const value = e.target.value
+        const {title, data} = allDocFormData.find((doc) => doc.pdf === value)
+        let positions = {}
+
+        Object.entries(data).forEach(([key, value]) => positions[key] = value.positions)
+
+        setPdfFile(value)
+        setPdfPositions(positions)
+        setPdfTitle(title)
+        setFormData(data)
+
+        const response = await fetch(value);
+        const buffer = await response.arrayBuffer();
+        const pdfNewDoc = await PDFDocument.load(buffer.slice(0));
+        const pdfNewBytes = await pdfNewDoc.save()
+        setUpdatedPdfBytes(pdfNewBytes)
     };
 
     return (
-        <div className="row my-5">
-            <div className="col-7">
-                <div className="card border-0 rounded-4 shadow-sm p-5">
+        <div className={"container"}>
+            <div className={"row mx-auto w-75 my-5"}>
+                <div className={"col-8"}>
+                    <div className={"card border-0 rounded-4 shadow-sm p-5"}>
 
-                    <h2 className={"text-primary"}>
-                        Document: {pdfFile.substring(pdfFile.lastIndexOf("/") + 1, pdfFile.length - 4)}
-                    </h2>
+                        <h3 className={"text-primary"}>
+                            Document: {pdfTitle}
+                        </h3>
 
-                    <select
-                        className='form-select my-4'
-                        value={pdfFile}
-                        onChange={handleSelectChange}
-                    >
-                        {templates.map(template =>
-                            (
-                                <option
-                                    key={template.id}
-                                    value={template.pdf}
-                                >
-                                    {template.title}
-                                </option>
-                            )
-                        )}
-                    </select>
-                    <PDFViewer
-                        pdfBytes={updatedPdfBytes || originalPdfBytes}
+                        <select
+                            className={"form-select my-4"}
+                            value={pdfFile}
+                            onChange={handleSelectChange}
+                        >
+                            {allDocFormData.map(({id, pdf, title}) =>
+                                (
+                                    <option
+                                        key={id}
+                                        value={pdf}
+                                        name={title}
+                                    >
+                                        {title}
+                                    </option>
+                                )
+                            )}
+                        </select>
+                        <PDFViewer pdfBytes={updatedPdfBytes || originalPdfBytes}/>
+                    </div>
+                </div>
+                <div className={"col-4"}>
+                    <PDFEditor
+                        formData={formData}
+                        handleInputChange={handleInputChange}
+                        updatedPdfBytes={updatedPdfBytes}
+                        pdfFile={pdfFile}
                     />
                 </div>
-            </div>
-            <div className="col-5 align-self-center">
-                <PDFEditor
-                    formData={formData}
-                    handleInputChange={handleInputChange}
-                    updatedPdfBytes={updatedPdfBytes}
-                    pdfFile={pdfFile}
-                />
             </div>
         </div>
     )

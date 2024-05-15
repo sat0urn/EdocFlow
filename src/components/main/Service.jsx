@@ -1,5 +1,5 @@
 import ServiceP from "./ServiceP.jsx"
-import { serviceData } from "../../data/data.js"
+import { serviceData } from "../../data/mainPageData.js"
 
 function Service() {
 

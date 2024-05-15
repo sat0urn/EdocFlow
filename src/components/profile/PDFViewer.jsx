@@ -6,11 +6,11 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     import.meta.url
 ).toString();
 
-function PDFViewer({pdfBytes}) {
+const PDFViewer = ({pdfBytes}) => {
     const [numPages, setNumPages] = useState(null);
     const [pdfUrl, setPdfUrl] = useState('');
 
-    function onDocumentLoadSuccess({numPages}) {
+    const onDocumentLoadSuccess = ({numPages}) => {
         setNumPages(numPages);
     }
 
