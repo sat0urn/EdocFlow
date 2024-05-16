@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   database:
-    image: mongo
+    image: sat0urn/mongo:latest
     container_name: database
     restart: unless-stopped
     ports:
@@ -19,11 +19,16 @@ services:
     build:
       context: server/
       dockerfile: Dockerfile
-    image: spring-server:v1.0
+    image: sat0urn/spring-server:v1.0
     container_name: server
     restart: on-failure
     ports:
       - "8080:8080"
+    environment:
+      - JWT_SECRET_KEY_ENV=5f3b36204951c177117fb5dadbde7f52b38e8688e00047cb1fb83321506b0cd2
+      - CLIENT_APP_ADDRESS_ENV=http://localhost:3000
+      - MONGO_DB_USERNAME=root
+      - MONGO_DB_PASSWORD=123456
     depends_on:
       - database
     networks:
@@ -33,11 +38,13 @@ services:
     build:
       context: client/
       dockerfile: Dockerfile
-    image: react-client:v1.0
+    image: sat0urn/react-client:v1.0
     container_name: client
     restart: always
     ports:
       - "3000:3000"
+    environment:
+      - VITE_SERVER_ADDRESS=http://localhost:8080/
     depends_on:
       - server
     networks:
