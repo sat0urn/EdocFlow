@@ -34,7 +34,7 @@ function Recover() {
                       Reset via Email
                     </h5>
                     <p className="m-0 small opacity-75">
-                      We will send a link to reset your passwordo
+                      We will send a link to reset your password
                     </p>
                   </div>
                 </div>

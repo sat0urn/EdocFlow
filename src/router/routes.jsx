@@ -6,6 +6,7 @@ import Recover from "../pages/Recover"
 import Reset from "../pages/Reset"
 import ProfileHistory from "../components/profile/ProfileHistory.jsx"
 import ProfileDash from "../components/profile/ProfileDash.jsx"
+import ProfileSecurity from "../components/profile/ProfileSecurity.jsx";
 
 export const publicRoutes = [
   {
@@ -53,11 +54,16 @@ export const privateRoutes = [
   },
   {
     id: 3,
+    path: '/security',
+    element: < ProfileSecurity />
+  },
+  {
+    id: 4,
     path: '/inbox',
     element: <h1>inbox</h1>
   },
   {
-    id: 4,
+    id: 5,
     path: '*',
     element: <Navigate to='/' />
   }

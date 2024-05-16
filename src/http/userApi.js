@@ -39,6 +39,19 @@ export const login = async (
     return jwtDecode(data.token)
 }
 
+export const updatePassword = async (
+    oldPassword,
+    newPassword,
+) => {
+    return await $authHost.patch(
+        '/user/updatePassword',
+        {
+            oldPassword: oldPassword,
+            newPassword: newPassword
+        }
+    )
+}
+
 export const check = async () => {
     const {data} = await $authHost.get('/user/auth')
     localStorage.setItem('token', data.token)

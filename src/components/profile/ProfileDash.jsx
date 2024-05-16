@@ -1,5 +1,4 @@
 import {useEffect, useState} from 'react'
-import empContract from '../../assets/pdfs/Employment_Contract.pdf'
 import {allDocFormData} from "../../data/docFormData.js";
 import PDFViewer from './PDFViewer.jsx';
 import {PDFDocument, rgb, StandardFonts} from 'pdf-lib'
@@ -8,7 +7,7 @@ import PDFEditor from './PDFEditor.jsx';
 const ProfileDash = () => {
     const [originalPdfBytes, setOriginalPdfBytes] = useState(null);
     const [updatedPdfBytes, setUpdatedPdfBytes] = useState(null);
-    const [pdfFile, setPdfFile] = useState(empContract)
+    const [pdfFile, setPdfFile] = useState(allDocFormData[0].pdf)
     const [pdfTitle, setPdfTitle] = useState(allDocFormData[0].title)
     const [formData, setFormData] = useState(allDocFormData[0].data);
 

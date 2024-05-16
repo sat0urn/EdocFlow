@@ -41,7 +41,9 @@ const SignUp = observer(() => {
                 user.setUser(data)
                 navigate('/profile')
             } catch (e) {
-                alert(e)
+                if (e.response.status === 409) {
+                    alert("User already exists by email: " + email)
+                }
             }
         } else {
             alert('Empty field')

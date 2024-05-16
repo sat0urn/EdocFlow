@@ -18,7 +18,9 @@ const SignIn = observer(() => {
             user.setUser(data)
             navigate('/profile')
         } catch (e) {
-            alert("Wrong credentials: " + e)
+            if (e.response.status === 403) {
+                alert("Wrong credentials!")
+            }
         }
     }
 

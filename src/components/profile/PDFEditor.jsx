@@ -14,26 +14,24 @@ const PDFEditor = ({formData, handleInputChange, updatedPdfBytes, pdfFile}) => {
         try {
             const response = await upload(formDataPdf)
             console.log(response.data);
-        } catch (error) {
-            console.error(error.response);
+        } catch (e) {
+            console.error(e.response);
         }
     };
 
     return (
         <form>
-            {Object.entries(formData).map(([key, value]) => {
+            {Object.entries(formData).map(([key, {name, value}]) => {
                 return (
                     <div key={key} className="mb-2">
-                        <label
-                            className="form-label opacity-75"
-                        >
-                            {value.name}
+                        <label className="form-label opacity-75">
+                            {name}
                         </label>
                         <input
                             type="text"
                             name={key}
                             className="form-control form-control-sm rounded-2 border-0 shadow-sm"
-                            value={value.value}
+                            value={value}
                             onChange={handleInputChange}
                         />
                     </div>
