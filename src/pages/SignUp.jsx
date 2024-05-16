@@ -32,6 +32,7 @@ const SignUp = observer(() => {
                         userForm.country,
                         userForm.city
                     )
+                    console.log(data)
                     user.setIsAuth(true)
                     user.setUser(data)
                     navigate('/profile')
@@ -39,9 +40,12 @@ const SignUp = observer(() => {
                     alert('Password should contain at least 6 characters')
                 }
             } catch (e) {
-                if (e.response.status === 409) {
-                    alert("User already exists by email: " + userForm.email)
-                }
+                console.log(e)
+                // if (e.response.status && e.response.status === 409) {
+                //     alert("User already exists by email: " + userForm.email)
+                // } else {
+                //     console.log(e)
+                // }
             }
         } else {
             alert('Empty fields')
