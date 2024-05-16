@@ -10,7 +10,6 @@ const ProfileDash = () => {
     const [updatedPdfBytes, setUpdatedPdfBytes] = useState(null);
     const [pdfFile, setPdfFile] = useState(empContract)
     const [pdfTitle, setPdfTitle] = useState(allDocFormData[0].title)
-    const [pdfPositions, setPdfPositions] = useState(allDocFormData[0].positions)
     const [formData, setFormData] = useState(allDocFormData[0].data);
 
     useEffect(() => {
@@ -30,12 +29,11 @@ const ProfileDash = () => {
         const firstPage = pages[0];
 
         // Iterate over all fields and add their text to the PDF
-        Object.entries(updatedFormData).forEach(([key, {value}]) => {
+        Object.values(updatedFormData).forEach(({value, positions}) => {
             if (value) {
-                const position = getPositionForKey(key);
                 firstPage.drawText(value, {
-                    x: position.x,
-                    y: position.y,
+                    x: positions.x,
+                    y: positions.y,
                     size: 12,
                     font: timesRomanFont,
                     color: rgb(0, 0, 0),
@@ -47,26 +45,19 @@ const ProfileDash = () => {
         setUpdatedPdfBytes(newPdfBytes);
     }
 
-    const getPositionForKey = (key) => {
-        return pdfPositions[key] || {x: 0, y: 0};
-    };
-
     const handleInputChange = async (e) => {
         const {name, value} = e.target;
-        const updatedFormData = {...formData, [name]: {['value']: value}};
-        setFormData(updatedFormData);
-        await updatePdf(updatedFormData);
+        formData[name].value = value
+        await updatePdf(formData);
     };
 
     const handleSelectChange = async (e) => {
         const value = e.target.value
         const {title, data} = allDocFormData.find((doc) => doc.pdf === value)
-        let positions = {}
 
-        Object.entries(data).forEach(([key, value]) => positions[key] = value.positions)
+        Object.keys(formData).forEach(key => formData[key].value = '')
 
         setPdfFile(value)
-        setPdfPositions(positions)
         setPdfTitle(title)
         setFormData(data)
 
@@ -82,7 +73,6 @@ const ProfileDash = () => {
             <div className={"row mx-auto w-75 my-5"}>
                 <div className={"col-8"}>
                     <div className={"card border-0 rounded-4 shadow-sm p-5"}>
-
                         <h3 className={"text-primary"}>
                             Document: {pdfTitle}
                         </h3>
@@ -94,11 +84,7 @@ const ProfileDash = () => {
                         >
                             {allDocFormData.map(({id, pdf, title}) =>
                                 (
-                                    <option
-                                        key={id}
-                                        value={pdf}
-                                        name={title}
-                                    >
+                                    <option key={id} value={pdf}>
                                         {title}
                                     </option>
                                 )
