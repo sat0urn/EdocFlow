@@ -11,7 +11,6 @@ import org.talos.server.service.PDFDocumentService;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*")
 @RequiredArgsConstructor
 public class FileUploadController {
 
@@ -48,5 +47,4 @@ public class FileUploadController {
         List<PDFDocument> PDFDocuments = pdfDocumentService.listUserDocuments(authHeader);
         return ResponseEntity.ok(PDFDocuments);
     }
-
 }

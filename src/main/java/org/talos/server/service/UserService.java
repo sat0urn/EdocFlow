@@ -94,7 +94,6 @@ public class UserService {
     public AuthenticationResponse isTokenExpired(String authHeader) {
         String token = authHeader.substring(7);
         boolean isExpired = jwtService.extractClaim(token, Claims::getExpiration).before(new Date());
-
         if (isExpired) {
             return new AuthenticationResponse("");
         } else {
@@ -104,7 +103,6 @@ public class UserService {
 
     public Optional<User> getUserByEmail(String email) {
         return userRepository.findUserByEmail(email);
-
     }
 
     public void updateUser(User existingUser) {

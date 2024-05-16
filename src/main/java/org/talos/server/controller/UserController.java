@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin("*")
 @RequiredArgsConstructor
 public class UserController {
     private final PasswordEncoder passwordEncoder;
