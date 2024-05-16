@@ -35,7 +35,7 @@ public class UserController {
         if (authenticationResponse.getToken().isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } else {
-            return ResponseEntity.ok(userService.registrateUser(userRegistrationDto));
+            return ResponseEntity.ok(authenticationResponse);
         }
     }
 
