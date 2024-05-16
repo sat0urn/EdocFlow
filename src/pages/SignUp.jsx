@@ -5,48 +5,46 @@ import {AuthContext} from "../context/index.js";
 import {observer} from "mobx-react-lite";
 
 const SignUp = observer(() => {
-
     const {user} = useContext(AuthContext)
-
-    const [email, setEmail] = useState('')
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
-    const [phoneNumber, setPhoneNumber] = useState('')
-    const [password, setPassword] = useState('')
-    const [country, setCountry] = useState('')
-    const [city, setCity] = useState('')
     const navigate = useNavigate()
+    const [userForm, setUserForm] = useState({
+        email: '',
+        firstName: '',
+        lastName: '',
+        phoneNumber: '',
+        password: '',
+        country: '',
+        city: ''
+    })
 
     const signUp = async (e) => {
         e.preventDefault()
-        if (email !== '' &&
-            firstName !== '' &&
-            lastName !== '' &&
-            phoneNumber !== '' &&
-            password !== '' &&
-            country !== '' &&
-            city !== ''
-        ) {
+
+        if (Object.values(userForm).every(uf => uf !== '')) {
             try {
-                const data = await registration(
-                    email,
-                    firstName,
-                    lastName,
-                    phoneNumber,
-                    password,
-                    country,
-                    city
-                )
-                user.setIsAuth(true)
-                user.setUser(data)
-                navigate('/profile')
+                if (userForm.password.length >= 6) {
+                    const data = await registration(
+                        userForm.email,
+                        userForm.firstName,
+                        userForm.lastName,
+                        userForm.phoneNumber,
+                        userForm.password,
+                        userForm.country,
+                        userForm.city
+                    )
+                    user.setIsAuth(true)
+                    user.setUser(data)
+                    navigate('/profile')
+                } else {
+                    alert('Password should contain at least 6 characters')
+                }
             } catch (e) {
                 if (e.response.status === 409) {
-                    alert("User already exists by email: " + email)
+                    alert("User already exists by email: " + userForm.email)
                 }
             }
         } else {
-            alert('Empty field')
+            alert('Empty fields')
         }
     }
 
@@ -76,8 +74,8 @@ const SignUp = observer(() => {
                                                 className="form-control p-3 rounded-4"
                                                 id="exampleInputFirstName1"
                                                 placeholder="First Name"
-                                                value={firstName}
-                                                onChange={e => setFirstName(e.target.value)}
+                                                value={userForm.firstName}
+                                                onChange={e => setUserForm({...userForm, firstName: e.target.value})}
                                             />
                                         </div>
                                     </div>
@@ -94,8 +92,8 @@ const SignUp = observer(() => {
                                                 className="form-control p-3 rounded-4"
                                                 id="exampleInputLastName1"
                                                 placeholder="Last Name"
-                                                value={lastName}
-                                                onChange={e => setLastName(e.target.value)}
+                                                value={userForm.lastName}
+                                                onChange={e => setUserForm({...userForm, lastName: e.target.value})}
                                             />
                                         </div>
                                     </div>
@@ -112,8 +110,8 @@ const SignUp = observer(() => {
                                         className="form-control p-3 rounded-4"
                                         id="exampleInputEmail1"
                                         placeholder="Email Address"
-                                        value={email}
-                                        onChange={e => setEmail(e.target.value)}
+                                        value={userForm.email}
+                                        onChange={e => setUserForm({...userForm, email: e.target.value})}
                                     />
                                 </div>
                                 <div className="mb-2">
@@ -128,8 +126,8 @@ const SignUp = observer(() => {
                                         className="form-control p-3 rounded-4"
                                         id="exampleInputPhone1"
                                         placeholder="Phone Number"
-                                        value={phoneNumber}
-                                        onChange={e => setPhoneNumber(e.target.value)}
+                                        value={userForm.phoneNumber}
+                                        onChange={e => setUserForm({...userForm, phoneNumber: e.target.value})}
                                     />
                                 </div>
                                 <div className="row mb-2">
@@ -145,8 +143,8 @@ const SignUp = observer(() => {
                                             className="form-control p-3 rounded-4"
                                             id="exampleInputCountry1"
                                             placeholder="Country"
-                                            value={country}
-                                            onChange={e => setCountry(e.target.value)}
+                                            value={userForm.country}
+                                            onChange={e => setUserForm({...userForm, country: e.target.value})}
                                         />
                                     </div>
                                     <div className="col-md-6">
@@ -161,8 +159,8 @@ const SignUp = observer(() => {
                                             className="form-control p-3 rounded-4"
                                             id="exampleInputCity1"
                                             placeholder="City"
-                                            value={city}
-                                            onChange={e => setCity(e.target.value)}
+                                            value={userForm.city}
+                                            onChange={e => setUserForm({...userForm, city: e.target.value})}
                                         />
                                     </div>
                                 </div>
@@ -178,8 +176,8 @@ const SignUp = observer(() => {
                                         className="form-control p-3 rounded-4"
                                         id="exampleInputPassword1"
                                         placeholder="Password"
-                                        value={password}
-                                        onChange={e => setPassword(e.target.value)}
+                                        value={userForm.password}
+                                        onChange={e => setUserForm({...userForm, password: e.target.value})}
                                     />
                                 </div>
 

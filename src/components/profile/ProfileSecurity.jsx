@@ -8,11 +8,15 @@ const ProfileSecurity = () => {
     const update = async (e) => {
         e.preventDefault()
         try {
-            const {data} = await updatePassword(
-                oldPassword,
-                newPassword
-            )
-            alert(data)
+            if (newPassword.length >= 6) {
+                const {data} = await updatePassword(
+                    oldPassword,
+                    newPassword
+                )
+                alert(data)
+            } else {
+                alert('New password should contain at least 6 characters')
+            }
         } catch (e) {
             if (e.response.status === 403) {
                 alert(e.response.data)
