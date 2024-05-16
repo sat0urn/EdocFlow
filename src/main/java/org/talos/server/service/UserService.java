@@ -30,6 +30,7 @@ public class UserService {
 
     public AuthenticationResponse registrateUser(UserRegistrationDto userRegistrationDto) {
         var checkUser = userRepository.findUserByEmail(userRegistrationDto.getEmail());
+
         if (checkUser.isEmpty()) {
             var user = User.builder()
                     .firstName(userRegistrationDto.getFirstName())
