@@ -22,7 +22,7 @@ const App = observer(() => {
             .finally(() =>
                 setIsLoading(false)
             )
-    }, [])
+    }, [user])
 
     if (isLoading) {
         return <Loader/>

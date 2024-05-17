@@ -1,12 +1,12 @@
 import {useContext, useEffect, useMemo, useState} from "react"
-import {fetchDocuments} from "../../http/docsApi.js";
 import {observer} from "mobx-react-lite";
 import {AuthContext} from "../../context/index.js";
+import {fetchDocuments} from "../../http/docsApi.js";
 
 const ProfileHistory = observer(() => {
     const {user} = useContext(AuthContext)
-    const [documents, setDocuments] = useState([])
     const [searchQuery, setSearchQuery] = useState('')
+    const [documents, setDocuments] = useState([])
 
     useEffect(() => {
         const fetchDocs = async () => {
@@ -23,9 +23,9 @@ const ProfileHistory = observer(() => {
 
     const getSearchedDocuments = useMemo(() => {
         return documents.filter(doc => doc.name
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase())
-        )
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase())
+            )
     }, [documents, searchQuery])
 
     const openPdf = (fileData) => {
@@ -45,20 +45,25 @@ const ProfileHistory = observer(() => {
 
     return (
         <div className={"container w-75"}>
-            <div className="card mb-5 p-4">
-                <div className="input-group mb-3">
+            <div className={"card mb-5 p-4"}>
+                <div className={"input-group mb-3"}>
+                    <div className={"d-flex align-items-center me-3"} style={{fontFamily: 'Arial, FontAwesome'}}>
+                        <div className={"fs-5"}>
+                            &#xF002;
+                        </div>
+                    </div>
                     <input
                         type="text"
-                        className="form-control shadow-sm"
+                        className={"form-control shadow-sm"}
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
-                        placeholder="&#xF002;   Search"
+                        placeholder="Search by document name"
                         style={{fontFamily: 'Arial, FontAwesome'}}
                     />
                 </div>
                 <div className="card">
                     <table className="table table-bordered m-4 w-auto">
-                    <thead className="text-center">
+                        <thead className="text-center">
                         <tr>
                             <th scope="col" className="text-start text-primary">Name</th>
                             <th scope="col" className="text-primary">Date</th>
@@ -78,7 +83,7 @@ const ProfileHistory = observer(() => {
                                         {doc.createdTime}
                                     </td>
                                     <td className="text-secondary">
-                                        {user.user.firstName} {user.user.lastName}
+                                        {user._user.firstName} {user._user.lastName}
                                     </td>
                                     <td className={
                                         (doc.status === 'pending') ? "text-warning" :

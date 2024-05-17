@@ -7,6 +7,8 @@ import Reset from "../pages/Reset"
 import ProfileHistory from "../components/profile/ProfileHistory.jsx"
 import ProfileDash from "../components/profile/ProfileDash.jsx"
 import ProfileSecurity from "../components/profile/ProfileSecurity.jsx";
+import ProfileInbox from "../components/profile/ProfileInbox.jsx";
+import ProfileSupport from "../components/profile/ProfileSupport.jsx";
 
 export const publicRoutes = [
   {
@@ -60,10 +62,15 @@ export const privateRoutes = [
   {
     id: 4,
     path: '/inbox',
-    element: <h1>inbox</h1>
+    element: <ProfileInbox />
   },
   {
     id: 5,
+    path: '/support',
+    element: <ProfileSupport />
+  },
+  {
+    id: 6,
     path: '*',
     element: <Navigate to='/' />
   }

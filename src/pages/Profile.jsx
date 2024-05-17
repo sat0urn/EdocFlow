@@ -2,6 +2,7 @@ import {Link, Outlet, useLocation} from "react-router-dom"
 import {observer} from "mobx-react-lite";
 import {useContext} from "react";
 import {AuthContext} from "../context/index.js";
+import {profilePathNames} from "../data/profilePageData.js";
 
 const Profile = observer(() => {
     const {user} = useContext(AuthContext)
@@ -34,8 +35,8 @@ const Profile = observer(() => {
                                 >
                                     <i className="fa-solid fa-house pe-none me-3"></i>
                                     <span className="small">
-                    Dashboard
-                  </span>
+                                        Dashboard
+                                    </span>
                                 </Link>
                             </li>
                             <li>
@@ -68,7 +69,7 @@ const Profile = observer(() => {
                         <ul className="nav nav-pills flex-column my-3">
                             <li>
                                 <Link
-                                    to="/#"
+                                    to="/support"
                                     className="nav-link link-body-emphasis opacity-25 fw-bold"
                                 >
                                     <i className="fa-solid fa-circle-exclamation pe-none me-3"></i>
@@ -83,34 +84,17 @@ const Profile = observer(() => {
                 <div className="col-10 bg-light">
                     <div className={"container w-75"}>
                         <div className="d-flex flex-row align-items-center justify-content-between my-5">
-                            {location.pathname === '/' &&
-                                <div className={"text-primary"}>
-                                    <h1 className={"fw-bolder"}>
-                                        Dashboard
-                                    </h1>
-                                </div>
-                            }
-                            {location.pathname === '/history' &&
-                                <div className={"text-primary"}>
-                                    <h1 className={"fw-bolder"}>
-                                        Your documents
-                                    </h1>
-                                </div>
-                            }
-                            {location.pathname === '/security' &&
-                                <div className={"text-primary"}>
-                                    <h1 className={"fw-bolder"}>
-                                        Login and Security
-                                    </h1>
-                                </div>
-                            }
-                            {location.pathname === '/inbox' &&
-                                <div className={"text-primary"}>
-                                    <h1 className={"fw-bolder"}>
-                                        Inbox
-                                    </h1>
-                                </div>
-                            }
+                            {profilePathNames.map((p) => {
+                                if (p.path === location.pathname) {
+                                    return (
+                                        <div key={p.id} className={"text-primary"}>
+                                            <h1 className={"fw-bolder"}>
+                                                {p.title}
+                                            </h1>
+                                        </div>
+                                    )
+                                }
+                            })}
                             <div className={"d-flex flex-row justify-content-end align-items-center"}>
                                 <span className="me-4 fw-bold">
                                     {user.user.sub} / {user.user.firstName} {user.user.lastName}

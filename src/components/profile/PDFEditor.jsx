@@ -2,25 +2,28 @@ import {upload} from "../../http/docsApi.js";
 
 const PDFEditor = ({formData, handleInputChange, updatedPdfBytes, pdfFile}) => {
 
-    const savePdfToDatabase = async () => {
+    const savePdfToDatabase = async (e) => {
+        e.preventDefault()
         const blob = new Blob([updatedPdfBytes], {type: 'application/pdf'});
+        const pdfName = pdfFile.substring(pdfFile.lastIndexOf("/") + 1, pdfFile.length - 4)
+        const createdDate = (new Date()).toISOString().split('T')[0]
 
         const formDataPdf = new FormData();
-        formDataPdf.append('name', pdfFile.substring(pdfFile.lastIndexOf("/") + 1, pdfFile.length - 4))
+        formDataPdf.append('name', pdfName)
         formDataPdf.append('fileData', blob);
-        formDataPdf.append('createdTime', (new Date()).toISOString().split('T')[0])
+        formDataPdf.append('createdTime', createdDate)
         formDataPdf.append('status', 'pending')
 
         try {
             const response = await upload(formDataPdf)
-            console.log(response.data);
+            alert("Document: " + pdfName + '\n' + response.data)
         } catch (e) {
             console.error(e.response);
         }
     };
 
     return (
-        <form>
+        <form onSubmit={savePdfToDatabase}>
             {Object.entries(formData).map(([key, {name, value}]) => {
                 return (
                     <div key={key} className="mb-2">
@@ -38,7 +41,7 @@ const PDFEditor = ({formData, handleInputChange, updatedPdfBytes, pdfFile}) => {
                 )
             })}
             <button
-                onClick={savePdfToDatabase}
+                type={"submit"}
                 className="btn btn-primary w-100 rounded-2 mt-3"
             >
                 Send
