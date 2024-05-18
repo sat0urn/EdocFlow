@@ -68,9 +68,9 @@ const ProfileDash = () => {
     };
 
     return (
-        <div className={"container w-75"}>
+        <div className={"container-md w-md-75 w-100"}>
             <div className={"row mx-auto my-5"}>
-                <div className={"col-9 ps-0"}>
+                <div className={"col-lg-9 ps-lg-0"}>
                     <div className={"card border-0 rounded-4 shadow-sm p-5"}>
                         <h3 className={"text-primary"}>
                             Document: {pdfTitle}
@@ -92,7 +92,7 @@ const ProfileDash = () => {
                         <PDFViewer pdfBytes={updatedPdfBytes || originalPdfBytes}/>
                     </div>
                 </div>
-                <div className={"col-3 pe-0"}>
+                <div className={"col-lg-3 pe-lg-0 mt-lg-0 mt-3"}>
                     <PDFEditor
                         formData={formData}
                         handleInputChange={handleInputChange}

@@ -1,15 +1,9 @@
 function AdvantageP(props) {
   return (
-    <div className="col-md-4">
+    <div className={"col-lg-4 col-md-6 my-3"}>
       <div
         className={props.borderOn ? "card border border-light" : "card"}
-        style={
-          {
-            height: '270px',
-            backgroundColor: props.bgColor,
-            color: props.textColor
-          }
-        }
+        style={{height: '270px', backgroundColor: props.bgColor, color: props.textColor}}
       >
         <div className="card-body d-flex align-items-end">
           <div className="d-inline-block p-2">

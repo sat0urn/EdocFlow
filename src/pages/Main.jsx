@@ -3,7 +3,7 @@ import Advantage from "../components/main/Advantage.jsx";
 import Contact from "../components/main/Contact.jsx";
 import Service from "../components/main/Service.jsx";
 
-export default function Main() {
+const Main = () => {
   return (
     <>
       <About />
@@ -13,3 +13,5 @@ export default function Main() {
     </>
   )
 }
+
+export default Main

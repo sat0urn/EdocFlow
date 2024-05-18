@@ -44,7 +44,7 @@ const ProfileHistory = observer(() => {
     }
 
     return (
-        <div className={"container w-75"}>
+        <div className={"container-md w-md-75 w-100"}>
             <div className={"card mb-5 p-4"}>
                 <div className={"input-group mb-3"}>
                     <div className={"d-flex align-items-center me-3"} style={{fontFamily: 'Arial, FontAwesome'}}>

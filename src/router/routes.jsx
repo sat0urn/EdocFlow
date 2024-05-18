@@ -14,27 +14,32 @@ export const publicRoutes = [
   {
     id: 0,
     path: '/',
-    element: < Main />
+    element: < Main />,
+    medium: 0
   },
   {
     id: 1,
     path: '/login',
-    element: < SignIn />
+    element: < SignIn />,
+    medium: 768
   },
   {
     id: 2,
     path: '/register',
-    element: < SignUp />
+    element: < SignUp />,
+    medium: 768
   },
   {
     id: 3,
     path: '/recover',
-    element: < Recover />
+    element: < Recover />,
+    medium: 768
   },
   {
     id: 4,
     path: '*',
-    element: <Navigate to='/' />
+    element: <Navigate to='/' />,
+    medium: 0
   }
 ]
 

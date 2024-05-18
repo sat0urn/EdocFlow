@@ -26,7 +26,7 @@ const ProfileSecurity = () => {
 
     return (
         <>
-            <div className={"container w-75"}>
+            <div className={"container-md w-md-75 w-100"}>
                 <div className={"py-5 border-bottom border-2"}>
                     <div className={"mb-4"}>
                         <h5 className={"fw-bold"}>Login</h5>

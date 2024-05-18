@@ -17,92 +17,74 @@ const Profile = observer(() => {
     ]
 
     return (
-        <section className="container-fluid">
-            <div className="row h-100">
-                <div className="col-2">
-                    <div
-                        className="d-flex flex-column flex-shrink-0 vh-100 p-4"
-                        style={{width: '250px', marginTop: '40%'}}
-                    >
-                        <h6 className="fw-bold text-primary ps-3">
-                            General
-                        </h6>
-                        <ul className="nav nav-pills flex-column my-3">
-                            <li className="nav-item">
-                                <Link
-                                    to="/"
-                                    className="nav-link link-body-emphasis opacity-25 fw-bold"
-                                >
-                                    <i className="fa-solid fa-house pe-none me-3"></i>
-                                    <span className="small">
-                                        Dashboard
-                                    </span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    to="/history"
-                                    className="nav-link link-body-emphasis opacity-25 fw-bold"
-                                >
-                                    <i className="fa-solid fa-clock-rotate-left pe-none me-3"></i>
-                                    <span className="small">
-                                        History
-                                    </span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    to="/inbox"
-                                    className="nav-link link-body-emphasis opacity-25 fw-bold"
-                                >
-                                    <i className="fa-solid fa-envelope pe-none me-3"></i>
-                                    <span className="small">
+        <section className={"container-fluid"}>
+            <div className={"row row-cols-2 min-vh-100"}>
+                <div className={"col-xl-2 d-xl-flex d-none flex-column mt-5 p-4"}>
+                    <h6 className={"fw-bold text-primary ps-3"}>
+                        General
+                    </h6>
+                    <ul className={"nav nav-pills flex-column my-3"}>
+                        <li>
+                            <Link to="/" className="nav-link link-body-emphasis opacity-25 fw-bold">
+                                <i className={"fa-solid fa-house pe-none me-3"}></i>
+                                <span className={"small"}>
+                                    Dashboard
+                                </span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/history" className={"nav-link link-body-emphasis opacity-25 fw-bold"}>
+                                <i className={"fa-solid fa-clock-rotate-left pe-none me-3"}></i>
+                                <span className={"small"}>
+                                    History
+                                </span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/inbox" className={"nav-link link-body-emphasis opacity-25 fw-bold"}>
+                                <i className={"fa-solid fa-envelope pe-none me-3"}></i>
+                                <span className={"small"}>
                                       Inbox
                                     </span>
-                                </Link>
-                            </li>
-                        </ul>
-                        <hr/>
-                        <h6 className="fw-bold text-primary ps-3 mt-4">
-                            Other
-                        </h6>
-                        <ul className="nav nav-pills flex-column my-3">
-                            <li>
-                                <Link
-                                    to="/support"
-                                    className="nav-link link-body-emphasis opacity-25 fw-bold"
-                                >
-                                    <i className="fa-solid fa-circle-exclamation pe-none me-3"></i>
-                                    <span className="small">
+                            </Link>
+                        </li>
+                    </ul>
+                    <hr/>
+                    <h6 className={"fw-bold text-primary ps-3 mt-4"}>
+                        Other
+                    </h6>
+                    <ul className={"nav nav-pills flex-column my-3"}>
+                        <li>
+                            <Link to="/support" className="nav-link link-body-emphasis opacity-25 fw-bold">
+                                <i className="fa-solid fa-circle-exclamation pe-none me-3"></i>
+                                <span className="small">
                                         Help & Support
                                     </span>
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
+                            </Link>
+                        </li>
+                    </ul>
                 </div>
-                <div className="col-10 bg-light">
-                    <div className={"container w-75"}>
-                        <div className="d-flex flex-row align-items-center justify-content-between my-5">
+                <div className={"col-xl-10 col-12 bg-light"}>
+                    <div className={"container-md w-md-75 w-100"}>
+                        <div className={"d-flex justify-content-between align-items-center my-5"}>
                             {profilePathNames.map((p) => {
                                 if (p.path === location.pathname) {
                                     return (
-                                        <div key={p.id} className={"text-primary"}>
+                                        <div key={p.id} className={"flex-column text-primary"}>
                                             <h1 className={"fw-bolder"}>
                                                 {p.title}
                                             </h1>
-                                        </div>
-                                    )
+                                        </div>)
                                 }
                             })}
-                            <div className={"d-flex flex-row justify-content-end align-items-center"}>
-                                <span className="me-4 fw-bold">
-                                    {user.user.sub} / {user.user.firstName} {user.user.lastName}
-                                </span>
-                                <div className="dropdown">
+                            <div className={"d-flex"}>
+                                <div className={"flex-column dropdown"}>
+                                    <div className={"d-inline-block border-bottom border-top border-dark p-1 fw-semibold me-3 fst-italic"}>
+                                        {user._user.firstName + ' ' + user._user.lastName + ' / ' + user._user.sub}
+                                    </div>
                                     <Link
                                         to=""
-                                        className="bg-white shadow me-2 py-2 px-3 rounded-start-circle"
+                                        className={"bg-white shadow me-2 py-2 px-3 rounded-start-circle"}
                                         role="button"
                                         id="dropdownMenuLink"
                                         data-bs-toggle="dropdown"

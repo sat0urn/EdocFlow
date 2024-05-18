@@ -40,12 +40,11 @@ const SignUp = observer(() => {
                     alert('Password should contain at least 6 characters')
                 }
             } catch (e) {
-                console.log(e)
-                // if (e.response.status && e.response.status === 409) {
-                //     alert("User already exists by email: " + userForm.email)
-                // } else {
-                //     console.log(e)
-                // }
+                if (e.response.status === 409) {
+                    alert("User already exists by email: " + userForm.email)
+                } else {
+                    console.log(e)
+                }
             }
         } else {
             alert('Empty fields')
@@ -53,58 +52,52 @@ const SignUp = observer(() => {
     }
 
     return (
-        <section className="d-flex vh-100">
+        <section className="d-flex min-vh-100">
             <div className="container-fluid">
                 <div className="row h-100">
-                    <div className="col-md-6 my-auto">
+                    <div className="col-lg-6 col-12 my-auto py-5">
                         <div className="w-75 mx-auto">
-                            <div className="text-primary mb-4">
-                                <h1 className="fw-bolder">
-                                    Get started
-                                </h1>
+                            <div className="text-primary mb-4 fs-1 fw-bolder">
+                                Get started
                             </div>
-                            <form>
-                                <div className="row mb-2">
-                                    <div className="col-md-6">
-                                        <div className="mb-2">
-                                            <label
-                                                htmlFor="exampleInputFirstName1"
-                                                className="form-label opacity-75"
-                                            >
-                                                First Name
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-control p-3 rounded-4"
-                                                id="exampleInputFirstName1"
-                                                placeholder="First Name"
-                                                value={userForm.firstName}
-                                                onChange={e => setUserForm({...userForm, firstName: e.target.value})}
-                                            />
-                                        </div>
+                            <form onSubmit={signUp}>
+                                <div className="d-flex flex-sm-row flex-column justify-content-between mb-2">
+                                    <div className="w-100 me-4 mb-sm-0 mb-2">
+                                        <label
+                                            htmlFor="exampleInputFirstName"
+                                            className="form-label opacity-75"
+                                        >
+                                            First Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control p-3 rounded-4"
+                                            id="exampleInputFirstName"
+                                            placeholder="First Name"
+                                            value={userForm.firstName}
+                                            onChange={e => setUserForm({...userForm, firstName: e.target.value})}
+                                        />
                                     </div>
-                                    <div className="col-md-6">
-                                        <div className="mb-2">
-                                            <label
-                                                htmlFor="exampleInputLastName1"
-                                                className="form-label opacity-75"
-                                            >
-                                                Last Name
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-control p-3 rounded-4"
-                                                id="exampleInputLastName1"
-                                                placeholder="Last Name"
-                                                value={userForm.lastName}
-                                                onChange={e => setUserForm({...userForm, lastName: e.target.value})}
-                                            />
-                                        </div>
+                                    <div className="w-100">
+                                        <label
+                                            htmlFor="exampleInputLastName1"
+                                            className="form-label opacity-75"
+                                        >
+                                            Last Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control p-3 rounded-4"
+                                            id="exampleInputLastName1"
+                                            placeholder="Last Name"
+                                            value={userForm.lastName}
+                                            onChange={e => setUserForm({...userForm, lastName: e.target.value})}
+                                        />
                                     </div>
                                 </div>
                                 <div className="mb-2">
                                     <label
-                                        htmlFor="exampleInputEmail1"
+                                        htmlFor="exampleInputEmail"
                                         className="form-label opacity-75"
                                     >
                                         Email Address
@@ -112,7 +105,7 @@ const SignUp = observer(() => {
                                     <input
                                         type="email"
                                         className="form-control p-3 rounded-4"
-                                        id="exampleInputEmail1"
+                                        id="exampleInputEmail"
                                         placeholder="Email Address"
                                         value={userForm.email}
                                         onChange={e => setUserForm({...userForm, email: e.target.value})}
@@ -120,7 +113,7 @@ const SignUp = observer(() => {
                                 </div>
                                 <div className="mb-2">
                                     <label
-                                        htmlFor="exampleInputPhone1"
+                                        htmlFor="exampleInputPhone"
                                         className="form-label opacity-75"
                                     >
                                         Phone Number
@@ -128,16 +121,16 @@ const SignUp = observer(() => {
                                     <input
                                         type="number"
                                         className="form-control p-3 rounded-4"
-                                        id="exampleInputPhone1"
+                                        id="exampleInputPhone"
                                         placeholder="Phone Number"
                                         value={userForm.phoneNumber}
                                         onChange={e => setUserForm({...userForm, phoneNumber: e.target.value})}
                                     />
                                 </div>
-                                <div className="row mb-2">
-                                    <div className="col-md-6">
+                                <div className="d-flex flex-sm-row flex-column mb-2">
+                                    <div className="w-100 me-4 mb-sm-0 mb-2">
                                         <label
-                                            htmlFor="exampleInputCountry1"
+                                            htmlFor="exampleInputCountry"
                                             className="form-label opacity-75"
                                         >
                                             Country
@@ -145,15 +138,15 @@ const SignUp = observer(() => {
                                         <input
                                             type="text"
                                             className="form-control p-3 rounded-4"
-                                            id="exampleInputCountry1"
+                                            id="exampleInputCountry"
                                             placeholder="Country"
                                             value={userForm.country}
                                             onChange={e => setUserForm({...userForm, country: e.target.value})}
                                         />
                                     </div>
-                                    <div className="col-md-6">
+                                    <div className="w-100">
                                         <label
-                                            htmlFor="exampleInputCity1"
+                                            htmlFor="exampleInputCity"
                                             className="form-label opacity-75"
                                         >
                                             City
@@ -161,7 +154,7 @@ const SignUp = observer(() => {
                                         <input
                                             type="text"
                                             className="form-control p-3 rounded-4"
-                                            id="exampleInputCity1"
+                                            id="exampleInputCity"
                                             placeholder="City"
                                             value={userForm.city}
                                             onChange={e => setUserForm({...userForm, city: e.target.value})}
@@ -170,7 +163,7 @@ const SignUp = observer(() => {
                                 </div>
                                 <div className="mb-4">
                                     <label
-                                        htmlFor="exampleInputPassword1"
+                                        htmlFor="exampleInputPassword"
                                         className="form-label opacity-75"
                                     >
                                         Password
@@ -178,29 +171,23 @@ const SignUp = observer(() => {
                                     <input
                                         type="password"
                                         className="form-control p-3 rounded-4"
-                                        id="exampleInputPassword1"
+                                        id="exampleInputPassword"
                                         placeholder="Password"
                                         value={userForm.password}
                                         onChange={e => setUserForm({...userForm, password: e.target.value})}
                                     />
                                 </div>
 
-                                <button
-                                    onClick={signUp}
-                                    className="btn btn-primary w-100 p-3 rounded-4"
-                                >
+                                <button type={"submit"} className="btn btn-primary w-100 p-3 rounded-4">
                                     Sign Up
                                 </button>
                             </form>
                         </div>
                     </div>
-                    <div
-                        className="col-md-6"
-                        style={{backgroundColor: '#407BFF'}}
-                    >
-                        <div className="d-flex align-items-center justify-content-center h-100 my-auto">
-                            <div className="text-start text-white w-50">
-                                <h1>Getting Easier to manage your documents onlines</h1>
+                    <div className="col-lg-6 d-lg-flex d-none bg-primary">
+                        <div className="d-flex align-items-center justify-content-center h-100">
+                            <div className="text-center text-white w-75">
+                                <h1>Getting Easier to manage your documents online</h1>
                                 <p className="small opacity-75 mt-5">
                                     Sign up and discover the world of digital documents
                                 </p>
