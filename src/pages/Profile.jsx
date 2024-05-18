@@ -77,34 +77,32 @@ const Profile = observer(() => {
                                         </div>)
                                 }
                             })}
-                            <div className={"d-flex"}>
-                                <div className={"flex-column dropdown"}>
-                                    <div className={"d-inline-block border-bottom border-top border-dark p-1 fw-semibold me-3 fst-italic"}>
-                                        {user._user.firstName + ' ' + user._user.lastName + ' / ' + user._user.sub}
-                                    </div>
-                                    <Link
-                                        to=""
-                                        className={"bg-white shadow me-2 py-2 px-3 rounded-start-circle"}
-                                        role="button"
-                                        id="dropdownMenuLink"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        <i className="fa-regular fa-bell small text-black"></i>
-                                    </Link>
-
-                                    <ul className="dropdown-menu text-center mt-2">
-                                        <div className={"mt-2"}></div>
-                                        {notificationArray.map((not, index) =>
-                                            <li key={index} className={"mb-2 px-2 text-primary"}>{not}</li>
-                                        )}
-                                        <div className={"mb-2"}></div>
-                                    </ul>
-
-                                    <Link to="/security" className="bg-white shadow py-2 px-3 rounded-end-circle">
-                                        <i className="fa-regular fa-user small text-black"></i>
-                                    </Link>
+                            <div className={"flex-column dropdown"}>
+                                <div className={"d-inline-block border-bottom border-top border-dark p-1 fw-semibold me-3 fst-italic"}>
+                                    {user._user.firstName + ' ' + user._user.lastName + ' / ' + user._user.sub}
                                 </div>
+                                <Link
+                                    to=""
+                                    className={"bg-white shadow me-2 py-2 px-3 rounded-start-circle"}
+                                    role="button"
+                                    id="dropdownMenuLink"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                >
+                                    <i className="fa-regular fa-bell small text-black"></i>
+                                </Link>
+
+                                <ul className="dropdown-menu text-center mt-2">
+                                    <div className={"mt-2"}></div>
+                                    {notificationArray.map((not, index) =>
+                                        <li key={index} className={"mb-2 px-2 text-primary"}>{not}</li>
+                                    )}
+                                    <div className={"mb-2"}></div>
+                                </ul>
+
+                                <Link to="/security" className="bg-white shadow py-2 px-3 rounded-end-circle">
+                                    <i className="fa-regular fa-user small text-black"></i>
+                                </Link>
                             </div>
                         </div>
                     </div>
