@@ -1,4 +1,4 @@
-import {upload} from "../../http/docsApi.js";
+import {upload} from "../../../http/docsApi.js";
 
 const PDFEditor = ({formData, handleInputChange, updatedPdfBytes, pdfFile}) => {
 

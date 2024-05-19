@@ -2,17 +2,21 @@ import {useContext, useEffect, useMemo, useState} from "react"
 import {observer} from "mobx-react-lite";
 import {AuthContext} from "../../context/index.js";
 import {fetchDocuments} from "../../http/docsApi.js";
+import DocsTableViewer from "./historyParts/DocsTableViewer.jsx";
 
 const ProfileHistory = observer(() => {
     const {user} = useContext(AuthContext)
     const [searchQuery, setSearchQuery] = useState('')
     const [documents, setDocuments] = useState([])
+    const [pages, setPages] = useState(0)
+    const [currentPage, setCurrentPage] = useState(0)
 
     useEffect(() => {
         const fetchDocs = async () => {
             try {
                 const response = await fetchDocuments()
                 setDocuments(response.data);
+                setPages(Math.ceil(response.data.length / 6))
             } catch (error) {
                 console.error('Error fetching documents', error);
             }
@@ -22,11 +26,15 @@ const ProfileHistory = observer(() => {
     }, []);
 
     const getSearchedDocuments = useMemo(() => {
-        return documents.filter(doc => doc.name
-                .toLowerCase()
-                .includes(searchQuery.toLowerCase())
-            )
-    }, [documents, searchQuery])
+        const filteredDocuments = documents.filter(doc => doc.name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+        )
+
+        setPages(Math.ceil(filteredDocuments.length / 6))
+
+        return filteredDocuments.slice(currentPage * 6, (currentPage + 1) * 6)
+    }, [currentPage, documents, searchQuery])
 
     const openPdf = (fileData) => {
         // base64 (byte[]) -> buffer array
@@ -62,49 +70,56 @@ const ProfileHistory = observer(() => {
                     />
                 </div>
                 <div className="card">
-                    <table className="table table-bordered m-4 w-auto">
-                        <thead className="text-center">
-                        <tr>
-                            <th scope="col" className="text-start text-primary">Name</th>
-                            <th scope="col" className="text-primary">Date</th>
-                            <th scope="col" className="text-primary">Responsible</th>
-                            <th scope="col" className="text-primary">Status</th>
-                            <th scope="col" className="text-primary">PDF</th>
-                        </tr>
-                        </thead>
-                        <tbody className="text-center">
-                        {getSearchedDocuments.map((doc, index) => {
-                            return (
-                                <tr key={index} className={"align-middle"}>
-                                    <th className="text-secondary text-start" scope="row">
-                                        {doc.name}
-                                    </th>
-                                    <td className="text-secondary">
-                                        {doc.createdTime}
-                                    </td>
-                                    <td className="text-secondary">
-                                        {user._user.firstName} {user._user.lastName}
-                                    </td>
-                                    <td className={
-                                        (doc.status === 'pending') ? "text-warning" :
-                                            (doc.status === 'checking') ? "text-info" :
-                                                (doc.status === 'signed') && "text-success"
-                                    }>
-                                        {doc.status}
-                                    </td>
-                                    <td className="text-secondary">
-                                        <button
-                                            className="btn btn-outline-secondary"
-                                            onClick={() => openPdf(doc.fileData)}
+                    <DocsTableViewer
+                        userFullName={[user._user.firstName, user._user.lastName]}
+                        openPdf={openPdf}
+                        getSearchedDocuments={getSearchedDocuments}
+                    />
+                    <div className={"fs-6 mx-auto border rounded-3 px-3 py-1 mb-4"}>
+                        Page {currentPage + 1}
+                    </div>
+                    {pages > 1 &&
+                        <nav className={"mx-auto"}>
+                            <ul className={"pagination"}>
+                                {currentPage !== 0 &&
+                                    <li className="page-item">
+                                        <button className="btn btn-outline-secondary me-3"
+                                                aria-label="Previous"
+                                                onClick={() => setCurrentPage(currentPage - 1)}
                                         >
-                                            open
+                                            <i className="fa-solid fa-chevron-left"></i>
                                         </button>
-                                    </td>
-                                </tr>
-                            )
-                        })}
-                        </tbody>
-                    </table>
+                                    </li>
+                                }
+                                {Array.from(
+                                    new Array(pages),
+                                    (el, index) =>
+                                        (<li key={'doc_' + index} className={"page-item"}>
+                                            <button
+                                                type={"button"}
+                                                onClick={() => setCurrentPage(index)}
+                                                className={
+                                                    "btn btn-outline-secondary rounded-3 me-2 " +
+                                                    (currentPage)
+                                                }
+                                            >
+                                                {index + 1}
+                                            </button>
+                                        </li>)
+                                )}
+                                {currentPage !== (pages - 1) &&
+                                    <li className="page-item">
+                                        <button className="btn btn-outline-secondary ms-2"
+                                                aria-label="Previous"
+                                                onClick={() => setCurrentPage(currentPage + 1)}
+                                        >
+                                            <i className="fa-solid fa-chevron-right"></i>
+                                        </button>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
+                    }
                 </div>
             </div>
         </div>

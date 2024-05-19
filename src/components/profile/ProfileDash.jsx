@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react'
 import {allDocFormData} from "../../data/docFormData.js";
-import PDFViewer from './PDFViewer.jsx';
+import PDFViewer from './dashParts/PDFViewer.jsx';
 import {PDFDocument, rgb, StandardFonts} from 'pdf-lib'
-import PDFEditor from './PDFEditor.jsx';
+import PDFEditor from './dashParts/PDFEditor.jsx';
 
 const ProfileDash = () => {
     const [originalPdfBytes, setOriginalPdfBytes] = useState(null);
@@ -71,26 +71,12 @@ const ProfileDash = () => {
         <div className={"container-md w-md-75 w-100"}>
             <div className={"row mx-auto my-5"}>
                 <div className={"col-lg-9 ps-lg-0"}>
-                    <div className={"card border-0 rounded-4 shadow-sm p-5"}>
-                        <h3 className={"text-primary"}>
-                            Document: {pdfTitle}
-                        </h3>
-
-                        <select
-                            className={"form-select my-4"}
-                            value={pdfFile}
-                            onChange={handleSelectChange}
-                        >
-                            {allDocFormData.map(({id, pdf, title}) =>
-                                (
-                                    <option key={id} value={pdf}>
-                                        {title}
-                                    </option>
-                                )
-                            )}
-                        </select>
-                        <PDFViewer pdfBytes={updatedPdfBytes || originalPdfBytes}/>
-                    </div>
+                    <PDFViewer
+                        pdfTitle={pdfTitle}
+                        pdfFile={pdfFile}
+                        handleSelectChange={handleSelectChange}
+                        pdfBytes={updatedPdfBytes || originalPdfBytes}
+                    />
                 </div>
                 <div className={"col-lg-3 pe-lg-0 mt-lg-0 mt-3"}>
                     <PDFEditor
