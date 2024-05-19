@@ -44,8 +44,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .csrf(AbstractHttpConfigurer::disable)  // Often disabled for APIs, but assess your own need
                 .authorizeHttpRequests(authz ->
                         authz.requestMatchers(
-                                        "/user/login",
-                                        "/user/registration"
+                                        "/users/login",
+                                        "/users/registration"
                                 )
                                 .permitAll()
                                 .anyRequest()

@@ -11,6 +11,7 @@ import org.talos.server.service.PDFDocumentService;
 import java.util.List;
 
 @RestController
+@RequestMapping("/documents")
 @RequiredArgsConstructor
 public class FileUploadController {
 
@@ -40,7 +41,7 @@ public class FileUploadController {
         }
     }
 
-    @GetMapping("/documents")
+    @GetMapping
     public ResponseEntity<List<PDFDocument>> getAllDocuments(
             @RequestHeader("Authorization") String authHeader
     ) {
