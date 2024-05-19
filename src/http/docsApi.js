@@ -4,7 +4,7 @@ const upload = async (
     formData
 ) => {
     return await $authHost.post(
-        '/upload',
+        '/documents/upload',
         formData,
         {headers: {'Content-Type': 'multipart/form-data'}}
     )

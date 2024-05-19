@@ -9,7 +9,7 @@ const ProfileSecurity = () => {
         e.preventDefault()
         try {
             if (newPassword.length >= 6) {
-                const {data} = await updatePassword(
+                const data = await updatePassword(
                     oldPassword,
                     newPassword
                 )

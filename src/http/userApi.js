@@ -1,7 +1,7 @@
 import {$authHost, $host} from "./index";
 import {jwtDecode} from "jwt-decode";
 
-export const registration = async (
+const registration = async (
     email,
     firstName,
     lastName,
@@ -11,7 +11,7 @@ export const registration = async (
     city
 ) => {
     const {data} = await $host.post(
-        '/user/registration',
+        '/users/registration',
         {
             email,
             firstName,
@@ -25,12 +25,12 @@ export const registration = async (
     return jwtDecode(data.token)
 }
 
-export const login = async (
+const login = async (
     email,
     password
 ) => {
     const {data} = await $host.post(
-        '/user/login',
+        '/users/login',
         {
             email,
             password
@@ -39,21 +39,28 @@ export const login = async (
     return jwtDecode(data.token)
 }
 
-export const updatePassword = async (
+const updatePassword = async (
     oldPassword,
     newPassword,
 ) => {
-    return await $authHost.patch(
-        '/user/updatePassword',
+    const response = await $authHost.patch(
+        '/users/updatePassword',
         {
-            oldPassword: oldPassword,
-            newPassword: newPassword
-        }
-    )
+            oldPassword,
+            newPassword
+        })
+    return response.data
 }
 
-export const check = async () => {
-    const {data} = await $authHost.get('/user/auth')
+const check = async () => {
+    const {data} = await $authHost.get('/users/auth')
     localStorage.setItem('token', data.token)
     return jwtDecode(data.token)
+}
+
+export {
+    registration,
+    login,
+    updatePassword,
+    check
 }
