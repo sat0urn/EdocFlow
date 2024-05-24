@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.talos.server.dto.AllInboxesDto;
 import org.talos.server.dto.InboxCreateDto;
+import org.talos.server.dto.InboxDto;
 import org.talos.server.entity.DocumentStatus;
 import org.talos.server.entity.Inbox;
 import org.talos.server.entity.PDFDocument;
@@ -55,5 +56,20 @@ public class InboxServiceImpl implements InboxService {
                 .senderEmail(inbox.getSender().getEmail())
                 .documentTitle(inbox.getPdfDocument().getName()).build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public InboxDto getInboxByIdAndUserEmail(String inboxId, String receiverEmail) {
+        Optional<Inbox> inbox = inboxRepository.findById(inboxId);
+        if(inbox.isEmpty())
+            throw new DataNotFoundException("Inbox with id " + inboxId + " does not exist in the system ");
+        if(inbox.get().getReceiver().getEmail().equals(receiverEmail))
+        {
+            return InboxDto.builder()
+                    .pdfDocument(inbox.get().getPdfDocument())
+                    .sender(inbox.get().getSender())
+                    .build();
+        }
+        return null;
     }
 }

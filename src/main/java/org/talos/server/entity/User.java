@@ -31,7 +31,7 @@ public class User implements UserDetails {
     private String city;
     private Role role;
     //  @DBRef uncommit if one document will belong to different users
-    private List<PDFDocument> documents = new ArrayList<>();
+    private List<String> documentIds = new ArrayList<>();
     private Department department;
 
     @Override

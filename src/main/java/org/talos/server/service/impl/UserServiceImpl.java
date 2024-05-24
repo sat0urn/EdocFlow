@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
                     .country(userRegistrationDto.getCountry())
                     .city(userRegistrationDto.getCity())
                     .email(userRegistrationDto.getEmail())
-                    .documents(userRegistrationDto.getDocuments())
+                    // убрал тут добавление документа так как у юзера при регистраций не должно быть документов
                     .password(passwordEncoder.encode(userRegistrationDto.getPassword()))
                     .role(Role.USER)
                     .build();

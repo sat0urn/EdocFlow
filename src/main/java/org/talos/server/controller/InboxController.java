@@ -1,6 +1,7 @@
 package org.talos.server.controller;
 
 import io.jsonwebtoken.Claims;
+import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,9 +9,11 @@ import org.talos.server.config.JwtService;
 import org.talos.server.dto.AllInboxesDto;
 
 import org.talos.server.dto.InboxCreateDto;
+import org.talos.server.dto.InboxDto;
 import org.talos.server.entity.User;
 import org.talos.server.exception.DataNotFoundException;
 import org.talos.server.service.InboxService;
+import org.talos.server.service.PdfDocumentService;
 import org.talos.server.service.UserService;
 
 import java.util.List;
@@ -23,6 +26,7 @@ public class InboxController {
     private final JwtService jwtService;
     private final InboxService inboxService;
     private final UserService userService;
+    private final PdfDocumentService pdfDocumentService;
     @PostMapping("/create")
     public ResponseEntity<?> createInbox(@RequestBody InboxCreateDto inboxCreateDto,
                                          @RequestHeader("Authorization") String authHeader)
@@ -43,5 +47,22 @@ public class InboxController {
 
         return inboxService.getInboxesByReceiver(userReceiver.get());
 
+    }
+    @GetMapping("/get/{id}")
+    public InboxDto getInboxById(@RequestHeader("Authorization") String authHeader,
+                                 @PathParam("id")String inboxId){
+        String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+
+        return inboxService.getInboxByIdAndUserEmail(inboxId,receiverEmail);
+    }
+
+    //here Aslan should provide signed document into inboxDto
+    @PostMapping("/sign")
+    public ResponseEntity<?> acceptInbox(@RequestHeader("Authorization") String authHeader,
+                                         @RequestBody InboxDto inboxDto)
+    {
+        String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+
+        return ResponseEntity.ok("document signed successfully");
     }
 }
