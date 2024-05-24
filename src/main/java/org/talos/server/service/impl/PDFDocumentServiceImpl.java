@@ -1,4 +1,4 @@
-package org.talos.server.service;
+package org.talos.server.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -7,19 +7,20 @@ import org.talos.server.dto.PDFDocumentDto;
 import org.talos.server.entity.PDFDocument;
 import org.talos.server.entity.User;
 import org.talos.server.repository.UserRepository;
+import org.talos.server.service.PdfDocumentService;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class PDFDocumentService {
+public class PDFDocumentServiceImpl implements PdfDocumentService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
+    @Override
     public void saveUserPdf(
             PDFDocumentDto pdfDocumentDto,
             String authHeader
@@ -42,7 +43,7 @@ public class PDFDocumentService {
             userRepository.save(user);
         }
     }
-
+    @Override
     public List<PDFDocument> listUserDocuments(String authHeader) {
         String userEmail = jwtService.extractUsername(authHeader.substring(7));
         Optional<User> userOptional = userRepository.findUserByEmail(userEmail);

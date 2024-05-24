@@ -32,6 +32,7 @@ public class User implements UserDetails {
     private Role role;
     //  @DBRef uncommit if one document will belong to different users
     private List<PDFDocument> documents = new ArrayList<>();
+    private Department department;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.talos.server.dto.PDFDocumentDto;
 import org.talos.server.entity.PDFDocument;
-import org.talos.server.service.PDFDocumentService;
+import org.talos.server.service.PdfDocumentService;
+import org.talos.server.service.impl.PDFDocumentServiceImpl;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FileUploadController {
 
-    private final PDFDocumentService pdfDocumentService;
+    private final PdfDocumentService pdfDocumentService;
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(
@@ -35,7 +36,7 @@ public class FileUploadController {
                     ),
                     authHeader
             );
-            return ResponseEntity.ok("File uploaded successfully");
+            return ResponseEntity.ok(" upFileloaded successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Could not upload the file: " + e.getMessage());
         }

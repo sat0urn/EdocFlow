@@ -1,6 +1,7 @@
 package org.talos.server.controller;
 
 import io.jsonwebtoken.Claims;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,13 +10,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.talos.server.config.JwtService;
+import org.talos.server.dto.SelectUsersToSignDto;
 import org.talos.server.dto.UpdatePasswordDto;
 import org.talos.server.dto.UserLoginDto;
 import org.talos.server.dto.UserRegistrationDto;
+import org.talos.server.entity.Department;
 import org.talos.server.entity.User;
 import org.talos.server.responses.AuthenticationResponse;
 import org.talos.server.service.UserService;
+import org.talos.server.service.impl.UserServiceImpl;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -76,5 +81,12 @@ public class UserController {
         existingUser.setPassword(passwordEncoder.encode(updatePasswordDto.getNewPassword()));
         userService.updateUser(existingUser);
         return ResponseEntity.ok("Password updated successfully!");
+    }
+
+    @GetMapping("/getAll/{id}")
+    private List<SelectUsersToSignDto> getAllUsersWorkingOnDepartment(@PathParam("id")String id){
+        Department department = userService.getDepartmentByUserId(id);
+
+        return userService.getAllUsersByDepartment(department);
     }
 }
