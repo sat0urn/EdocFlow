@@ -81,7 +81,7 @@ public class InboxServiceImpl implements InboxService {
     }
 
     @Override
-    public void rejectDocument(RejectDocumentDto rejectDocumentDto) {
+    public void rejectDocument(InboxRejectDto rejectDocumentDto) {
         Optional<Inbox> inbox = inboxRepository.findById(rejectDocumentDto.getInboxId());
         if(inbox.isEmpty())
             throw new DataNotFoundException("Inbox by id {}"+ rejectDocumentDto.getInboxId() + ", does not exist");

@@ -70,7 +70,7 @@ public class InboxController {
         return ResponseEntity.ok("document signed successfully");
     }
     @PostMapping("/reject")
-    public ResponseEntity<?> rejectDocument(@RequestBody RejectDocumentDto rejectDocumentDto)
+    public ResponseEntity<?> rejectDocument(@RequestBody InboxRejectDto rejectDocumentDto)
     {
         inboxService.rejectDocument(rejectDocumentDto);
         return ResponseEntity.ok("document rejected successfully");

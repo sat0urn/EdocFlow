@@ -3,7 +3,7 @@ package org.talos.server.service;
 import org.talos.server.dto.AllInboxesDto;
 import org.talos.server.dto.InboxCreateDto;
 import org.talos.server.dto.InboxDto;
-import org.talos.server.dto.RejectDocumentDto;
+import org.talos.server.dto.InboxRejectDto;
 import org.talos.server.entity.Inbox;
 import org.talos.server.entity.User;
 
@@ -19,5 +19,5 @@ public interface InboxService {
 
     Optional<Inbox> getInboxById(String inboxId);
 
-    void rejectDocument(RejectDocumentDto rejectDocumentDto);
+    void rejectDocument(InboxRejectDto rejectDocumentDto);
 }

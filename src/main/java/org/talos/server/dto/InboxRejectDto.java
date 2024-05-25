@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class RejectDocumentDto {
+public class InboxRejectDto {
     private String inboxId;
     private String reasonToReject;
 }
