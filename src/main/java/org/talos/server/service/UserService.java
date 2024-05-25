@@ -4,6 +4,7 @@ import org.talos.server.dto.SelectUsersToSignDto;
 import org.talos.server.dto.UserLoginDto;
 import org.talos.server.dto.UserRegistrationDto;
 import org.talos.server.entity.Department;
+import org.talos.server.entity.Inbox;
 import org.talos.server.entity.User;
 import org.talos.server.responses.AuthenticationResponse;
 
@@ -18,4 +19,6 @@ public interface UserService {
     public Department getDepartmentByUserId(String id);
     public List<SelectUsersToSignDto> getAllUsersByDepartment(Department department);
     public void updateUser(User existingUser);
+
+    void saveUsersPdf(String documentId, String userId);
 }

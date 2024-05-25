@@ -10,4 +10,6 @@ public interface PdfDocumentService {
             PDFDocumentDto pdfDocumentDto,
             String authHeader);
     public List<PDFDocument> listUserDocuments(String authHeader);
+
+    String savePdfDocument(PDFDocumentDto pdfDocumentDto);
 }

@@ -2,9 +2,7 @@ package org.talos.server.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.talos.server.dto.AllInboxesDto;
-import org.talos.server.dto.InboxCreateDto;
-import org.talos.server.dto.InboxDto;
+import org.talos.server.dto.*;
 import org.talos.server.entity.DocumentStatus;
 import org.talos.server.entity.Inbox;
 import org.talos.server.entity.PDFDocument;
@@ -66,10 +64,29 @@ public class InboxServiceImpl implements InboxService {
         if(inbox.get().getReceiver().getEmail().equals(receiverEmail))
         {
             return InboxDto.builder()
-                    .pdfDocument(inbox.get().getPdfDocument())
+                    .pdfDocumentDto(PDFDocumentDto.builder()
+                            .createdTime(inbox.get().getPdfDocument().getCreatedTime())
+                            .fileData(inbox.get().getPdfDocument().getFileData())
+                            .name(inbox.get().getPdfDocument().getName())
+                            .status(inbox.get().getPdfDocument().getStatus()).build())
                     .sender(inbox.get().getSender())
                     .build();
         }
         return null;
+    }
+
+    @Override
+    public Optional<Inbox> getInboxById(String inboxId) {
+        return inboxRepository.findById(inboxId);
+    }
+
+    @Override
+    public void rejectDocument(RejectDocumentDto rejectDocumentDto) {
+        Optional<Inbox> inbox = inboxRepository.findById(rejectDocumentDto.getInboxId());
+        if(inbox.isEmpty())
+            throw new DataNotFoundException("Inbox by id {}"+ rejectDocumentDto.getInboxId() + ", does not exist");
+
+        inbox.get().setRejectReason(rejectDocumentDto.getReasonToReject());
+        inbox.get().getPdfDocument().setStatus(DocumentStatus.REJECTED);
     }
 }

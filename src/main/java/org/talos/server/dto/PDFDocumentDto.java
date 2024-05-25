@@ -1,17 +1,16 @@
 package org.talos.server.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.talos.server.entity.DocumentStatus;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Builder
 public class PDFDocumentDto {
     private String name;
     private byte[] fileData;
     private String createdTime;
-    private String status;
+    private DocumentStatus status;
 }

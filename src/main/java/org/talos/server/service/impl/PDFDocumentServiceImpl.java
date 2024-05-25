@@ -12,6 +12,7 @@ import org.talos.server.repository.PdfDocumentRepository;
 import org.talos.server.repository.UserRepository;
 import org.talos.server.service.PdfDocumentService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,5 +58,18 @@ public class PDFDocumentServiceImpl implements PdfDocumentService {
         List<String> documentIds = userOptional.get().getDocumentIds();
         return pdfDocumentRepository.findAllByIdIn(documentIds);
 
+    }
+
+    @Override
+    public String savePdfDocument(PDFDocumentDto pdfDocumentDto) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        PDFDocument pdfDocument = PDFDocument.builder()
+                .createdTime(String.valueOf(currentDateTime))
+                .fileData(pdfDocumentDto.getFileData())
+                .name(pdfDocumentDto.getName())
+                .status(DocumentStatus.ACCEPTED)
+                .build();
+        pdfDocumentRepository.save(pdfDocument);
+        return pdfDocument.getId();
     }
 }

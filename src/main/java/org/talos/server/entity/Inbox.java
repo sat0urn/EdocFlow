@@ -18,5 +18,6 @@ public class Inbox {
     private User sender;
     private User receiver;
     private PDFDocument pdfDocument;
+    private String rejectReason;
 
 }
