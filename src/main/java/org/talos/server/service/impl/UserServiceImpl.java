@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final InboxService inboxService;
+
 
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;

@@ -10,6 +10,7 @@ import org.talos.server.entity.User;
 @Setter
 @Builder
 public class InboxDto {
+    private String inboxId;
     private PDFDocumentDto pdfDocumentDto;
     private User sender;
 }

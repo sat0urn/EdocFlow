@@ -50,7 +50,7 @@ public class InboxController {
     }
     @GetMapping("/get/{id}")
     public InboxDto getInboxById(@RequestHeader("Authorization") String authHeader,
-                                 @PathParam("id")String inboxId){
+                                 @PathVariable("id")String inboxId){
         String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
 
         return inboxService.getInboxByIdAndUserEmail(inboxId,receiverEmail);
@@ -60,11 +60,13 @@ public class InboxController {
     @PostMapping("/sign")
     public ResponseEntity<?> acceptInbox(@RequestBody InboxToDocumentDto inboxToDocumentDto)
     {
-
-        String documentId = pdfDocumentService.savePdfDocument(inboxToDocumentDto.getPdfDocumentDto());
         Optional<Inbox> inbox = inboxService.getInboxById(inboxToDocumentDto.getInboxId());
         if(inbox.isEmpty())
             throw new DataNotFoundException("inbox by id {}" + inboxToDocumentDto.getInboxId() + "does not exist");
+
+        String documentId = pdfDocumentService.savePdfDocument(inbox.get(),inboxToDocumentDto.getFileData());
+
+
         userService.saveUsersPdf(documentId,inbox.get().getSender().getId());
         userService.saveUsersPdf(documentId,inbox.get().getReceiver().getId());
         return ResponseEntity.ok("document signed successfully");
