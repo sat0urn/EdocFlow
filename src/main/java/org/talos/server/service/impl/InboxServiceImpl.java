@@ -1,6 +1,6 @@
 package org.talos.server.service.impl;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.talos.server.dto.*;
 import org.talos.server.entity.DocumentStatus;
@@ -17,10 +17,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InboxServiceImpl implements InboxService {
     private final InboxRepository inboxRepository;
     private final UserService userService;
+
     @Override
     public void createInbox(InboxCreateDto inboxCreateDto, String senderEmail) {
         var pdfDocument = PDFDocument.builder()

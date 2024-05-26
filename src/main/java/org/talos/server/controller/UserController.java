@@ -18,7 +18,6 @@ import org.talos.server.entity.Department;
 import org.talos.server.entity.User;
 import org.talos.server.responses.AuthenticationResponse;
 import org.talos.server.service.UserService;
-import org.talos.server.service.impl.UserServiceImpl;
 
 import java.util.List;
 import java.util.Optional;

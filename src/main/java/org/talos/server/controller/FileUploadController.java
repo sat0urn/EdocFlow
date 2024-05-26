@@ -8,7 +8,6 @@ import org.talos.server.dto.PDFDocumentDto;
 import org.talos.server.entity.DocumentStatus;
 import org.talos.server.entity.PDFDocument;
 import org.talos.server.service.PdfDocumentService;
-import org.talos.server.service.impl.PDFDocumentServiceImpl;
 
 import java.util.List;
 

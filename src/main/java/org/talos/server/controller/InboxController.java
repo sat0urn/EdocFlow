@@ -2,12 +2,11 @@ package org.talos.server.controller;
 
 import io.jsonwebtoken.Claims;
 import jakarta.websocket.server.PathParam;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.talos.server.config.JwtService;
 import org.talos.server.dto.*;
-
 import org.talos.server.entity.Inbox;
 import org.talos.server.entity.User;
 import org.talos.server.exception.DataNotFoundException;
@@ -19,14 +18,14 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/inbox")
 public class InboxController {
     private final JwtService jwtService;
     private final InboxService inboxService;
     private final UserService userService;
-
     private final PdfDocumentService pdfDocumentService;
+
     @PostMapping("/create")
     public ResponseEntity<?> createInbox(@RequestBody InboxCreateDto inboxCreateDto,
                                          @RequestHeader("Authorization") String authHeader)
@@ -48,6 +47,7 @@ public class InboxController {
         return inboxService.getInboxesByReceiver(userReceiver.get());
 
     }
+
     @GetMapping("/get/{id}")
     public InboxDto getInboxById(@RequestHeader("Authorization") String authHeader,
                                  @PathParam("id")String inboxId){
@@ -69,6 +69,7 @@ public class InboxController {
         userService.saveUsersPdf(documentId,inbox.get().getReceiver().getId());
         return ResponseEntity.ok("document signed successfully");
     }
+
     @PostMapping("/reject")
     public ResponseEntity<?> rejectDocument(@RequestBody InboxRejectDto rejectDocumentDto)
     {
