@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.talos.server.config.JwtService;
 import org.talos.server.dto.PDFDocumentDto;
 import org.talos.server.entity.DocumentStatus;
+import org.talos.server.entity.Inbox;
 import org.talos.server.entity.PDFDocument;
 import org.talos.server.entity.User;
 import org.talos.server.exception.DataNotFoundException;
@@ -61,15 +62,16 @@ public class PDFDocumentServiceImpl implements PdfDocumentService {
     }
 
     @Override
-    public String savePdfDocument(PDFDocumentDto pdfDocumentDto) {
-        LocalDateTime currentDateTime = LocalDateTime.now();
+    public String savePdfDocument(Inbox inbox, byte[] fileData) {
         PDFDocument pdfDocument = PDFDocument.builder()
-                .createdTime(String.valueOf(currentDateTime))
-                .fileData(pdfDocumentDto.getFileData())
-                .name(pdfDocumentDto.getName())
                 .status(DocumentStatus.ACCEPTED)
+                .name(inbox.getPdfDocument().getName())
+                .fileData(fileData)
+                .createdTime(inbox.getPdfDocument().getCreatedTime())
                 .build();
         pdfDocumentRepository.save(pdfDocument);
         return pdfDocument.getId();
     }
+
+
 }

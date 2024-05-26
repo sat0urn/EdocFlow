@@ -8,6 +8,6 @@ import lombok.*;
 @Setter
 @Builder
 public class InboxToDocumentDto {
-    PDFDocumentDto pdfDocumentDto;
+    private byte[] fileData;
     String inboxId;
 }

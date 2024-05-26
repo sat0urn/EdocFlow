@@ -12,11 +12,13 @@ import org.talos.server.dto.SelectUsersToSignDto;
 import org.talos.server.dto.UserLoginDto;
 import org.talos.server.dto.UserRegistrationDto;
 import org.talos.server.entity.Department;
+import org.talos.server.entity.Inbox;
 import org.talos.server.entity.Role;
 import org.talos.server.entity.User;
 import org.talos.server.exception.DataNotFoundException;
 import org.talos.server.repository.UserRepository;
 import org.talos.server.responses.AuthenticationResponse;
+import org.talos.server.service.InboxService;
 import org.talos.server.service.UserService;
 
 import java.util.Date;
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 

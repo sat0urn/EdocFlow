@@ -12,6 +12,7 @@ import org.talos.server.repository.InboxRepository;
 import org.talos.server.service.InboxService;
 import org.talos.server.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,10 +25,11 @@ public class InboxServiceImpl implements InboxService {
 
     @Override
     public void createInbox(InboxCreateDto inboxCreateDto, String senderEmail) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
         var pdfDocument = PDFDocument.builder()
                 .name(inboxCreateDto.getName())
                 .fileData(inboxCreateDto.getFileData())
-                .createdTime(inboxCreateDto.getCreatedTime())
+                .createdTime(String.valueOf(currentDateTime))
                 .status(DocumentStatus.OnPROCESS)
                 .build();
         String receiver = inboxCreateDto.getReceiverEmail();
@@ -65,6 +67,7 @@ public class InboxServiceImpl implements InboxService {
         if(inbox.get().getReceiver().getEmail().equals(receiverEmail))
         {
             return InboxDto.builder()
+                    .inboxId(inboxId)
                     .pdfDocumentDto(PDFDocumentDto.builder()
                             .createdTime(inbox.get().getPdfDocument().getCreatedTime())
                             .fileData(inbox.get().getPdfDocument().getFileData())
