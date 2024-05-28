@@ -13,4 +13,5 @@ public class InboxDto {
     private String inboxId;
     private PDFDocumentDto pdfDocumentDto;
     private User sender;
+    private String remark;
 }

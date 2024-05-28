@@ -68,7 +68,7 @@ public class InboxServiceImpl implements InboxService {
         if (inbox.isEmpty())
             throw new DataNotFoundException("Inbox with id " + inboxId + " does not exist in the system ");
         if (inbox.get().getReceiver().getEmail().equals(receiverEmail)) {
-            return InboxDto.builder()
+            InboxDto inboxDto = InboxDto.builder()
                     .inboxId(inboxId)
                     .pdfDocumentDto(PDFDocumentDto.builder()
                             .createdTime(inbox.get().getPdfDocument().getCreatedTime())
@@ -77,6 +77,10 @@ public class InboxServiceImpl implements InboxService {
                             .status(inbox.get().getPdfDocument().getStatus()).build())
                     .sender(inbox.get().getSender())
                     .build();
+            if(inboxDto.getPdfDocumentDto().getStatus().equals(DocumentStatus.REJECTED))
+                inboxDto.setRemark(inbox.get().getRejectReason());
+
+            return inboxDto;
         }
         return null;
     }
