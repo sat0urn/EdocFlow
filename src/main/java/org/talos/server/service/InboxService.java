@@ -20,4 +20,8 @@ public interface InboxService {
     Optional<Inbox> getInboxById(String inboxId);
 
     void rejectDocument(InboxRejectDto rejectDocumentDto);
+
+    Inbox signInbox(String inboxId);
+
+    void deleteInboxById(String id);
 }

@@ -92,4 +92,22 @@ public class InboxServiceImpl implements InboxService {
         inbox.get().setRejectReason(rejectDocumentDto.getReasonToReject());
         inbox.get().getPdfDocument().setStatus(DocumentStatus.REJECTED);
     }
+
+    @Override
+    public Inbox signInbox(String inboxId) {
+        Optional<Inbox> inbox = inboxRepository.findById(inboxId);
+        if(inbox.isEmpty())
+            throw new DataNotFoundException("Inbox by id {}"+ inboxId+ ", does not exist");
+        inbox.get().getPdfDocument().setStatus(DocumentStatus.ACCEPTED);
+        inboxRepository.save(inbox.get());
+        return inbox.get();
+    }
+
+    @Override
+    public void deleteInboxById(String inboxId) {
+        Optional<Inbox> inbox = inboxRepository.findById(inboxId);
+        if(inbox.isEmpty())
+            throw new DataNotFoundException("Inbox by id {}"+ inboxId+ ", does not exist");
+        inboxRepository.delete(inbox.get());
+    }
 }
