@@ -94,6 +94,7 @@ public class InboxServiceImpl implements InboxService {
         //here some validation
         inbox.get().setRejectReason(rejectDocumentDto.getReasonToReject());
         inbox.get().getPdfDocument().setStatus(DocumentStatus.REJECTED);
+        inboxRepository.save(inbox.get());
     }
 
     @Override
@@ -112,5 +113,19 @@ public class InboxServiceImpl implements InboxService {
         if(inbox.isEmpty())
             throw new DataNotFoundException("Inbox by id {}"+ inboxId+ ", does not exist");
         inboxRepository.delete(inbox.get());
+    }
+
+    @Override
+    public List<AllInboxesDto> getAllSendInboxes(User user) {
+        List<Inbox> inboxes = inboxRepository.findAllBySenderId(user.getId());
+        return inboxes.stream().map(inbox -> AllInboxesDto.builder()
+                        .inboxId(inbox.getId())
+                        .documentStatus(inbox.getPdfDocument().getStatus())
+                        .senderEmail(inbox.getReceiver().getEmail())
+                        .createdDate(inbox.getPdfDocument().getCreatedTime())
+                        .documentTitle(inbox.getPdfDocument().getName())
+                        .build()
+                )
+                .collect(Collectors.toList());
     }
 }

@@ -24,4 +24,6 @@ public interface InboxService {
     Inbox signInbox(String inboxId);
 
     void deleteInboxById(String id);
+
+    List<AllInboxesDto> getAllSendInboxes(User user);
 }

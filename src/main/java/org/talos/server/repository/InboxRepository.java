@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface InboxRepository extends MongoRepository<Inbox,String> {
     List<Inbox> findAllByReceiverId(String receiverId);
+
+    List<Inbox> findAllBySenderId(String senderId);
 }

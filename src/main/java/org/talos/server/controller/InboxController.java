@@ -35,7 +35,15 @@ public class InboxController {
         String senderEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
         inboxService.createInbox(inboxCreateDto,senderEmail);
         return ResponseEntity.ok("Inbox created successfully");
-
+    }
+    @GetMapping("/send/getAll")
+    public List<AllInboxesDto> getAllSend(@RequestHeader("Authorization")String authHeader)
+    {
+        String senderEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+        Optional<User> userSender = userService.getUserByEmail(senderEmail);
+        if(userSender.isEmpty())
+            throw new DataNotFoundException("User receiver by email" + senderEmail + ", does not exist");
+        return inboxService.getAllSendInboxes(userSender.get());
     }
     @GetMapping("/getAll")
     public List<AllInboxesDto> getAllInboxes(@RequestHeader("Authorization") String authHeader)
@@ -54,6 +62,7 @@ public class InboxController {
 
         return inboxService.getInboxByIdAndUserEmail(inboxId,receiverEmail);
     }
+
 
     //here Aslan should provide signed document into inboxDto
     @PostMapping("/sign")
