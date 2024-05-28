@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom"
+import {Navigate} from "react-router-dom"
 import Main from "../pages/Main"
 import SignIn from "../pages/SignIn"
 import SignUp from "../pages/SignUp"
@@ -9,36 +9,44 @@ import ProfileDash from "../components/profile/ProfileDash.jsx"
 import ProfileSecurity from "../components/profile/ProfileSecurity.jsx";
 import ProfileInbox from "../components/profile/ProfileInbox.jsx";
 import ProfileSupport from "../components/profile/ProfileSupport.jsx";
+import RegisterBusiness from "../pages/RegisterBusiness.jsx";
+import ProfileDocViewSign from "../components/profile/ProfileDocViewSign.jsx";
 
 export const publicRoutes = [
   {
     id: 0,
     path: '/',
-    element: < Main />,
+    element: < Main/>,
     medium: 0
   },
   {
     id: 1,
     path: '/login',
-    element: < SignIn />,
+    element: < SignIn/>,
     medium: 768
   },
   {
     id: 2,
     path: '/register',
-    element: < SignUp />,
+    element: < SignUp/>,
     medium: 768
   },
   {
     id: 3,
-    path: '/recover',
-    element: < Recover />,
+    path: '/registerBusiness',
+    element: <RegisterBusiness/>,
     medium: 768
   },
   {
     id: 4,
+    path: '/recover',
+    element: < Recover/>,
+    medium: 768
+  },
+  {
+    id: 5,
     path: '*',
-    element: <Navigate to='/' />,
+    element: <Navigate to='/'/>,
     medium: 0
   }
 ]
@@ -47,36 +55,41 @@ export const privateRoutes = [
   {
     id: 0,
     path: '/reset',
-    element: < Reset />
+    element: < Reset/>
   },
   {
     id: 1,
     path: '/',
-    element: < ProfileDash />
+    element: < ProfileDash/>
   },
   {
     id: 2,
     path: '/history',
-    element: < ProfileHistory />
+    element: < ProfileHistory/>
   },
   {
     id: 3,
     path: '/security',
-    element: < ProfileSecurity />
+    element: < ProfileSecurity/>
   },
   {
     id: 4,
     path: '/inbox',
-    element: <ProfileInbox />
+    element: <ProfileInbox/>
   },
   {
     id: 5,
     path: '/support',
-    element: <ProfileSupport />
+    element: <ProfileSupport/>
   },
   {
     id: 6,
+    path: '/viewAndSign/:id',
+    element: <ProfileDocViewSign/>
+  },
+  {
+    id: 7,
     path: '*',
-    element: <Navigate to='/' />
+    element: <Navigate to='/'/>
   }
 ]

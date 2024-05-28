@@ -6,35 +6,56 @@ import {AuthContext} from './context/index'
 import {useContext, useEffect, useState} from 'react'
 import Loader from './components/Loader'
 import {observer} from "mobx-react-lite";
-import {check} from "./http/userApi.js"
+import {check, getAllEmails} from "./http/userApi.js"
+import {getAllHistory, getAllInboxes} from "./http/docsApi.js";
 
 const App = observer(() => {
-    const {user} = useContext(AuthContext)
-    const [isLoading, setIsLoading] = useState(true)
+  const {user, documents, searchData} = useContext(AuthContext)
+  const [isLoading, setIsLoading] = useState(true)
 
-    useEffect(() => {
-        check()
-            .then(data => {
-                user.setUser(data)
-                user.setIsAuth(true)
-            })
-            .catch(() => {})
-            .finally(() =>
-                setIsLoading(false)
-            )
-    }, [user])
+  useEffect(() => {
+    check()
+      .then(data => {
+        user.setUser(data)
+        user.setIsAuth(true)
+        getAllInboxes()
+          .then(data => {
+            documents.setInbox(data)
+          })
+          .catch((e) => {
+            console.error(e)
+          })
+        getAllHistory()
+          .then(data => {
+            documents.setHistory(data)
+          })
+          .catch((e) => {
+            console.error(e)
+          })
+        getAllEmails()
+          .then(data => {
+            searchData.setEmails(data)
+          })
+          .catch((e) => {
+            console.error(e)
+          })
+      })
+      .catch(() => {
+      })
+      .finally(() => setIsLoading(false))
+  }, [user, documents, searchData])
 
-    if (isLoading) {
-        return <Loader/>
-    }
+  if (isLoading) {
+    return <Loader/>
+  }
 
-    return (
-        <BrowserRouter>
-            <Header/>
-            <AppRouter/>
-            <Footer/>
-        </BrowserRouter>
-    )
+  return (
+    <BrowserRouter>
+      {!user.isAuth && <Header/>}
+      <AppRouter/>
+      {!user.isAuth && <Footer/>}
+    </BrowserRouter>
+  )
 })
 
 export default App
