@@ -21,9 +21,10 @@ public interface InboxService {
 
     void rejectDocument(InboxRejectDto rejectDocumentDto);
 
-    Inbox signInbox(String inboxId);
 
     void deleteInboxById(String id);
 
     List<AllInboxesDto> getAllSendInboxes(User user);
+
+    Inbox signInbox(String inboxId, byte[] fileData);
 }

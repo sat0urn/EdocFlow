@@ -97,15 +97,6 @@ public class InboxServiceImpl implements InboxService {
         inboxRepository.save(inbox.get());
     }
 
-    @Override
-    public Inbox signInbox(String inboxId) {
-        Optional<Inbox> inbox = inboxRepository.findById(inboxId);
-        if(inbox.isEmpty())
-            throw new DataNotFoundException("Inbox by id {}"+ inboxId+ ", does not exist");
-        inbox.get().getPdfDocument().setStatus(DocumentStatus.ACCEPTED);
-        inboxRepository.save(inbox.get());
-        return inbox.get();
-    }
 
     @Override
     public void deleteInboxById(String inboxId) {
@@ -127,5 +118,16 @@ public class InboxServiceImpl implements InboxService {
                         .build()
                 )
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Inbox signInbox(String inboxId, byte[] fileData) {
+        Optional<Inbox> inbox = inboxRepository.findById(inboxId);
+        if(inbox.isEmpty())
+            throw new DataNotFoundException("Inbox by id {}"+ inboxId+ ", does not exist");
+        inbox.get().getPdfDocument().setStatus(DocumentStatus.ACCEPTED);
+        inbox.get().getPdfDocument().setFileData(fileData);
+        inboxRepository.save(inbox.get());
+        return inbox.get();
     }
 }

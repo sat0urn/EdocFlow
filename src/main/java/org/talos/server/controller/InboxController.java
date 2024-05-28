@@ -68,7 +68,7 @@ public class InboxController {
     @PostMapping("/sign")
     public ResponseEntity<?> acceptInbox(@RequestBody InboxToDocumentDto inboxToDocumentDto)
     {
-        Inbox inbox = inboxService.signInbox(inboxToDocumentDto.getInboxId());
+        Inbox inbox = inboxService.signInbox(inboxToDocumentDto.getInboxId(),inboxToDocumentDto.getFileData());
 
 
         String documentId = pdfDocumentService.savePdfDocument(inbox,inboxToDocumentDto.getFileData());

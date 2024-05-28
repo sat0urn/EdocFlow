@@ -13,7 +13,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class Department {
     private String id;
-    private String name;
-    private String location;
+    private String departmentName;
+    private String country;
+    private String city;
+    private String address;
     private String bin;
+    private String managerIIN;
 }
