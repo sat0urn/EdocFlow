@@ -46,7 +46,6 @@ public class InboxController {
             throw new DataNotFoundException("User receiver by email" + receiverEmail + ", does not exist");
 
         return inboxService.getInboxesByReceiver(userReceiver.get());
-
     }
     @GetMapping("/get/{id}")
     public InboxDto getInboxById(@RequestHeader("Authorization") String authHeader,

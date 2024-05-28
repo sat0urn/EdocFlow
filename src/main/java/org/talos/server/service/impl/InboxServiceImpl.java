@@ -50,7 +50,7 @@ public class InboxServiceImpl implements InboxService {
 
     @Override
     public List<AllInboxesDto> getInboxesByReceiver(User userReceiver) {
-        List<Inbox> inboxes = inboxRepository.findAllByReceiver(userReceiver);
+        List<Inbox> inboxes = inboxRepository.findAllByReceiverId(userReceiver.getId());
         return inboxes.stream().map(inbox -> AllInboxesDto.builder()
                         .inboxId(inbox.getId())
                         .documentStatus(inbox.getPdfDocument().getStatus())
