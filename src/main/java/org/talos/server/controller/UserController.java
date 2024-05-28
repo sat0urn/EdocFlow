@@ -18,7 +18,6 @@ import org.talos.server.entity.Department;
 import org.talos.server.entity.User;
 import org.talos.server.responses.AuthenticationResponse;
 import org.talos.server.service.UserService;
-import org.talos.server.service.impl.UserServiceImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -84,9 +83,19 @@ public class UserController {
     }
 
     @GetMapping("/getAll/{id}")
-    private List<SelectUsersToSignDto> getAllUsersWorkingOnDepartment(@PathParam("id")String id){
+    private List<SelectUsersToSignDto> getAllUsersWorkingOnDepartment(
+            @PathParam("id") String id
+    ) {
         Department department = userService.getDepartmentByUserId(id);
 
         return userService.getAllUsersByDepartment(department);
+    }
+
+    @GetMapping("/getAllEmails")
+    private List<String> getAllEmails(
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        String email = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+        return userService.getAllUsersEmailsExceptYours(email);
     }
 }

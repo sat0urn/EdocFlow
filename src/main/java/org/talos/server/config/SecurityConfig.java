@@ -45,8 +45,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .authorizeHttpRequests(authz ->
                         authz.requestMatchers(
                                         "/users/login",
-                                        "/users/registration",
-                                "/inbox/*"
+                                        "/users/registration"
                                 )
                                 .permitAll()
                                 .anyRequest()

@@ -12,13 +12,11 @@ import org.talos.server.dto.SelectUsersToSignDto;
 import org.talos.server.dto.UserLoginDto;
 import org.talos.server.dto.UserRegistrationDto;
 import org.talos.server.entity.Department;
-import org.talos.server.entity.Inbox;
 import org.talos.server.entity.Role;
 import org.talos.server.entity.User;
 import org.talos.server.exception.DataNotFoundException;
 import org.talos.server.repository.UserRepository;
 import org.talos.server.responses.AuthenticationResponse;
-import org.talos.server.service.InboxService;
 import org.talos.server.service.UserService;
 
 import java.util.Date;
@@ -32,7 +30,6 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
 
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -51,7 +48,7 @@ public class UserServiceImpl implements UserService {
                     .email(userRegistrationDto.getEmail())
                     // убрал тут добавление документа так как у юзера при регистраций не должно быть документов
                     .password(passwordEncoder.encode(userRegistrationDto.getPassword()))
-                    .role(Role.USER)
+                    .role(Role.INDEPENDENT_USER)
                     .build();
 
             userRepository.save(user);
@@ -74,6 +71,7 @@ public class UserServiceImpl implements UserService {
                     .build();
         }
     }
+
     @Override
     public AuthenticationResponse loginUser(UserLoginDto loginDTO) {
         authenticationManager.authenticate(
@@ -101,6 +99,7 @@ public class UserServiceImpl implements UserService {
                 .token(jwtToken)
                 .build();
     }
+
     @Override
     public AuthenticationResponse isTokenExpired(String authHeader) {
         String token = authHeader.substring(7);
@@ -111,10 +110,12 @@ public class UserServiceImpl implements UserService {
             return new AuthenticationResponse(token);
         }
     }
+
     @Override
     public Optional<User> getUserByEmail(String email) {
         return userRepository.findUserByEmail(email);
     }
+
     @Override
     public void updateUser(User existingUser) {
         userRepository.save(existingUser);
@@ -122,39 +123,42 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void saveUsersPdf(String documentId, String userId) {
-      Optional<User> userSender = userRepository.findById(userId);
-      if(userSender.isEmpty())
-          throw new DataNotFoundException("user not found by id {}" + userId);
-      List<String> senderDocuments = userSender.get().getDocumentIds();
-      senderDocuments.add(documentId);
-      userSender.get().setDocumentIds(senderDocuments);
-      userRepository.save(userSender.get());
-
-
-
-
-
-
+        Optional<User> userSender = userRepository.findById(userId);
+        if (userSender.isEmpty())
+            throw new DataNotFoundException("user not found by id {}" + userId);
+        List<String> senderDocuments = userSender.get().getDocumentIds();
+        senderDocuments.add(documentId);
+        userSender.get().setDocumentIds(senderDocuments);
+        userRepository.save(userSender.get());
     }
 
     @Override
     public Department getDepartmentByUserId(String id) {
         Optional<User> user = userRepository.findById(id);
-        if(user.isEmpty())
+        if (user.isEmpty())
             //throw exception
             throw new DataNotFoundException("No such user by id{}" + id);
         return user.get().getDepartment();
 
 
     }
+
     @Override
     public List<SelectUsersToSignDto> getAllUsersByDepartment(Department department) {
-        if(department ==null)
+        if (department == null)
             throw new IllegalArgumentException("Department is null");
         List<User> users = userRepository.findAllByDepartment(department);
 
         return users.stream()
                 .map(user -> new SelectUsersToSignDto(user.getFirstName(), user.getLastName()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> getAllUsersEmailsExceptYours(String yourEmail) {
+        List<User> onlyEmails = userRepository.findAllEmails();
+        return onlyEmails.stream()
+                .map(User::getEmail)
+                .toList();
     }
 }

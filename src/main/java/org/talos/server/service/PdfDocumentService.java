@@ -7,11 +7,9 @@ import org.talos.server.entity.PDFDocument;
 import java.util.List;
 
 public interface PdfDocumentService {
-    public void saveUserPdf(
-            PDFDocumentDto pdfDocumentDto,
-            String authHeader);
-    public List<PDFDocument> listUserDocuments(String authHeader);
+    public void saveUserPdf(PDFDocumentDto pdfDocumentDto, String authHeader);
 
+    public List<PDFDocument> listUserDocuments(String authHeader);
 
 
     String savePdfDocument(Inbox inbox, byte[] fileData);

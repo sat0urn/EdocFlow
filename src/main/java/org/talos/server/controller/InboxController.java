@@ -60,14 +60,15 @@ public class InboxController {
     @PostMapping("/sign")
     public ResponseEntity<?> acceptInbox(@RequestBody InboxToDocumentDto inboxToDocumentDto)
     {
-        Inbox inbox = inboxService.signInbox(inboxToDocumentDto.getInboxId());
+        Optional<Inbox> inbox = inboxService.getInboxById(inboxToDocumentDto.getInboxId());
+        if(inbox.isEmpty())
+            throw new DataNotFoundException("inbox by id {}" + inboxToDocumentDto.getInboxId() + "does not exist");
+
+        String documentId = pdfDocumentService.savePdfDocument(inbox.get(),inboxToDocumentDto.getFileData());
 
 
-        String documentId = pdfDocumentService.savePdfDocument(inbox,inboxToDocumentDto.getFileData());
-
-
-        userService.saveUsersPdf(documentId,inbox.getSender().getId());
-        userService.saveUsersPdf(documentId,inbox.getReceiver().getId());
+        userService.saveUsersPdf(documentId,inbox.get().getSender().getId());
+        userService.saveUsersPdf(documentId,inbox.get().getReceiver().getId());
         return ResponseEntity.ok("document signed successfully");
     }
     @PostMapping("/reject")
@@ -75,11 +76,5 @@ public class InboxController {
     {
         inboxService.rejectDocument(rejectDocumentDto);
         return ResponseEntity.ok("document rejected successfully");
-    }
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteInbox(@PathVariable("id")String id)
-    {
-        inboxService.deleteInboxById(id);
-        return ResponseEntity.ok("inbox deleted successfully");
     }
 }
