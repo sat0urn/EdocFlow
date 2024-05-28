@@ -91,7 +91,7 @@ public class InboxServiceImpl implements InboxService {
         Optional<Inbox> inbox = inboxRepository.findById(rejectDocumentDto.getInboxId());
         if (inbox.isEmpty())
             throw new DataNotFoundException("Inbox by id {}" + rejectDocumentDto.getInboxId() + ", does not exist");
-
+        //here some validation
         inbox.get().setRejectReason(rejectDocumentDto.getReasonToReject());
         inbox.get().getPdfDocument().setStatus(DocumentStatus.REJECTED);
     }
