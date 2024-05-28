@@ -14,5 +14,6 @@ public class AllInboxesDto {
     private String inboxId;
     private String senderEmail;
     private String documentTitle;
+    private String createdDate;
     private DocumentStatus documentStatus;
 }

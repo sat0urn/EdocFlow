@@ -10,5 +10,6 @@ import lombok.*;
 public class InboxCreateDto {
     private String name;
     private byte[] fileData;
+    private String remark;
     private String receiverEmail;
 }

@@ -1,7 +1,6 @@
 package org.talos.server.controller;
 
 import io.jsonwebtoken.Claims;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,21 +26,22 @@ public class InboxController {
     private final PdfDocumentService pdfDocumentService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createInbox(@RequestBody InboxCreateDto inboxCreateDto,
-                                         @RequestHeader("Authorization") String authHeader)
-
-    {
+    public ResponseEntity<?> createInbox(
+            @RequestBody InboxCreateDto inboxCreateDto,
+            @RequestHeader("Authorization") String authHeader
+    ) {
         String senderEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
-        inboxService.createInbox(inboxCreateDto,senderEmail);
+        inboxService.createInbox(inboxCreateDto, senderEmail);
         return ResponseEntity.ok("Inbox created successfully");
-
     }
+
     @GetMapping("/getAll")
-    public List<AllInboxesDto> getAllInboxes(@RequestHeader("Authorization") String authHeader)
-    {
+    public List<AllInboxesDto> getAllInboxes(
+            @RequestHeader("Authorization") String authHeader
+    ) {
         String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
         Optional<User> userReceiver = userService.getUserByEmail(receiverEmail);
-        if(userReceiver.isEmpty())
+        if (userReceiver.isEmpty())
             throw new DataNotFoundException("User receiver by email" + receiverEmail + ", does not exist");
 
         return inboxService.getInboxesByReceiver(userReceiver.get());
@@ -49,32 +49,35 @@ public class InboxController {
     }
 
     @GetMapping("/get/{id}")
-    public InboxDto getInboxById(@RequestHeader("Authorization") String authHeader,
-                                 @PathVariable("id")String inboxId){
+    public InboxDto getInboxById(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("id") String inboxId
+    ) {
         String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
 
-        return inboxService.getInboxByIdAndUserEmail(inboxId,receiverEmail);
+        return inboxService.getInboxByIdAndUserEmail(inboxId, receiverEmail);
     }
 
     //here Aslan should provide signed document into inboxDto
     @PostMapping("/sign")
-    public ResponseEntity<?> acceptInbox(@RequestBody InboxToDocumentDto inboxToDocumentDto)
-    {
+    public ResponseEntity<?> acceptInbox(
+            @RequestBody InboxToDocumentDto inboxToDocumentDto
+    ) {
         Optional<Inbox> inbox = inboxService.getInboxById(inboxToDocumentDto.getInboxId());
-        if(inbox.isEmpty())
+        if (inbox.isEmpty())
             throw new DataNotFoundException("inbox by id {}" + inboxToDocumentDto.getInboxId() + "does not exist");
 
-        String documentId = pdfDocumentService.savePdfDocument(inbox.get(),inboxToDocumentDto.getFileData());
+        String documentId = pdfDocumentService.savePdfDocument(inbox.get(), inboxToDocumentDto.getFileData());
 
-
-        userService.saveUsersPdf(documentId,inbox.get().getSender().getId());
-        userService.saveUsersPdf(documentId,inbox.get().getReceiver().getId());
+        userService.saveUsersPdf(documentId, inbox.get().getSender().getId());
+        userService.saveUsersPdf(documentId, inbox.get().getReceiver().getId());
         return ResponseEntity.ok("document signed successfully");
     }
 
     @PostMapping("/reject")
-    public ResponseEntity<?> rejectDocument(@RequestBody InboxRejectDto rejectDocumentDto)
-    {
+    public ResponseEntity<?> rejectDocument(
+            @RequestBody InboxRejectDto rejectDocumentDto
+    ) {
         inboxService.rejectDocument(rejectDocumentDto);
         return ResponseEntity.ok("document rejected successfully");
     }

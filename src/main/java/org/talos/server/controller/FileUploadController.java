@@ -23,9 +23,9 @@ public class FileUploadController {
             @RequestParam("name") String name,
             @RequestParam("fileData") MultipartFile fileData,
             @RequestParam("createdTime") String createdTime,
-            @RequestParam("status") String status,
             @RequestHeader("Authorization") String authHeader
     ) {
+        System.out.println(name + " " + fileData + " " + createdTime + " " + authHeader);
         try {
             pdfDocumentService.saveUserPdf(
                     new PDFDocumentDto(
@@ -36,7 +36,7 @@ public class FileUploadController {
                     ),
                     authHeader
             );
-            return ResponseEntity.ok(" upFileloaded successfully");
+            return ResponseEntity.ok("File uploaded successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Could not upload the file: " + e.getMessage());
         }

@@ -1,7 +1,8 @@
 package org.talos.server.entity;
 
 public enum Role {
-    USER,
-    SECRETARY,
+    INDEPENDENT_USER,
+    OFFICE_MANAGER,
+    EMPLOYEE,
     ADMIN
 }

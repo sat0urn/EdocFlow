@@ -34,11 +34,11 @@ public class InboxServiceImpl implements InboxService {
                 .build();
         String receiver = inboxCreateDto.getReceiverEmail();
         Optional<User> userSender = userService.getUserByEmail(senderEmail);
-        if(userSender.isEmpty())
+        if (userSender.isEmpty())
             throw new DataNotFoundException("User by email " + senderEmail + ", does not exist");
 
         Optional<User> userReceiver = userService.getUserByEmail(receiver);
-        if(userReceiver.isEmpty())
+        if (userReceiver.isEmpty())
             throw new DataNotFoundException("User by email " + receiver + ", does not exist");
 
         Inbox inbox = Inbox.builder().pdfDocument(pdfDocument)
@@ -52,20 +52,22 @@ public class InboxServiceImpl implements InboxService {
     public List<AllInboxesDto> getInboxesByReceiver(User userReceiver) {
         List<Inbox> inboxes = inboxRepository.findAllByReceiver(userReceiver);
         return inboxes.stream().map(inbox -> AllInboxesDto.builder()
-                .inboxId(inbox.getId())
-                .documentStatus(inbox.getPdfDocument().getStatus())
-                .senderEmail(inbox.getSender().getEmail())
-                .documentTitle(inbox.getPdfDocument().getName()).build())
+                        .inboxId(inbox.getId())
+                        .documentStatus(inbox.getPdfDocument().getStatus())
+                        .senderEmail(inbox.getSender().getEmail())
+                        .createdDate(inbox.getPdfDocument().getCreatedTime())
+                        .documentTitle(inbox.getPdfDocument().getName())
+                        .build()
+                )
                 .collect(Collectors.toList());
     }
 
     @Override
     public InboxDto getInboxByIdAndUserEmail(String inboxId, String receiverEmail) {
         Optional<Inbox> inbox = inboxRepository.findById(inboxId);
-        if(inbox.isEmpty())
+        if (inbox.isEmpty())
             throw new DataNotFoundException("Inbox with id " + inboxId + " does not exist in the system ");
-        if(inbox.get().getReceiver().getEmail().equals(receiverEmail))
-        {
+        if (inbox.get().getReceiver().getEmail().equals(receiverEmail)) {
             return InboxDto.builder()
                     .inboxId(inboxId)
                     .pdfDocumentDto(PDFDocumentDto.builder()
@@ -87,8 +89,8 @@ public class InboxServiceImpl implements InboxService {
     @Override
     public void rejectDocument(InboxRejectDto rejectDocumentDto) {
         Optional<Inbox> inbox = inboxRepository.findById(rejectDocumentDto.getInboxId());
-        if(inbox.isEmpty())
-            throw new DataNotFoundException("Inbox by id {}"+ rejectDocumentDto.getInboxId() + ", does not exist");
+        if (inbox.isEmpty())
+            throw new DataNotFoundException("Inbox by id {}" + rejectDocumentDto.getInboxId() + ", does not exist");
 
         inbox.get().setRejectReason(rejectDocumentDto.getReasonToReject());
         inbox.get().getPdfDocument().setStatus(DocumentStatus.REJECTED);
