@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   database:
-    image: sat0urn/mongo:latest
+    image: mongo:latest
     container_name: database
     restart: unless-stopped
     ports:
