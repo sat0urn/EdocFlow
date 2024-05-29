@@ -63,11 +63,13 @@ public class InboxServiceImpl implements InboxService {
     }
 
     @Override
-    public InboxDto getInboxByIdAndUserEmail(String inboxId, String receiverEmail) {
+    public InboxDto getInboxByIdAndUserEmail(String inboxId, String email) {
         Optional<Inbox> inbox = inboxRepository.findById(inboxId);
         if (inbox.isEmpty())
             throw new DataNotFoundException("Inbox with id " + inboxId + " does not exist in the system ");
-        if (inbox.get().getReceiver().getEmail().equals(receiverEmail)) {
+
+        if (inbox.get().getReceiver().getEmail().equals(email) ||
+                inbox.get().getSender().getEmail().equals(email)) {
             InboxDto inboxDto = InboxDto.builder()
                     .inboxId(inboxId)
                     .pdfDocumentDto(PDFDocumentDto.builder()
@@ -77,7 +79,8 @@ public class InboxServiceImpl implements InboxService {
                             .status(inbox.get().getPdfDocument().getStatus()).build())
                     .sender(inbox.get().getSender())
                     .build();
-            if(inboxDto.getPdfDocumentDto().getStatus().equals(DocumentStatus.REJECTED))
+
+            if (inboxDto.getPdfDocumentDto().getStatus().equals(DocumentStatus.REJECTED))
                 inboxDto.setRemark(inbox.get().getRejectReason());
 
             return inboxDto;
@@ -105,8 +108,8 @@ public class InboxServiceImpl implements InboxService {
     @Override
     public void deleteInboxById(String inboxId) {
         Optional<Inbox> inbox = inboxRepository.findById(inboxId);
-        if(inbox.isEmpty())
-            throw new DataNotFoundException("Inbox by id {}"+ inboxId+ ", does not exist");
+        if (inbox.isEmpty())
+            throw new DataNotFoundException("Inbox by id {}" + inboxId + ", does not exist");
         inboxRepository.delete(inbox.get());
     }
 
@@ -127,8 +130,8 @@ public class InboxServiceImpl implements InboxService {
     @Override
     public Inbox signInbox(String inboxId, byte[] fileData) {
         Optional<Inbox> inbox = inboxRepository.findById(inboxId);
-        if(inbox.isEmpty())
-            throw new DataNotFoundException("Inbox by id {}"+ inboxId+ ", does not exist");
+        if (inbox.isEmpty())
+            throw new DataNotFoundException("Inbox by id {}" + inboxId + ", does not exist");
         inbox.get().getPdfDocument().setStatus(DocumentStatus.ACCEPTED);
         inbox.get().getPdfDocument().setFileData(fileData);
         inboxRepository.save(inbox.get());

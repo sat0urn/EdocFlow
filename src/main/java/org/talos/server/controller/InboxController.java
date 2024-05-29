@@ -27,67 +27,65 @@ public class InboxController {
     private final UserService userService;
 
     private final PdfDocumentService pdfDocumentService;
+
     @PostMapping("/create")
     public ResponseEntity<?> createInbox(@RequestBody InboxCreateDto inboxCreateDto,
-                                         @RequestHeader("Authorization") String authHeader)
-
-    {
+                                         @RequestHeader("Authorization") String authHeader) {
         String senderEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
-        inboxService.createInbox(inboxCreateDto,senderEmail);
+        inboxService.createInbox(inboxCreateDto, senderEmail);
         return ResponseEntity.ok("Inbox created successfully");
     }
+
     @GetMapping("/send/getAll")
-    public List<AllInboxesDto> getAllSend(@RequestHeader("Authorization")String authHeader)
-    {
+    public List<AllInboxesDto> getAllSend(@RequestHeader("Authorization") String authHeader) {
         String senderEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
         Optional<User> userSender = userService.getUserByEmail(senderEmail);
-        if(userSender.isEmpty())
+        if (userSender.isEmpty())
             throw new DataNotFoundException("User receiver by email" + senderEmail + ", does not exist");
         return inboxService.getAllSendInboxes(userSender.get());
     }
+
     @GetMapping("/getAll")
-    public List<AllInboxesDto> getAllInboxes(@RequestHeader("Authorization") String authHeader)
-    {
+    public List<AllInboxesDto> getAllInboxes(@RequestHeader("Authorization") String authHeader) {
         String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
         Optional<User> userReceiver = userService.getUserByEmail(receiverEmail);
-        if(userReceiver.isEmpty())
+        if (userReceiver.isEmpty())
             throw new DataNotFoundException("User receiver by email" + receiverEmail + ", does not exist");
 
         return inboxService.getInboxesByReceiver(userReceiver.get());
     }
+
     @GetMapping("/get/{id}")
     public InboxDto getInboxById(@RequestHeader("Authorization") String authHeader,
-                                 @PathVariable("id")String inboxId){
+                                 @PathVariable("id") String inboxId) {
         String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
 
-        return inboxService.getInboxByIdAndUserEmail(inboxId,receiverEmail);
+        return inboxService.getInboxByIdAndUserEmail(inboxId, receiverEmail);
     }
 
 
     //here Aslan should provide signed document into inboxDto
     @PostMapping("/sign")
-    public ResponseEntity<?> acceptInbox(@RequestBody InboxToDocumentDto inboxToDocumentDto)
-    {
-        Inbox inbox = inboxService.signInbox(inboxToDocumentDto.getInboxId(),inboxToDocumentDto.getFileData());
+    public ResponseEntity<?> acceptInbox(@RequestBody InboxToDocumentDto inboxToDocumentDto) {
+        Inbox inbox = inboxService.signInbox(inboxToDocumentDto.getInboxId(), inboxToDocumentDto.getFileData());
 
 
-        String documentId = pdfDocumentService.savePdfDocument(inbox,inboxToDocumentDto.getFileData());
+        String documentId = pdfDocumentService.savePdfDocument(inbox, inboxToDocumentDto.getFileData());
 
 
-        userService.saveUsersPdf(documentId,inbox.getSender().getId());
-        userService.saveUsersPdf(documentId,inbox.getReceiver().getId());
+        userService.saveUsersPdf(documentId, inbox.getSender().getId());
+        userService.saveUsersPdf(documentId, inbox.getReceiver().getId());
         return ResponseEntity.ok("document signed successfully");
     }
+
     @PostMapping("/reject")
-    public ResponseEntity<?> rejectDocument(@RequestBody InboxRejectDto rejectDocumentDto)
-    {
+    public ResponseEntity<?> rejectDocument(@RequestBody InboxRejectDto rejectDocumentDto) {
         inboxService.rejectDocument(rejectDocumentDto);
         return ResponseEntity.ok("document rejected successfully");
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteInbox(@PathVariable("id")String id)
-    {
+    public ResponseEntity<?> deleteInbox(@PathVariable("id") String id) {
         inboxService.deleteInboxById(id);
         return ResponseEntity.ok("inbox deleted successfully");
     }
