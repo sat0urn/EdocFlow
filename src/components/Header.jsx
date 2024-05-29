@@ -26,7 +26,7 @@ const Header = () => {
           <span className={"navbar-toggler-icon"}></span>
         </button>
         <div className={"collapse navbar-collapse justify-content-end"} id={"navbarSupportedContent"}>
-          <ul className={"navbar-nav mx-lg-auto mx-0 align-items-center mb-2 mb-lg-0"}>
+          <ul className={"navbar-nav mx-xxl-auto mx-0 align-items-center mb-2 mb-lg-0"}>
             <li className={"nav-item"}>
               <a href="/#about" className={"nav-link px-3 link-dark"}>
                 About Us
@@ -48,7 +48,7 @@ const Header = () => {
               </a>
             </li>
           </ul>
-          <div className="dropstart d-md-block d-none text-lg-end text-center">
+          <div className="dropstart d-xxl-block d-none text-lg-end text-center">
 
             <a className="btn btn-outline-primary px-4"
                href="#"

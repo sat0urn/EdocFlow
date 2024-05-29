@@ -1,11 +1,10 @@
 import {useContext, useState} from 'react'
-import {Link, useNavigate} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import {AuthContext} from '../context'
 import {login} from '../http/userApi'
 import {observer} from "mobx-react-lite";
 
 const SignIn = observer(() => {
-  const navigate = useNavigate()
   const {user} = useContext(AuthContext)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -23,7 +22,6 @@ const SignIn = observer(() => {
     }
     user.setIsAuth(true)
     user.setUser(data)
-    navigate('/profile')
   }
 
   return (

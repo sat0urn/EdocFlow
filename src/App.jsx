@@ -7,7 +7,7 @@ import {useContext, useEffect, useState} from 'react'
 import Loader from './components/Loader'
 import {observer} from "mobx-react-lite";
 import {check, getAllEmails} from "./http/userApi.js"
-import {getAllHistory, getAllInboxes} from "./http/docsApi.js";
+import {getAllHistory, getAllInboxes, getAllOutboxes} from "./http/docsApi.js";
 
 const App = observer(() => {
   const {user, documents, searchData} = useContext(AuthContext)
@@ -21,6 +21,13 @@ const App = observer(() => {
         getAllInboxes()
           .then(data => {
             documents.setInbox(data)
+          })
+          .catch((e) => {
+            console.error(e)
+          })
+        getAllOutboxes()
+          .then(data => {
+            documents.setOutbox(data)
           })
           .catch((e) => {
             console.error(e)
@@ -43,7 +50,7 @@ const App = observer(() => {
       .catch(() => {
       })
       .finally(() => setIsLoading(false))
-  }, [user, documents, searchData])
+  }, [user.isAuth, user, documents, searchData])
 
   if (isLoading) {
     return <Loader/>

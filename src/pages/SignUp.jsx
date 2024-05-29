@@ -1,12 +1,11 @@
 import {useContext, useState} from "react"
 import {registration} from "../http/userApi"
-import {Link, useNavigate} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import {AuthContext} from "../context/index.js";
 import {observer} from "mobx-react-lite";
 
 const SignUp = observer(() => {
   const {user} = useContext(AuthContext)
-  const navigate = useNavigate()
   const [userForm, setUserForm] = useState({
     email: '',
     firstName: '',
@@ -18,24 +17,22 @@ const SignUp = observer(() => {
   })
 
   const signUp = async (event) => {
+    event.preventDefault()
     let data
     if (userForm.password.length >= 6) {
       try {
         data = await registration(userForm)
       } catch (e) {
-        event.preventDefault()
         if (e.response.status === 409) {
           alert("User already exists by email: " + userForm.email)
         } else {
           console.log(e)
         }
+        return
       }
-      console.log(data)
       user.setIsAuth(true)
       user.setUser(data)
-      navigate('/profile')
     } else {
-      event.preventDefault()
       alert('Password should contain at least 6 characters')
     }
   }

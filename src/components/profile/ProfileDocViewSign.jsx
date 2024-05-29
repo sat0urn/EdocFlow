@@ -1,9 +1,7 @@
-import {Link, useParams} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import ProfileAuxWindow from "./ProfileAuxWindow.jsx";
 import {Document, Page} from "react-pdf";
 import {useContext, useEffect, useState} from "react";
-import {observer} from "mobx-react-lite";
-import {AuthContext} from "../../context/index.js";
 import {getInboxById, rejectInboxDocument, signInboxDocument} from "../../http/docsApi.js";
 import Loader from "../Loader.jsx";
 import {
@@ -14,16 +12,23 @@ import {
   parseDDC,
   prepareSignature
 } from "../../http/sigexApi.js";
+import {observer} from "mobx-react-lite";
+import {AuthContext} from "../../context/index.js";
 
 const ProfileDocViewSign = observer(() => {
   const {user} = useContext(AuthContext)
+  const navigate = useNavigate()
 
-  const {id} = useParams()
+  const location = useLocation()
+  const searchURL = new URLSearchParams(location.search)
+  const id = searchURL.get('id')
+  const status = searchURL.get('status')
 
   const [pdfFile, setPdfFile] = useState(null)
   const [documentData, setDocumentData] = useState({})
   const [senderInfo, setSenderInfo] = useState({})
   const [remark, setRemark] = useState('')
+  const [inRemark, setInRemark] = useState('')
 
   const [numPages, setNumPages] = useState(null);
 
@@ -63,6 +68,7 @@ const ProfileDocViewSign = observer(() => {
   useEffect(() => {
     getInboxById(id)
       .then((data) => {
+        console.log(data)
         const pdfBytes = base64ToArrayBuffer(data.pdfDocumentDto.fileData)
         const blob = new Blob([pdfBytes], {type: 'application/pdf'});
         const url = URL.createObjectURL(blob);
@@ -71,7 +77,8 @@ const ProfileDocViewSign = observer(() => {
         setSenderInfo({
           firstName: data.sender.firstName,
           lastName: data.sender.lastName,
-          email: data.sender.email
+          email: data.sender.email,
+          rejectedReason: data.remark
         })
         return () => URL.revokeObjectURL(url);
       })
@@ -79,14 +86,13 @@ const ProfileDocViewSign = observer(() => {
   }, [id])
 
   const onDocumentLoadSuccess = ({numPages}) => {
-    setNumPages(numPages);
+    setNumPages(numPages)
   }
 
   const signDocument = async () => {
     let signature
     const data = await parseDDC(documentData.fileData)
-    console.log(data.documentId)
-    console.log(data)
+    console.log('Document has parsed successfully!')
 
     if (data.documentId) {
       setAwaitingSignature(true)
@@ -100,7 +106,6 @@ const ProfileDocViewSign = observer(() => {
 
       await addAnotherSign(data.documentId, signature)
       console.log('another sign has been added')
-      console.log(documentData.name, data.document)
 
       const buildUpdatedDDC = await buildDDC(
         data.documentId,
@@ -114,8 +119,14 @@ const ProfileDocViewSign = observer(() => {
         signInboxDocument({
           fileData: buildUpdatedDDC.ddc,
           inboxId: id
-        }).then((data) => console.log(data))
-          .catch((e) => console.error(e))
+        }).then((data) => {
+          console.log(data)
+          navigate('/inbox')
+          window.location.reload()
+        }).catch((e) => {
+          alert('Something went wrong')
+          console.error(e)
+        })
       } else {
         alert('Something went wrong')
       }
@@ -126,10 +137,13 @@ const ProfileDocViewSign = observer(() => {
   const rejectDocument = () => {
     rejectInboxDocument({
       inboxId: id,
-      reasonToReject: remark
+      reasonToReject: inRemark
     }).then((data) => {
       console.log(data)
+      navigate('/inbox')
+      window.location.reload()
     }).catch((e) => {
+      alert('Something went wrong')
       console.error(e)
     })
   }
@@ -141,20 +155,32 @@ const ProfileDocViewSign = observer(() => {
   return (
     <div className={"row"}>
       <div className="col-lg-9">
-        <Link to={'/inbox'}
+        <Link to={(user._user.sub === senderInfo.email) ? '/outbox' : '/inbox'}
               className={"rounded-pill bg-primary d-inline-flex align-items-center p-2 text-decoration-none"}>
           <div className={"bg-white shadow rounded-circle d-inline-flex align-items-center justify-content-center"}
                style={{width: '40px', height: '40px'}}>
             <i className={"fa-solid fa-arrow-left"}></i>
           </div>
           <div className={"text-white mx-4"}>
-            Return to Inbox
+            Return to <span>{(user._user.sub === senderInfo.email) ? 'Outbox' : 'Inbox'}</span>
           </div>
         </Link>
         <div className={"card border-0 rounded-4 shadow-sm p-5 my-4"}>
-          <div className={"text-secondary fw-light opacity-50 text-center"}>
-            {documentData.name} #{id} was created by {senderInfo.firstName + ' ' + senderInfo.lastName}
-          </div>
+          {(status === 'REJECTED') ?
+            ((user._user.sub === senderInfo.email) &&
+              <div className={"fw-light opacity-75 text-center"}>
+                <div className={"text-danger"}>
+                  Rejected <br/>
+                </div>
+                <div>
+                  Reason: {senderInfo.rejectedReason}
+                </div>
+              </div>)
+            :
+            <div className={"text-secondary fw-light opacity-50 text-center"}>
+              {documentData.name} was created by {senderInfo.firstName + ' ' + senderInfo.lastName}
+            </div>
+          }
           <hr/>
           <div className={"d-flex flex-row"}>
             <div className={"overflow-y-auto card rounded-5 shadow-sm flex-fill"}
@@ -178,64 +204,76 @@ const ProfileDocViewSign = observer(() => {
               </Document>
             </div>
 
-            <div className={"ms-3"}>
-              <textarea className={"form-control rounded-4"}
-                        rows={5}
-                        placeholder={'Please justify your rejection!'}
-                        value={remark}
-                        onChange={(e) => setRemark(e.target.value)}
-              />
-              <button className={"btn btn-primary mt-3 w-100"}>
-                Add remark
-              </button>
-              {ncaLayerNotAvailable ?
-                <div className={"text-center"}>
-                  <div className={"text-danger my-3"}>
-                    Failed to detect <strong>NCALayer</strong>.
-                  </div>
-                  <div className={"card p-2 small"}>
-                    NCALayer is required for
-                    signing digital signature documents (ЭЦП).
-                  </div>
-                  <button type={"button"}
-                          className={"btn btn-outline-danger w-100 mt-3"}
-                          onClick={reloadPage}>
-                    <span className={"small"}>
-                      Reload the page and try again
-                    </span>
+            {(status === 'OnPROCESS' && (user._user.sub !== senderInfo.email)) &&
+              <div className={"ms-3"}>
+                  <textarea className={"form-control rounded-4"}
+                            rows={5}
+                            placeholder={'Please justify your rejection!'}
+                            value={remark}
+                            onChange={(e) => setRemark(e.target.value)}
+                  />
+                {remark &&
+                  <button className={"btn btn-primary mt-3 w-100"}
+                          onClick={() => {
+                            setInRemark(remark)
+                            alert('Remark has been added!')
+                          }}
+                  >
+                    Add remark
                   </button>
-                </div>
-                :
-                (connecting ?
-                  <div className={"row justify-content-center"}>
-                    <div className="col-md-auto">
-                      <div className="d-flex justify-content-center">
-                        <div className={"spinner-grow"}></div>
-                      </div>
-                      <p>Connecting to NCALayer...</p>
+                }
+
+                {ncaLayerNotAvailable ?
+                  <div className={"text-center"}>
+                    <div className={"text-danger small my-3"}>
+                      Failed to detect <strong>NCALayer</strong>
                     </div>
+                    <div className={"card p-2 small"}>
+                      NCALayer is required
+                    </div>
+                    <button type={"button"}
+                            className={"btn btn-outline-danger w-100 mt-3"}
+                            onClick={reloadPage}>
+                      <span className={"small"}>
+                        Reload the page
+                      </span>
+                    </button>
                   </div>
                   :
-                  (!awaitingSignature ?
-                    <div className={"btn-group w-100 mt-3"}>
-                      <button className={"btn btn-success w-100"}
-                              onClick={signDocument}>
-                        Sign
-                      </button>
-                      <button className={"btn btn-danger w-100"}
-                              onClick={rejectDocument}>
-                        Reject
-                      </button>
+                  (connecting ?
+                    <div className={"row justify-content-center"}>
+                      <div className="col-md-auto">
+                        <div className="d-flex justify-content-center">
+                          <div className={"spinner-grow"}></div>
+                        </div>
+                        <p>Connecting to NCALayer...</p>
+                      </div>
                     </div>
                     :
-                    <button type={"button"}
-                            className={"btn btn-primary w-100 rounded-4 mt-3"}
-                            disabled>
-                      <span
-                        className={"spinner-border spinner-border-sm"}></span>
-                    </button>))
-              }
-            </div>
+                    (!awaitingSignature ?
+                      <div className={"mt-3"}>
+                        {!remark ?
+                          <button className={"btn btn-success w-100"}
+                                  onClick={signDocument}>
+                            Sign
+                          </button>
+                          :
+                          <button className={"btn btn-danger w-100"}
+                                  onClick={rejectDocument}>
+                            Reject
+                          </button>
+                        }
+                      </div>
+                      :
+                      <button type={"button"}
+                              className={"btn btn-primary w-100 rounded-4 mt-3"}
+                              disabled>
+                        <span
+                          className={"spinner-border spinner-border-sm"}></span>
+                      </button>))
+                }
+              </div>
+            }
           </div>
         </div>
       </div>

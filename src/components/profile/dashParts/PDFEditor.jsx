@@ -102,6 +102,8 @@ const PDFEditor = (
       createInbox({pdfName, fileData: data.ddc, remark, receiverEmail})
         .then(data => {
           console.log(data)
+          window.location.reload()
+          alert('Document has been signed and sent successfully!')
         })
         .catch((e) => {
           console.error(e)

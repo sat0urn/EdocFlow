@@ -11,10 +11,7 @@ const login = async (
   email,
   password
 ) => {
-  const {data} = await $host.post(
-    '/users/login',
-    {email, password}
-  )
+  const {data} = await $host.post('/users/login', {email, password})
   localStorage.setItem('token', data.token)
   return jwtDecode(data.token)
 }

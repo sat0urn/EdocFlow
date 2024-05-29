@@ -1,8 +1,12 @@
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {updatePassword} from "../../http/userApi.js";
 import ProfileAuxWindow from "./ProfileAuxWindow.jsx";
+import {observer} from "mobx-react-lite";
+import {AuthContext} from "../../context/index.js";
 
-const ProfileSecurity = () => {
+const ProfileSecurity = observer(() => {
+  const {user} = useContext(AuthContext)
+
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
 
@@ -28,6 +32,10 @@ const ProfileSecurity = () => {
   return (
     <div className={"row"}>
       <div className={"col-lg-9"}>
+        <div className={"py-5 border-bottom border-2"}>
+          <h6 className={"fw-bold"}>Email</h6>
+          <p className={"text-secondary m-0"}>{user._user.sub}</p>
+        </div>
         <div className={"py-5 border-bottom border-2"}>
           <div className={"d-flex justify-content-between align-items-center"}>
             <div className={""}>
@@ -198,6 +206,6 @@ const ProfileSecurity = () => {
       </div>
     </div>
   )
-}
+})
 
 export default ProfileSecurity

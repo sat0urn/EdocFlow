@@ -23,25 +23,25 @@ export const publicRoutes = [
     id: 1,
     path: '/login',
     element: < SignIn/>,
-    medium: 768
+    medium: 1350
   },
   {
     id: 2,
     path: '/register',
     element: < SignUp/>,
-    medium: 768
+    medium: 1350
   },
   {
     id: 3,
     path: '/registerBusiness',
     element: <RegisterBusiness/>,
-    medium: 768
+    medium: 1350
   },
   {
     id: 4,
     path: '/recover',
     element: < Recover/>,
-    medium: 768
+    medium: 1350
   },
   {
     id: 5,
@@ -79,16 +79,21 @@ export const privateRoutes = [
   },
   {
     id: 5,
+    path: '/outbox',
+    element: <ProfileInbox/>
+  },
+  {
+    id: 6,
     path: '/support',
     element: <ProfileSupport/>
   },
   {
-    id: 6,
-    path: '/viewAndSign/:id',
+    id: 7,
+    path: '/viewAndSign',
     element: <ProfileDocViewSign/>
   },
   {
-    id: 7,
+    id: 8,
     path: '*',
     element: <Navigate to='/'/>
   }

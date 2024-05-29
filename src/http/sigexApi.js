@@ -29,11 +29,7 @@ export const registerSignature = async (
   try {
     const response = await axios.post(
       `${sigexURL}/api`,
-      {
-        title: pdfName,
-        description: description,
-        signature
-      }
+      {title: pdfName, description: description, signature}
     )
     return response.data
   } catch (e) {
@@ -64,10 +60,7 @@ export const addAnotherSign = async (documentId, signature) => {
   try {
     await axios.post(
       `${sigexURL}/api/${documentId}`,
-      {
-        signType: 'cms',
-        signature
-      },
+      {signType: 'cms', signature},
       {headers: {'Content-Type': 'application/json'}}
     )
   } catch (e) {
@@ -76,7 +69,6 @@ export const addAnotherSign = async (documentId, signature) => {
 }
 
 export const buildDDC = async (documentId, pdfName, dataB64) => {
-  console.log(dataB64)
   const dataToSend = Uint8Array.from(
     atob(dataB64.replace(/-/g, "+").replace(/_/g, "/")),
     c => c.charCodeAt(0)

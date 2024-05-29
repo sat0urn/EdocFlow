@@ -8,7 +8,7 @@ const upload = async (
     formData,
     {headers: {'Content-Type': 'multipart/form-data'}}
   )
-  return response
+  return response.data
 }
 
 const createInbox = async (
@@ -33,6 +33,11 @@ const getAllInboxes = async () => {
   return response.data
 }
 
+const getAllOutboxes = async() => {
+  const response = await $authHost.get('/inbox/send/getAll')
+  return response.data
+}
+
 const getInboxById = async (
   inboxId
 ) => {
@@ -49,17 +54,19 @@ const signInboxDocument = async (
     '/inbox/sign',
     data
   )
-  return response
+  return response.data
 }
 
 const rejectInboxDocument = async (
   data
 ) => {
-  const response = await $authHost.post(
-    '/inbox/reject',
-    data
-  )
-  return response
+  const response = await $authHost.post('/inbox/reject', data)
+  return response.data
+}
+
+const deleteInboxById = async (inboxId) => {
+  const response = await $authHost.delete(`/inbox/delete/${inboxId}`)
+  return response.data
 }
 
 const getAllHistory = async () => {
@@ -72,7 +79,9 @@ export {
   getAllHistory,
   createInbox,
   getAllInboxes,
+  getAllOutboxes,
   getInboxById,
+  deleteInboxById,
   signInboxDocument,
   rejectInboxDocument
 }

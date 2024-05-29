@@ -18,7 +18,7 @@ const ProfileSideMenu = observer(() => {
   }
 
   return (
-    <div className={"sticky-top p-4 vh-100"}>
+    <div className={"sticky-top d-flex flex-column p-4 vh-100 border border-right"}>
       <Link to='/' className={"d-flex align-items-center text-decoration-none"}>
         <div className={"text-primary fs-2 fw-bold"}>EDMS</div>
         <div className={"text-black ms-2 fw-semibold"}
@@ -27,9 +27,9 @@ const ProfileSideMenu = observer(() => {
           management system
         </div>
       </Link>
-      <div className="d-flex flex-column h-100 justify-content-between">
+      <div className="d-flex flex-column h-100 justify-content-between mt-5">
         <div>
-          <div className={"fw-bold text-primary fs-5 mt-5"}>
+          <div className={"fw-bold text-primary fs-5"}>
             Services
           </div>
           <ul className={"nav nav-pills flex-column mt-3"}>
@@ -56,6 +56,17 @@ const ProfileSideMenu = observer(() => {
               </Link>
             </li>
             <li className={"mb-1"}>
+              <Link to={"/outbox"} className={"nav-link link-body-emphasis fw-medium px-0"}>
+                <img src={Inbox}
+                     alt="dashboard"
+                     className={"img-fluid me-3"}
+                />
+                <span className={"small opacity-50 align-middle"}>
+                  Outbox
+                </span>
+              </Link>
+            </li>
+            <li className={"mb-1"}>
               <Link to={"/history"} className={"nav-link link-body-emphasis fw-medium px-0"}>
                 <img src={History}
                      alt="history"
@@ -69,7 +80,7 @@ const ProfileSideMenu = observer(() => {
           </ul>
           <hr/>
         </div>
-        <div className={"mb-5"}>
+        <div>
           <hr/>
           <ul className={"nav nav-pills flex-column"}>
             <li>
@@ -87,8 +98,7 @@ const ProfileSideMenu = observer(() => {
             <li>
               <button type={'button'}
                       onClick={logout}
-                      className={"nav-link link-body-emphasis fw-medium px-0"}
-              >
+                      className={"nav-link link-body-emphasis fw-medium px-0"}>
                 <img src={Logout}
                      alt="logout"
                      width={'25px'}
