@@ -4,12 +4,10 @@ import {useContext, useMemo, useState} from "react";
 import {AuthContext} from "../../context/index.js";
 import InboxTableView from "./inboxParts/InboxTableView.jsx";
 import DocumentsPagination from "./commonParts/DocumentsPagination.jsx";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 const ProfileInbox = observer(() => {
   const {documents} = useContext(AuthContext)
-  const location = useLocation()
-  const isOutboxPath = location.pathname === '/outbox'
 
   const [searchQuery, setSearchQuery] = useState('')
   const [pages, setPages] = useState(Math.ceil(documents.inbox.length / 6))
@@ -17,45 +15,49 @@ const ProfileInbox = observer(() => {
 
   const [filterOrder, setFilterOrder] = useState(0)
 
+  const location = useLocation()
+  const isOutboxPath = location.pathname === '/outbox'
+
   const getSearchedDocuments = useMemo(() => {
-    console.log(isOutboxPath)
     let filteredDocuments = isOutboxPath ? documents.outbox : documents.inbox
 
-    filteredDocuments = filteredDocuments.filter(doc => doc.documentTitle
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase())
-    )
+    if (filteredDocuments) {
+      filteredDocuments = filteredDocuments.filter(doc => doc.documentTitle
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+      )
 
-    switch (filterOrder) {
-      case 1:
-        break
-      case 2:
-        filteredDocuments = filteredDocuments.filter(
-          doc => ((new Date().getTime() - new Date(doc.createdDate).getTime()) / (1000 * 3600 * 24)) < 7
-        )
-        break
-      case 3:
-        filteredDocuments = filteredDocuments.filter(doc => doc.documentStatus === 'OnPROCESS')
-        break
-      case 4:
-        filteredDocuments = filteredDocuments.filter(doc => doc.documentStatus === 'REJECTED')
-        break
-      case 5:
-        filteredDocuments = filteredDocuments.filter(doc => doc.documentStatus === 'ACCEPTED')
-        break
+      switch (filterOrder) {
+        case 1:
+          break
+        case 2:
+          filteredDocuments = filteredDocuments.filter(
+            doc => ((new Date().getTime() - new Date(doc.createdDate).getTime()) / (1000 * 3600 * 24)) < 7
+          )
+          break
+        case 3:
+          filteredDocuments = filteredDocuments.filter(doc => doc.documentStatus === 'OnPROCESS')
+          break
+        case 4:
+          filteredDocuments = filteredDocuments.filter(doc => doc.documentStatus === 'REJECTED')
+          break
+        case 5:
+          filteredDocuments = filteredDocuments.filter(doc => doc.documentStatus === 'ACCEPTED')
+          break
+      }
+
+      setPages(Math.ceil(filteredDocuments.length / 6))
+
+      return filteredDocuments.slice(currentPage * 6, (currentPage + 1) * 6)
     }
-
-    setPages(Math.ceil(filteredDocuments.length / 6))
-
-    return filteredDocuments.slice(currentPage * 6, (currentPage + 1) * 6)
-  }, [currentPage, searchQuery, filterOrder, isOutboxPath])
+  }, [currentPage, documents.inbox, searchQuery, filterOrder, isOutboxPath])
 
   return (
     <div className={"row"}>
       <div className={"col-lg-9"}>
         <div className={"rounded-pill bg-primary text-white d-flex justify-content-between w-50 p-3"}>
           <div>New and Active documents</div>
-          <div>{getSearchedDocuments.length} in total</div>
+          <div>{'2'} in total</div>
         </div>
 
         <input type="text"
@@ -89,9 +91,7 @@ const ProfileInbox = observer(() => {
           </button>
         </div>
 
-        <InboxTableView
-          inboxDocuments={getSearchedDocuments}
-        />
+        <InboxTableView documents={getSearchedDocuments}/>
 
         <DocumentsPagination
           pages={pages}

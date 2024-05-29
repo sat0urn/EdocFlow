@@ -1,13 +1,18 @@
 import {deleteInboxById} from "../../../http/docsApi.js";
 import {useNavigate} from "react-router-dom";
 
-const InboxTableView = ({inboxDocuments}) => {
+const InboxTableView = ({documents}) => {
   const navigate = useNavigate()
 
-  const removeInbox = async (inboxId) => {
-    const data = await deleteInboxById(inboxId)
-    window.location.reload()
-    console.log(data)
+  const removeInbox = (inboxId) => {
+    deleteInboxById(inboxId)
+      .then(() => {
+        window.location.reload()
+        alert('Inbox with id: ' + inboxId + ' has been removed!')
+      })
+      .catch((e) => {
+        console.error(e)
+      })
   }
 
   return (
@@ -23,7 +28,7 @@ const InboxTableView = ({inboxDocuments}) => {
       </tr>
       </thead>
       <tbody>
-      {inboxDocuments.map((inb, index) =>
+      {documents.map((inb, index) =>
         <tr key={index} className={"fw-medium small"}>
           <td className={""}>
             {inb.documentTitle}

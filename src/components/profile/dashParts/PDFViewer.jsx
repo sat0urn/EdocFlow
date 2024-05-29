@@ -68,6 +68,7 @@ const PDFViewer = observer((
   const handleAddingRemark = (e) => {
     e.preventDefault()
     setRemark(inRemark)
+    alert('Remark has been added!')
   }
 
   return (

@@ -11,7 +11,6 @@ const AppRouter = observer(() => {
     const location = useLocation()
 
     useEffect(() => {
-        console.log(window.innerWidth)
         if (location.pathname === '/') {
             document.title = user.isAuth ? (document.title = 'Dashboard') : (document.title = 'Home')
         } else {

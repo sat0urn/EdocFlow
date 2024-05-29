@@ -119,8 +119,7 @@ const ProfileDocViewSign = observer(() => {
         signInboxDocument({
           fileData: buildUpdatedDDC.ddc,
           inboxId: id
-        }).then((data) => {
-          console.log(data)
+        }).then(() => {
           navigate('/inbox')
           window.location.reload()
         }).catch((e) => {
@@ -138,8 +137,7 @@ const ProfileDocViewSign = observer(() => {
     rejectInboxDocument({
       inboxId: id,
       reasonToReject: inRemark
-    }).then((data) => {
-      console.log(data)
+    }).then(() => {
       navigate('/inbox')
       window.location.reload()
     }).catch((e) => {
