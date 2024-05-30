@@ -12,7 +12,7 @@ import org.talos.server.service.PdfDocumentService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/documents")
+@RequestMapping("/api/documents")
 @RequiredArgsConstructor
 public class FileUploadController {
 

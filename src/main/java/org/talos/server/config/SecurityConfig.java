@@ -35,7 +35,6 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .allowCredentials(true);
     }
 
-    //for now give access to any request, later we will develop it for requests login and logout
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http
@@ -44,9 +43,9 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .csrf(AbstractHttpConfigurer::disable)  // Often disabled for APIs, but assess your own need
                 .authorizeHttpRequests(authz ->
                         authz.requestMatchers(
-                                        "/users/login",
-                                        "/users/registration",
-                                        "/department/create"
+                                        "/api/users/login",
+                                        "/api/users/registration",
+                                        "/api/department/create"
                                 )
                                 .permitAll()
                                 .anyRequest()

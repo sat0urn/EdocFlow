@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/inbox")
+@RequestMapping("/api/inbox")
 public class InboxController {
     private final JwtService jwtService;
     private final InboxService inboxService;

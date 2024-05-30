@@ -1,16 +1,18 @@
 package org.talos.server.controller;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.talos.server.dto.DepartmentCreateDto;
 import org.talos.server.service.DepartmentService;
 
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/department")
+@RequestMapping("/api/department")
 public class DepartmentController {
     private final DepartmentService departmentService;
 
