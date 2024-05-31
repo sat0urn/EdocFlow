@@ -57,7 +57,7 @@ const ProfileInbox = observer(() => {
       <div className={"col-lg-9"}>
         <div className={"rounded-pill bg-primary text-white d-flex justify-content-between w-50 p-3"}>
           <div>New and Active documents</div>
-          <div>{'2'} in total</div>
+          <div>{getSearchedDocuments.length} in total</div>
         </div>
 
         <input type="text"
