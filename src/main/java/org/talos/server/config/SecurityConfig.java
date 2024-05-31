@@ -21,15 +21,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableMethodSecurity
 public class SecurityConfig implements WebMvcConfigurer {
 
-    @Value("${CLIENT_APP_ADDRESS}")
-    private String CLIENT_APP_ADDRESS;
+    @Value("${CLIENT_APP_ADDRESSES}")
+    private String CLIENT_APP_ADDRESSES;
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(CLIENT_APP_ADDRESS)
+                .allowedOrigins(CLIENT_APP_ADDRESSES)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")
                 .allowCredentials(true);
