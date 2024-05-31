@@ -1,19 +1,32 @@
 version: "3.8"
 
 services:
+  nginx:
+    image: nginx:latest
+    container_name: webserver
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - webnet
+    depends_on:
+      - database
+      - server
+      - client
+
   database:
     image: mongo:latest
     container_name: database
-    restart: unless-stopped
-    ports:
-      - "27017:27017"
+    expose:
+      - "27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=123456
+    networks:
+      - webnet
     volumes:
       - data:/data/db
-    networks:
-      - main-network
 
   server:
     build:
@@ -21,18 +34,17 @@ services:
       dockerfile: Dockerfile
     image: sat0urn/spring-server:v1.0
     container_name: server
-    restart: on-failure
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     environment:
       - JWT_SECRET_KEY_ENV=5f3b36204951c177117fb5dadbde7f52b38e8688e00047cb1fb83321506b0cd2
-      - CLIENT_APP_ADDRESS_ENV=http://localhost:3000
+      - CLIENT_APP_ADDRESSES_ENV=http://localhost
       - MONGO_DB_USERNAME=root
       - MONGO_DB_PASSWORD=123456
+    networks:
+      - webnet
     depends_on:
       - database
-    networks:
-      - main-network
 
   client:
     build:
@@ -40,19 +52,19 @@ services:
       dockerfile: Dockerfile
     image: sat0urn/react-client:v1.0
     container_name: client
-    restart: always
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     environment:
-      - VITE_SERVER_ADDRESS=http://localhost:8080/
+      - VITE_SERVER_ADDRESS=http://localhost/api
+      - VITE_CLIENT_HOST=localhost
+      - VITE_CLIENT_PROTOCOL=ws
+    networks:
+      - webnet
     depends_on:
       - server
-    networks:
-      - main-network
 
 volumes:
   data:
 
 networks:
-  main-network:
-    name: edoc-flow-network
+  webnet:

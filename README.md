@@ -1,6 +1,6 @@
 # EdocFlow
 
-Electronic Document Management system &#9983;<br/>
+Electronic Document Management system<br/>
 Running app through `docker` & `docker-compose`<br/>
 
 ### TECHNOLOGY STACK USED: 
@@ -12,3 +12,6 @@ Running app through `docker` & `docker-compose`<br/>
 ### SECURED WITH:
 - Spring-Security
 - JWT
+
+### DEPLOYED ON
+- DigitalOcean Droplet
