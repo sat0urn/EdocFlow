@@ -8,10 +8,11 @@ import lombok.*;
 @Setter
 @Builder
 public class DepartmentCreateDto {
-    private String departmentName;
-    private String country;
-    private String city;
-    private String address;
-    private String bin;
-    private String managerIIN;
+    private String companyName;
+    private String companyCountry;
+    private String companyCity;
+    private String companyAddress;
+    private String companyBin;
+    private String companyManagerIIN;
+    private UserRegistrationDto companyManager;
 }
