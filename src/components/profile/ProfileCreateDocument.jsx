@@ -1,10 +1,10 @@
 import {useEffect, useState} from 'react'
 import {allDocFormData} from "../../data/docFormData.js";
-import PDFViewer from './dashParts/PDFViewer.jsx';
+import PDFViewer from './createDocumentParts/PDFViewer.jsx';
 import {PDFDocument, rgb, StandardFonts} from 'pdf-lib'
-import PDFEditor from './dashParts/PDFEditor.jsx';
+import PDFEditor from './createDocumentParts/PDFEditor.jsx';
 
-const ProfileDash = () => {
+const ProfileCreateDocument = () => {
   const [originalPdfBytes, setOriginalPdfBytes] = useState(null)
   const [updatedPdfBytes, setUpdatedPdfBytes] = useState(null)
 
@@ -97,4 +97,4 @@ const ProfileDash = () => {
   )
 }
 
-export default ProfileDash
+export default ProfileCreateDocument

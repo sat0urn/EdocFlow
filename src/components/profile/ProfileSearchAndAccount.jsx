@@ -2,6 +2,7 @@ import {Link} from "react-router-dom";
 import {useContext, useState} from "react";
 import {AuthContext} from "../../context/index.js";
 import {observer} from "mobx-react-lite";
+import Notification from "../../assets/icons/notification.svg"
 
 const ProfileSearchAndAccount = observer(() => {
   const {user, documents} = useContext(AuthContext)
@@ -71,24 +72,21 @@ const ProfileSearchAndAccount = observer(() => {
             )}
           </div>
         </div>
-        <div className={"col-3 d-flex"}>
+        <div className={"col-3 d-flex flex-row"}>
           <div className={"me-3"}>
-            <Link to=""
+            <Link to="#"
                   className={"bg-white shadow rounded-circle text-decoration-none d-inline-flex align-items-center justify-content-center"}
                   style={{width: '40px', height: '40px'}}>
-              <i className={"fa-regular fa-bell"}
-              ></i>
+              <img src={Notification} className={"img-fluid"} alt="notification"/>
             </Link>
           </div>
           <div className={"border-start border-2 ps-3"}>
-            <Link to="/security"
-                  className={"bg-white shadow rounded-circle text-decoration-none d-inline-flex align-items-center justify-content-center me-3"}
-                  style={{width: '40px', height: '40px'}}
-            >
-              <i className="fa-regular fa-user"></i>
-            </Link>
-            <Link to={'/security'} className={"text-decoration-none link-body-emphasis"}>
-              <span className={"fw-bold"}>
+            <Link to="/security" className={"text-decoration-none"}>
+              <div className={"d-inline-flex shadow rounded-circle align-items-center justify-content-center me-3"}
+                   style={{width: '40px', height: '40px'}}>
+                <i className="fa-regular fa-user text-black"></i>
+              </div>
+              <span className={"fw-bold link-body-emphasis"}>
                 {user._user.firstName + ' ' + user._user.lastName}
               </span>
             </Link>

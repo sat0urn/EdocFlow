@@ -3,7 +3,6 @@ import ProfileSideMenu from "../components/profile/ProfileSideMenu.jsx";
 import ProfileSearchAndAccount from "../components/profile/ProfileSearchAndAccount.jsx";
 
 const Profile = () => {
-
   return (
     <section className={"container-fluid min-vh-100 px-0 bg-light"}>
       <div className={"d-flex flex-row"}>

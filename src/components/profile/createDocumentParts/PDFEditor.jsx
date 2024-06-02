@@ -29,7 +29,6 @@ const PDFEditor = (
   useEffect(() => {
     if (updatedPdfBytes) {
       setDataB64(arrayBufferToBase64(updatedPdfBytes))
-      console.log('updatedPdfBytes')
     }
   }, [updatedPdfBytes])
 

@@ -16,7 +16,7 @@ const ProfileAuxWindow = observer(() => {
       </div>
 
       <div className={"text-center"}>
-        <img src={ProfileLogo} alt="" className={"my-4 card-img rounded-circle w-50"}/>
+        <img src={ProfileLogo} alt="" className={"my-4 card-img rounded-circle border border-dark border-opacity-25 p-2 w-50"}/>
         <div className={"fw-bold"}>
           Welcome back, {user._user.firstName}
         </div>
@@ -35,11 +35,11 @@ const ProfileAuxWindow = observer(() => {
                  aria-valuenow={historyDocsLength}
                  aria-valuemin="0"
                  aria-valuemax="100"
-                 style={{height: '40px'}}>
+                 style={{height: '45px'}}>
               <div className="progress-bar bg-success rounded-end-3" style={{width: historyDocsLength + '%'}}></div>
             </div>
             <button type={'button'}
-                    className={'btn btn-primary w-100 rounded-4'}
+                    className={'btn btn-primary w-100 py-2 rounded-4'}
                     onClick={() => navigate('/')}
             >
               Create new document

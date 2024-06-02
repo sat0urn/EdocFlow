@@ -29,14 +29,6 @@ const updatePassword = async (
   return response.data
 }
 
-const registerBusiness = async (
-  businessForm
-) => {
-  const {data} = await $host.post('/users/registerBusiness', businessForm)
-  localStorage.setItem('token', data.token)
-  return jwtDecode(data.token)
-}
-
 const getAllEmails = async () => {
   const response = await $authHost.get(
     '/users/getAllEmails'
@@ -53,7 +45,6 @@ const check = async () => {
 export {
   registration,
   login,
-  registerBusiness,
   updatePassword,
   check,
   getAllEmails

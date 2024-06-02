@@ -152,20 +152,20 @@ const ProfileDocViewSign = observer(() => {
 
   return (
     <div className={"row"}>
-      <div className="col-lg-9">
-        <Link to={(user._user.sub === senderInfo.email) ? '/outbox' : '/inbox'}
+      <div className={"col-lg-9"}>
+        <Link to={(user.user.sub === senderInfo.email) ? '/outbox' : '/inbox'}
               className={"rounded-pill bg-primary d-inline-flex align-items-center p-2 text-decoration-none"}>
           <div className={"bg-white shadow rounded-circle d-inline-flex align-items-center justify-content-center"}
                style={{width: '40px', height: '40px'}}>
             <i className={"fa-solid fa-arrow-left"}></i>
           </div>
           <div className={"text-white mx-4"}>
-            Return to <span>{(user._user.sub === senderInfo.email) ? 'Outbox' : 'Inbox'}</span>
+            Return to <span>{(user.user.sub === senderInfo.email) ? 'Outbox' : 'Inbox'}</span>
           </div>
         </Link>
         <div className={"card border-0 rounded-4 shadow-sm p-5 my-4"}>
           {(status === 'REJECTED') ?
-            ((user._user.sub === senderInfo.email) &&
+            ((user.user.sub === senderInfo.email) &&
               <div className={"fw-light opacity-75 text-center"}>
                 <div className={"text-danger"}>
                   Rejected <br/>

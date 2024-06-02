@@ -1,0 +1,4 @@
+export const INDEPENDENT_USER = 'INDEPENDENT_USER'
+export const OFFICE_MANAGER = 'OFFICE_MANAGER'
+export const EMPLOYEE = 'EMPLOYEE'
+export const ADMIN = 'ADMIN'
