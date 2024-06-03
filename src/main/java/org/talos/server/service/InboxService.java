@@ -1,9 +1,6 @@
 package org.talos.server.service;
 
-import org.talos.server.dto.AllInboxesDto;
-import org.talos.server.dto.InboxCreateDto;
-import org.talos.server.dto.InboxDto;
-import org.talos.server.dto.InboxRejectDto;
+import org.talos.server.dto.inboxes_dto.*;
 import org.talos.server.entity.Inbox;
 import org.talos.server.entity.User;
 
@@ -13,18 +10,18 @@ import java.util.Optional;
 public interface InboxService {
     void createInbox(InboxCreateDto inboxCreateDto, String senderEmail);
 
-    List<AllInboxesDto> getInboxesByReceiver(User userReceiver);
+    List<AllInboxesDto> getInboxesByReceiver(String receiverEmail);
 
-    InboxDto getInboxByIdAndUserEmail(String inboxId, String receiverEmail);
+    InboxDto getInboxByIdAndUserEmail(String inboxId, String receiverEmail) throws IllegalAccessException;
 
     Optional<Inbox> getInboxById(String inboxId);
 
-    void rejectDocument(InboxRejectDto rejectDocumentDto);
+    void rejectDocument(InboxRejectDto rejectDocumentDto,String email) throws IllegalAccessException;
 
 
-    void deleteInboxById(String id);
+    void deleteInboxById(String id,String userEmail) throws IllegalAccessException;
 
-    List<AllInboxesDto> getAllSendInboxes(User user);
+    List<AllSendInboxesDto> getAllSendInboxes(User user);
 
-    Inbox signInbox(String inboxId, byte[] fileData);
+    Inbox signInbox(String inboxId, byte[] fileData,String signerEmail) throws IllegalAccessException;
 }

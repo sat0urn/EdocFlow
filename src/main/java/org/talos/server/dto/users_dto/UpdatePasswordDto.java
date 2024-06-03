@@ -1,4 +1,4 @@
-package org.talos.server.dto;
+package org.talos.server.dto.users_dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class UserLoginDto {
-    private String email;
-    private String password;
+public class UpdatePasswordDto {
+    private String oldPassword;
+    private String newPassword;
 }

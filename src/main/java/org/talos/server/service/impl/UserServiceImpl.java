@@ -3,15 +3,13 @@ package org.talos.server.service.impl;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.talos.server.config.JwtService;
-import org.talos.server.dto.SelectUsersToSignDto;
-import org.talos.server.dto.UserLoginDto;
-import org.talos.server.dto.UserRegistrationDto;
+import org.talos.server.dto.users_dto.SelectUsersToSignDto;
+import org.talos.server.dto.users_dto.UserLoginDto;
+import org.talos.server.dto.users_dto.UserRegistrationDto;
 import org.talos.server.entity.Department;
 import org.talos.server.entity.Role;
 import org.talos.server.entity.User;
@@ -155,10 +153,10 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void saveUsersPdf(String documentId, String userId) {
-    Optional<User> userSender = userRepository.findById(userId);
+  public void saveUsersPdf(String documentId, String userEmail) {
+    Optional<User> userSender = userRepository.findUserByEmail(userEmail);
     if (userSender.isEmpty())
-      throw new DataNotFoundException("user not found by id {}" + userId);
+      throw new DataNotFoundException("user not found by email {}" + userEmail);
     List<String> senderDocuments = userSender.get().getDocumentIds();
     senderDocuments.add(documentId);
     userSender.get().setDocumentIds(senderDocuments);

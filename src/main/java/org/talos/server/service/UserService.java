@@ -1,8 +1,8 @@
 package org.talos.server.service;
 
-import org.talos.server.dto.SelectUsersToSignDto;
-import org.talos.server.dto.UserLoginDto;
-import org.talos.server.dto.UserRegistrationDto;
+import org.talos.server.dto.users_dto.SelectUsersToSignDto;
+import org.talos.server.dto.users_dto.UserLoginDto;
+import org.talos.server.dto.users_dto.UserRegistrationDto;
 import org.talos.server.entity.Department;
 import org.talos.server.entity.User;
 import org.talos.server.responses.AuthenticationResponse;
@@ -27,5 +27,5 @@ public interface UserService {
 
     public void updateUser(User existingUser);
 
-    void saveUsersPdf(String documentId, String userId);
+    void saveUsersPdf(String documentId, String userEmail);
 }

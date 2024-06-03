@@ -1,6 +1,6 @@
 package org.talos.server.service;
 
-import org.talos.server.dto.PDFDocumentDto;
+import org.talos.server.dto.document_dto.PDFDocumentDto;
 import org.talos.server.entity.Inbox;
 import org.talos.server.entity.PDFDocument;
 

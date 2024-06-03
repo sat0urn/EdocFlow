@@ -1,14 +1,15 @@
 package org.talos.server.controller;
 
 import io.jsonwebtoken.Claims;
-import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.talos.server.config.JwtService;
-import org.talos.server.dto.*;
 
+import org.talos.server.dto.inboxes_dto.*;
+import org.talos.server.entity.DocumentStatus;
 import org.talos.server.entity.Inbox;
+import org.talos.server.entity.InboxReceivers;
 import org.talos.server.entity.User;
 import org.talos.server.exception.DataNotFoundException;
 import org.talos.server.service.InboxService;
@@ -37,7 +38,7 @@ public class InboxController {
     }
 
     @GetMapping("/send/getAll")
-    public List<AllInboxesDto> getAllSend(@RequestHeader("Authorization") String authHeader) {
+    public List<AllSendInboxesDto> getAllSend(@RequestHeader("Authorization") String authHeader) {
         String senderEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
         Optional<User> userSender = userService.getUserByEmail(senderEmail);
         if (userSender.isEmpty())
@@ -52,12 +53,12 @@ public class InboxController {
         if (userReceiver.isEmpty())
             throw new DataNotFoundException("User receiver by email" + receiverEmail + ", does not exist");
 
-        return inboxService.getInboxesByReceiver(userReceiver.get());
+        return inboxService.getInboxesByReceiver(receiverEmail);
     }
 
     @GetMapping("/get/{id}")
     public InboxDto getInboxById(@RequestHeader("Authorization") String authHeader,
-                                 @PathVariable("id") String inboxId) {
+                                 @PathVariable("id") String inboxId) throws IllegalAccessException {
         String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
 
         return inboxService.getInboxByIdAndUserEmail(inboxId, receiverEmail);
@@ -66,27 +67,41 @@ public class InboxController {
 
     //here Aslan should provide signed document into inboxDto
     @PostMapping("/sign")
-    public ResponseEntity<?> acceptInbox(@RequestBody InboxToDocumentDto inboxToDocumentDto) {
-        Inbox inbox = inboxService.signInbox(inboxToDocumentDto.getInboxId(), inboxToDocumentDto.getFileData());
+    public ResponseEntity<?> acceptInbox(@RequestBody InboxToDocumentDto inboxToDocumentDto,
+                                         @RequestHeader("Authorization") String authHeader) throws IllegalAccessException {
+        String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+        Inbox inbox = inboxService.signInbox(inboxToDocumentDto.getInboxId(),
+                inboxToDocumentDto.getFileData(),receiverEmail);
+
+        if(inbox.getPdfDocument().getStatus().equals(DocumentStatus.COMPLETED)) {
+            String documentId = pdfDocumentService.savePdfDocument(inbox, inboxToDocumentDto.getFileData());
+            userService.saveUsersPdf(documentId, inbox.getSender().getEmail());
+            for(InboxReceivers inboxReceiver : inbox.getReceivers())
+            {
+                userService.saveUsersPdf(documentId, inboxReceiver.getUserEmail());
+            }
+
+        }
 
 
-        String documentId = pdfDocumentService.savePdfDocument(inbox, inboxToDocumentDto.getFileData());
 
 
-        userService.saveUsersPdf(documentId, inbox.getSender().getId());
-        userService.saveUsersPdf(documentId, inbox.getReceiver().getId());
         return ResponseEntity.ok("document signed successfully");
     }
 
     @PostMapping("/reject")
-    public ResponseEntity<?> rejectDocument(@RequestBody InboxRejectDto rejectDocumentDto) {
-        inboxService.rejectDocument(rejectDocumentDto);
+    public ResponseEntity<?> rejectDocument(@RequestBody InboxRejectDto rejectDocumentDto,
+                                            @RequestHeader("Authorization") String authHeader) throws IllegalAccessException {
+        String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+        inboxService.rejectDocument(rejectDocumentDto,receiverEmail);
         return ResponseEntity.ok("document rejected successfully");
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteInbox(@PathVariable("id") String id) {
-        inboxService.deleteInboxById(id);
+    public ResponseEntity<?> deleteInbox(@PathVariable("id") String id,
+                                         @RequestHeader("Authorization") String authHeader) throws IllegalAccessException {
+        String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+        inboxService.deleteInboxById(id,receiverEmail);
         return ResponseEntity.ok("inbox deleted successfully");
     }
 }

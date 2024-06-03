@@ -1,4 +1,4 @@
-package org.talos.server.dto;
+package org.talos.server.dto.document_dto;
 
 import lombok.AllArgsConstructor;
 import org.talos.server.entity.DocumentStatus;

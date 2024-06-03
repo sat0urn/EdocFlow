@@ -1,6 +1,8 @@
-package org.talos.server.dto;
+package org.talos.server.dto.inboxes_dto;
 
 import lombok.*;
+
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,5 +13,5 @@ public class InboxCreateDto {
     private String name;
     private byte[] fileData;
     private String remark;
-    private String receiverEmail;
+    private List<String> receiversEmail;
 }

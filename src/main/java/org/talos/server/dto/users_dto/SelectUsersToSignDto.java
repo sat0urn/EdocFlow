@@ -1,4 +1,4 @@
-package org.talos.server.dto;
+package org.talos.server.dto.users_dto;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;

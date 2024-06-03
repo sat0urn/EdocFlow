@@ -1,4 +1,4 @@
-package org.talos.server.dto;
+package org.talos.server.dto.inboxes_dto;
 
 import lombok.*;
 

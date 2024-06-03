@@ -2,91 +2,173 @@ package org.talos.server.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.talos.server.dto.*;
-import org.talos.server.entity.DocumentStatus;
-import org.talos.server.entity.Inbox;
-import org.talos.server.entity.PDFDocument;
-import org.talos.server.entity.User;
+import org.talos.server.dto.document_dto.PDFDocumentDto;
+import org.talos.server.dto.inboxes_dto.*;
+import org.talos.server.entity.*;
 import org.talos.server.exception.DataNotFoundException;
 import org.talos.server.repository.InboxRepository;
+import org.talos.server.repository.UserRepository;
 import org.talos.server.service.InboxService;
-import org.talos.server.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class InboxServiceImpl implements InboxService {
     private final InboxRepository inboxRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
+    Logger logger = Logger.getLogger(InboxService.class.getName());
 
     @Override
     public void createInbox(InboxCreateDto inboxCreateDto, String senderEmail) {
+        if (inboxCreateDto == null) {
+            throw new IllegalArgumentException("InboxCreateDto cannot be null");
+        }
+
+        if (senderEmail == null || senderEmail.isEmpty()) {
+            throw new IllegalArgumentException("Sender email cannot be null or empty");
+        }
+
+
         LocalDateTime currentDateTime = LocalDateTime.now();
-        var pdfDocument = PDFDocument.builder()
+
+        // Validate and create PDFDocument
+        PDFDocument pdfDocument = PDFDocument.builder()
                 .name(inboxCreateDto.getName())
                 .fileData(inboxCreateDto.getFileData())
                 .createdTime(String.valueOf(currentDateTime))
-                .status(DocumentStatus.OnPROCESS)
+                .status(DocumentStatus.WAITING)
                 .build();
-        String receiver = inboxCreateDto.getReceiverEmail();
-        Optional<User> userSender = userService.getUserByEmail(senderEmail);
-        if (userSender.isEmpty())
-            throw new DataNotFoundException("User by email " + senderEmail + ", does not exist");
 
-        Optional<User> userReceiver = userService.getUserByEmail(receiver);
-        if (userReceiver.isEmpty())
-            throw new DataNotFoundException("User by email " + receiver + ", does not exist");
+        // Fetch sender user
+        Optional<User> senderOptional = userRepository.findUserByEmail(senderEmail);
+        if (senderOptional.isEmpty()) {
+            throw new DataNotFoundException("User with email " + senderEmail + " does not exist");
+        }
+        User sender = senderOptional.get();
 
-        Inbox inbox = Inbox.builder().pdfDocument(pdfDocument)
-                .receiver(userReceiver.get())
-                .sender(userSender.get())
+        // Fetch receiver users
+        List<String> receiverEmails = inboxCreateDto.getReceiversEmail();
+        if (receiverEmails == null || receiverEmails.isEmpty()) {
+            throw new DataNotFoundException("Receiver emails are empty");
+        }
+
+/*        // Validate email formats
+        Pattern emailPattern = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
+        for (String email : receiverEmails) {
+            if (!emailPattern.matcher(email).matches()) {
+                throw new IllegalArgumentException("Invalid email format: " + email);
+            }
+        }*/
+
+        //to validate that user email exist in the system
+        List<User> receivers = userRepository.findByEmails(receiverEmails);
+        if (receivers.isEmpty()) {
+            throw new DataNotFoundException("No valid receivers found for provided emails");
+        }
+
+        // Create sign processes
+        List<InboxReceivers> signProcesses = new ArrayList<>();
+        for (User receiver : receivers) {
+            signProcesses.add(InboxReceivers.builder()
+                    .date(String.valueOf(currentDateTime))
+                    .documentStatus(DocumentStatus.WAITING)
+                    .userEmail(receiver.getEmail())
+                    .build());
+        }
+
+        // Set first user as signing
+        if (!signProcesses.isEmpty()) {
+            signProcesses.get(0).setDocumentStatus(DocumentStatus.SIGNING);
+        }
+
+        // Create and save Inbox
+        Inbox inbox = Inbox.builder()
+                .pdfDocument(pdfDocument)
+                .receivers(signProcesses)
+                .sender(sender)
                 .build();
         inboxRepository.save(inbox);
+
+        logger.info("Inbox created successfully with ID: " + inbox.getId());
     }
 
     @Override
-    public List<AllInboxesDto> getInboxesByReceiver(User userReceiver) {
-        List<Inbox> inboxes = inboxRepository.findAllByReceiverId(userReceiver.getId());
-        return inboxes.stream().map(inbox -> AllInboxesDto.builder()
-                        .inboxId(inbox.getId())
-                        .documentStatus(inbox.getPdfDocument().getStatus())
-                        .senderEmail(inbox.getSender().getEmail())
-                        .createdDate(inbox.getPdfDocument().getCreatedTime())
-                        .documentTitle(inbox.getPdfDocument().getName())
-                        .build()
-                )
+    public List<AllInboxesDto> getInboxesByReceiver(String receiverEmail) {
+        // on this method receiver only can see sender email, but cannot see who
+        // also will participate on signing process
+
+        List<Inbox> inboxes = inboxRepository.findAllByReceiverEmail(receiverEmail);
+        return inboxes.stream()
+                .map(inbox -> {
+                    Optional<InboxReceivers> matchingSignProcess = inbox.getReceivers().stream()
+                            .filter(inboxReceivers -> inboxReceivers.getUserEmail().equals(receiverEmail))
+                            .findFirst();
+
+                    DocumentStatus documentStatus = matchingSignProcess
+                            .map(InboxReceivers::getDocumentStatus)
+                            .orElse(null); // or handle the case where it is not found
+
+                    return AllInboxesDto.builder()
+                            .inboxId(inbox.getId())
+                            .documentStatus(documentStatus)
+                            .senderEmail(inbox.getSender().getEmail())
+                            .createdDate(inbox.getPdfDocument().getCreatedTime())
+                            .documentTitle(inbox.getPdfDocument().getName())
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
     @Override
-    public InboxDto getInboxByIdAndUserEmail(String inboxId, String email) {
-        Optional<Inbox> inbox = inboxRepository.findById(inboxId);
-        if (inbox.isEmpty())
+    public InboxDto getInboxByIdAndUserEmail(String inboxId, String email) throws IllegalAccessException {
+        Optional<Inbox> optionalInbox = inboxRepository.findById(inboxId);
+        if (optionalInbox.isEmpty())
             throw new DataNotFoundException("Inbox with id " + inboxId + " does not exist in the system ");
+        Inbox inbox = optionalInbox.get();
 
-        if (inbox.get().getReceiver().getEmail().equals(email) ||
-                inbox.get().getSender().getEmail().equals(email)) {
-            InboxDto inboxDto = InboxDto.builder()
-                    .inboxId(inboxId)
-                    .pdfDocumentDto(PDFDocumentDto.builder()
-                            .createdTime(inbox.get().getPdfDocument().getCreatedTime())
-                            .fileData(inbox.get().getPdfDocument().getFileData())
-                            .name(inbox.get().getPdfDocument().getName())
-                            .status(inbox.get().getPdfDocument().getStatus()).build())
-                    .sender(inbox.get().getSender())
-                    .build();
+        Optional<InboxReceivers> receiverOptional = inbox.getReceivers().stream().filter(inboxReceivers ->
+                        inboxReceivers.getUserEmail().equals(email))
+                .findFirst();
+        if(receiverOptional.isEmpty())
+            throw new IllegalAccessException("User by email {}" + email +
+                    ", has not access to inbox by id{}" + inboxId);
+
+        //checking that user has access to sign this document
+    /*    for(SignProcess signProcess : inbox.getReceivers())
+        {
+            if(email.equals(signProcess.getUserEmail()) &&
+                    !signProcess.getDocumentStatus().equals(DocumentStatus.SIGNING))
+                throw new IllegalAccessException("User by email {}" + email +
+                        ", does not have access to sign this document");
+
+        }*/
+
+
+        InboxDto inboxDto = InboxDto.builder()
+                .inboxId(inboxId)
+                .pdfDocumentDto(PDFDocumentDto.builder()
+                        .createdTime(inbox.getPdfDocument().getCreatedTime())
+                        .fileData(inbox.getPdfDocument().getFileData())
+                        .name(inbox.getPdfDocument().getName())
+                        .status(inbox.getPdfDocument().getStatus()).build())
+                .sender(inbox.getSender())
+                .receivers(inbox.getReceivers())
+                .build();
 
             if (inboxDto.getPdfDocumentDto().getStatus().equals(DocumentStatus.REJECTED))
-                inboxDto.setRemark(inbox.get().getRejectReason());
+                inboxDto.setRemark(inbox.getRejectReason());
 
             return inboxDto;
         }
-        return null;
-    }
+
+
 
     @Override
     public Optional<Inbox> getInboxById(String inboxId) {
@@ -94,32 +176,83 @@ public class InboxServiceImpl implements InboxService {
     }
 
     @Override
-    public void rejectDocument(InboxRejectDto rejectDocumentDto) {
-        Optional<Inbox> inbox = inboxRepository.findById(rejectDocumentDto.getInboxId());
-        if (inbox.isEmpty())
-            throw new DataNotFoundException("Inbox by id {}" + rejectDocumentDto.getInboxId() + ", does not exist");
-        //here some validation
-        inbox.get().setRejectReason(rejectDocumentDto.getReasonToReject());
-        inbox.get().getPdfDocument().setStatus(DocumentStatus.REJECTED);
-        inboxRepository.save(inbox.get());
+    public void rejectDocument(InboxRejectDto rejectDocumentDto, String email) throws IllegalAccessException {
+        Optional<Inbox> optionalInbox = inboxRepository.findById(rejectDocumentDto.getInboxId());
+        if (optionalInbox.isEmpty()) {
+            throw new DataNotFoundException("Inbox by id " + rejectDocumentDto.getInboxId() + " does not exist");
+        }
+
+        Inbox inbox = optionalInbox.get();
+
+        // Initialize AtomicBoolean for thread-safe updating within the stream
+        AtomicBoolean foundAndUpdated = new AtomicBoolean(false);
+
+        // Find and update the SignProcess for the given email
+        List<InboxReceivers> updatedSignProcesses = inbox.getReceivers().stream().map(signProcess -> {
+            if (signProcess.getUserEmail().equals(email)) {
+                signProcess.setDocumentStatus(DocumentStatus.REJECTED);
+                foundAndUpdated.set(true); // Update flag using AtomicBoolean
+            }
+            return signProcess;
+        }).collect(Collectors.toList());
+
+        if (!foundAndUpdated.get()) { // Check the flag using AtomicBoolean
+            throw new IllegalAccessException("User by email " + email + " does not have access to reject this document");
+        }
+
+        // Update the list of receivers in the inbox
+        inbox.setReceivers(updatedSignProcesses);
+
+        // Set the reject reason and update the document status to REJECTED
+        inbox.setRejectReason(rejectDocumentDto.getReasonToReject());
+        inbox.getPdfDocument().setStatus(DocumentStatus.REJECTED);
+
+        // Save the updated Inbox
+        inboxRepository.save(inbox);
     }
 
 
+
+
+
     @Override
-    public void deleteInboxById(String inboxId) {
-        Optional<Inbox> inbox = inboxRepository.findById(inboxId);
-        if (inbox.isEmpty())
+    public void deleteInboxById(String inboxId,String userEmail) throws IllegalAccessException {
+        Optional<Inbox> inboxOptional = inboxRepository.findById(inboxId);
+        if (inboxOptional.isEmpty())
             throw new DataNotFoundException("Inbox by id {}" + inboxId + ", does not exist");
-        inboxRepository.delete(inbox.get());
+
+        Inbox inbox = inboxOptional.get();
+
+        // Initialize AtomicBoolean for thread-safe updating within the stream
+        AtomicBoolean foundAndUpdated = new AtomicBoolean(false);
+
+        // Find and update the SignProcess for the given email
+        List<InboxReceivers> updatedSignProcesses = inbox.getReceivers().stream().map(signProcess -> {
+            if (signProcess.getUserEmail().equals(userEmail)) {
+                inbox.getReceivers().remove(signProcess);
+                foundAndUpdated.set(true); // Update flag using AtomicBoolean
+            }
+            return signProcess;
+        }).collect(Collectors.toList());
+
+        if (!foundAndUpdated.get()) { // Check the flag using AtomicBoolean
+            throw new IllegalAccessException("User by email " + userEmail + " does not have access to reject this document");
+        }
+
+        // Update the list of receivers in the inbox
+        inbox.setReceivers(updatedSignProcesses);
+        // Save the updated Inbox
+        inboxRepository.save(inbox);
+
     }
 
     @Override
-    public List<AllInboxesDto> getAllSendInboxes(User user) {
+    public List<AllSendInboxesDto> getAllSendInboxes(User user) {
         List<Inbox> inboxes = inboxRepository.findAllBySenderId(user.getId());
-        return inboxes.stream().map(inbox -> AllInboxesDto.builder()
+        return inboxes.stream().map(inbox -> AllSendInboxesDto.builder()
                         .inboxId(inbox.getId())
                         .documentStatus(inbox.getPdfDocument().getStatus())
-                        .senderEmail(inbox.getReceiver().getEmail())
+                        .receivers(inbox.getReceivers())
                         .createdDate(inbox.getPdfDocument().getCreatedTime())
                         .documentTitle(inbox.getPdfDocument().getName())
                         .build()
@@ -128,13 +261,62 @@ public class InboxServiceImpl implements InboxService {
     }
 
     @Override
-    public Inbox signInbox(String inboxId, byte[] fileData) {
-        Optional<Inbox> inbox = inboxRepository.findById(inboxId);
-        if (inbox.isEmpty())
-            throw new DataNotFoundException("Inbox by id {}" + inboxId + ", does not exist");
-        inbox.get().getPdfDocument().setStatus(DocumentStatus.ACCEPTED);
-        inbox.get().getPdfDocument().setFileData(fileData);
-        inboxRepository.save(inbox.get());
-        return inbox.get();
+    public Inbox signInbox(String inboxId, byte[] fileData, String signerEmail) throws IllegalAccessException {
+        Optional<Inbox> optionalInbox = inboxRepository.findById(inboxId);
+        if (optionalInbox.isEmpty()) {
+            throw new DataNotFoundException("Inbox by id " + inboxId + " does not exist");
+        }
+        Inbox inbox = optionalInbox.get();
+
+        if(inbox.getPdfDocument().getStatus().equals(DocumentStatus.REJECTED))
+        {
+            throw new IllegalAccessException("Inbox by +" + inboxId + ", is rejected");
+        }
+
+        // Find the matching SignProcess for the signerEmail
+        InboxReceivers matchingSignProcess = inbox.getReceivers().stream()
+                .filter(signProcess -> signProcess.getUserEmail().equals(signerEmail))
+                .findFirst()
+                .orElseThrow(() -> new IllegalAccessException("User by email " + signerEmail +
+                        " does not have access to sign this document"));
+
+        // Check if the current status is SIGNING
+        if (!matchingSignProcess.getDocumentStatus().equals(DocumentStatus.SIGNING)) {
+            throw new IllegalAccessException("User by email " + signerEmail +
+                    " does not have access to sign this document");
+        }
+
+        // Update the current signer's status to ACCEPTED
+        matchingSignProcess.setDocumentStatus(DocumentStatus.ACCEPTED);
+
+        // Find the index of the current SignProcess
+        int currentIndex = inbox.getReceivers().indexOf(matchingSignProcess);
+        int nextIndex = currentIndex + 1;
+
+        // Update the next signer's status to SIGNING if they exist
+        if (nextIndex < inbox.getReceivers().size()) {
+            inbox.getReceivers().get(nextIndex).setDocumentStatus(DocumentStatus.SIGNING);
+        }
+
+        // Check if all signers have accepted
+        boolean allAccepted = inbox.getReceivers().stream()
+                .allMatch(signProcess -> signProcess.getDocumentStatus() == DocumentStatus.ACCEPTED);
+
+        // Update the document's status based on allAccepted
+        if (allAccepted) {
+            inbox.getPdfDocument().setStatus(DocumentStatus.COMPLETED);
+            inboxRepository.save(inbox);
+            return inbox;
+        } else {
+            inbox.getPdfDocument().setStatus(DocumentStatus.WAITING);
+        }
+
+        // Update the document with the signed file data
+        inbox.getPdfDocument().setFileData(fileData);
+
+        // Save the updated Inbox
+        inboxRepository.save(inbox);
+        return inbox;
     }
+
 }

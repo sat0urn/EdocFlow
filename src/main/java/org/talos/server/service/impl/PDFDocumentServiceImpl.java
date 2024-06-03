@@ -3,7 +3,7 @@ package org.talos.server.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.talos.server.config.JwtService;
-import org.talos.server.dto.PDFDocumentDto;
+import org.talos.server.dto.document_dto.PDFDocumentDto;
 import org.talos.server.entity.DocumentStatus;
 import org.talos.server.entity.Inbox;
 import org.talos.server.entity.PDFDocument;
@@ -13,8 +13,6 @@ import org.talos.server.repository.PdfDocumentRepository;
 import org.talos.server.repository.UserRepository;
 import org.talos.server.service.PdfDocumentService;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.talos.server.dto.PDFDocumentDto;
+import org.talos.server.dto.document_dto.PDFDocumentDto;
 import org.talos.server.entity.DocumentStatus;
 import org.talos.server.entity.PDFDocument;
 import org.talos.server.service.PdfDocumentService;

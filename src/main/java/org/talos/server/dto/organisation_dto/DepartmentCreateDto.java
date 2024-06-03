@@ -1,6 +1,7 @@
-package org.talos.server.dto;
+package org.talos.server.dto.organisation_dto;
 
 import lombok.*;
+import org.talos.server.dto.users_dto.UserRegistrationDto;
 
 @Data
 @AllArgsConstructor
