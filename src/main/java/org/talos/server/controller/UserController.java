@@ -47,7 +47,12 @@ public class UserController {
     public ResponseEntity<AuthenticationResponse> login(
             @RequestBody UserLoginDto userLoginDto
     ) {
-        return ResponseEntity.ok(userService.loginUser(userLoginDto));
+        AuthenticationResponse authenticationResponse = userService.loginUser(userLoginDto);
+        if (authenticationResponse.getToken().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } else {
+            return ResponseEntity.ok(authenticationResponse);
+        }
     }
 
     @GetMapping("/auth")
@@ -96,6 +101,6 @@ public class UserController {
             @RequestHeader("Authorization") String authHeader
     ) {
         String email = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
-        return userService.getAllUsersEmailsExceptYours(email);
+        return userService.getAllUsersEmails(email);
     }
 }

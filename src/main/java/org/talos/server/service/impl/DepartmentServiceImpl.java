@@ -36,13 +36,14 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .token("WARN_USER_EXISTS")
                 .build();
       }
+
       UserRegistrationDto officeManager = departmentCreateDto.getCompanyManager();
       var user = User.builder()
               .firstName(officeManager.getFirstName())
               .lastName(officeManager.getLastName())
               .phoneNumber(officeManager.getPhoneNumber())
-              .country(officeManager.getCountry())
-              .city(officeManager.getCity())
+              .country(departmentCreateDto.getCompanyCountry())
+              .city(departmentCreateDto.getCompanyCity())
               .email(officeManager.getEmail())
               .password(passwordEncoder.encode(officeManager.getPassword()))
               .role(Role.OFFICE_MANAGER)

@@ -23,7 +23,7 @@ public interface UserService {
 
     public List<SelectUsersToSignDto> getAllUsersByDepartment(Department department);
 
-    List<String> getAllUsersEmailsExceptYours(String email);
+    List<String> getAllUsersEmails(String email);
 
     public void updateUser(User existingUser);
 

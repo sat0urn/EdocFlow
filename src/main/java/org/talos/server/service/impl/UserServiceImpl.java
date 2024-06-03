@@ -3,6 +3,7 @@ package org.talos.server.service.impl;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +16,7 @@ import org.talos.server.entity.Department;
 import org.talos.server.entity.Role;
 import org.talos.server.entity.User;
 import org.talos.server.exception.DataNotFoundException;
+import org.talos.server.repository.DepartmentRepository;
 import org.talos.server.repository.UserRepository;
 import org.talos.server.responses.AuthenticationResponse;
 import org.talos.server.service.UserService;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
+  private final DepartmentRepository departmentRepository;
   private final PasswordEncoder passwordEncoder;
 
   private final JwtService jwtService;
@@ -81,23 +84,53 @@ public class UserServiceImpl implements UserService {
             )
     );
 
-    var user = userRepository.findUserByEmail(loginDTO.getEmail())
-            .orElseThrow(() ->
-                    new UsernameNotFoundException("User not found")
-            );
+    var checkUser = userRepository.findUserByEmail(loginDTO.getEmail());
+    if (checkUser.isPresent()) {
 
-    var jwtToken = jwtService.generateToken(Map.of(
-            "firstName", user.getFirstName(),
-            "lastName", user.getLastName(),
-            "phoneNumber", user.getPhoneNumber(),
-            "country", user.getCountry(),
-            "city", user.getCity(),
-            "role", user.getRole()
-    ), user);
+      String jwtToken = "";
 
-    return AuthenticationResponse.builder()
-            .token(jwtToken)
-            .build();
+      User user = checkUser.get();
+
+      switch (user.getRole()) {
+        case OFFICE_MANAGER:
+          var checkDepartment = departmentRepository.findDepartmentByManagerID(user.getId());
+          if (checkDepartment.isEmpty()) {
+            throw new DataNotFoundException("Department not found");
+          }
+          jwtToken = jwtService.generateToken(Map.of(
+                  "companyBin", checkDepartment.get().getBin(),
+                  "companyName", checkDepartment.get().getDepartmentName(),
+                  "firstName", user.getFirstName(),
+                  "lastName", user.getLastName(),
+                  "phoneNumber", user.getPhoneNumber(),
+                  "country", user.getCountry(),
+                  "city", user.getCity(),
+                  "role", user.getRole()
+          ), user);
+          break;
+        case EMPLOYEE:
+          break;
+        case ADMIN:
+          break;
+        default:
+          jwtToken = jwtService.generateToken(Map.of(
+                  "firstName", user.getFirstName(),
+                  "lastName", user.getLastName(),
+                  "phoneNumber", user.getPhoneNumber(),
+                  "country", user.getCountry(),
+                  "city", user.getCity(),
+                  "role", user.getRole()
+          ), user);
+      }
+
+      return AuthenticationResponse.builder()
+              .token(jwtToken)
+              .build();
+    } else {
+      return AuthenticationResponse.builder()
+              .token("")
+              .build();
+    }
   }
 
   @Override
@@ -155,10 +188,11 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public List<String> getAllUsersEmailsExceptYours(String yourEmail) {
+  public List<String> getAllUsersEmails(String email) {
     List<User> onlyEmails = userRepository.findAllEmails();
     return onlyEmails.stream()
             .map(User::getEmail)
+            .filter(e -> !e.equals(email))
             .toList();
   }
 }

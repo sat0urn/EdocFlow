@@ -21,42 +21,42 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableMethodSecurity
 public class SecurityConfig implements WebMvcConfigurer {
 
-    @Value("${CLIENT_APP_ADDRESSES}")
-    private String CLIENT_APP_ADDRESSES;
-    private final JwtAuthenticationFilter jwtAuthFilter;
-    private final AuthenticationProvider authenticationProvider;
+  @Value("${CLIENT_APP_ADDRESSES}")
+  private String CLIENT_APP_ADDRESSES;
+  private final JwtAuthenticationFilter jwtAuthFilter;
+  private final AuthenticationProvider authenticationProvider;
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins(CLIENT_APP_ADDRESSES)
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-                .allowedHeaders("*")
-                .allowCredentials(true);
-    }
+  @Override
+  public void addCorsMappings(CorsRegistry registry) {
+    registry.addMapping("/**")
+            .allowedOrigins(CLIENT_APP_ADDRESSES)
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+            .allowedHeaders("*")
+            .allowCredentials(true);
+  }
 
-    @Bean
-    public SecurityFilterChain filterChain(
-            HttpSecurity http
-    ) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)  // Often disabled for APIs, but assess your own need
-                .authorizeHttpRequests(authz ->
-                        authz.requestMatchers(
-                                        "/api/users/login",
-                                        "/api/users/registration",
-                                        "/api/department/create"
-                                )
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
-                )
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+  @Bean
+  public SecurityFilterChain filterChain(
+          HttpSecurity http
+  ) throws Exception {
+    http
+            .csrf(AbstractHttpConfigurer::disable)  // Often disabled for APIs, but assess your own need
+            .authorizeHttpRequests(authz ->
+                    authz.requestMatchers(
+                                    "/api/users/login",
+                                    "/api/users/registration",
+                                    "/api/department/create"
+                            )
+                            .permitAll()
+                            .anyRequest()
+                            .authenticated()
+            )
+            .sessionManagement(session ->
+                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+    return http.build();
+  }
 }

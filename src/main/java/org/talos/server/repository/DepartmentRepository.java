@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface DepartmentRepository extends MongoRepository<Department,String> {
   Optional<Department> findDepartmentByBin(String bin);
+  Optional<Department> findDepartmentByManagerID(String managerId);
 }
