@@ -15,37 +15,21 @@ const App = observer(() => {
 
   useEffect(() => {
     check()
-      .then(data => {
-        user.setUser(data)
+      .then(userData => {
+        user.setUser(userData)
         user.setIsAuth(true)
-        getAllInboxes()
-          .then(data => {
-            documents.setInbox(data)
-          })
-          .catch((e) => {
-            console.error(e)
-          })
-        getAllOutboxes()
-          .then(data => {
-            documents.setOutbox(data)
-          })
-          .catch((e) => {
-            console.error(e)
-          })
-        getAllHistory()
-          .then(data => {
-            documents.setHistory(data)
-          })
-          .catch((e) => {
-            console.error(e)
-          })
         getAllEmails()
-          .then(data => {
-            searchData.setEmails(data)
-          })
-          .catch((e) => {
-            console.error(e)
-          })
+          .then(data => searchData.setEmails(data))
+          .catch((e) => console.error(e))
+        getAllInboxes()
+          .then(data => documents.setInbox(data))
+          .catch((e) => console.error(e))
+        getAllOutboxes()
+          .then(data => documents.setOutbox(data))
+          .catch((e) => console.error(e))
+        getAllHistory()
+          .then(data => documents.setHistory(data))
+          .catch((e) => console.error(e))
       })
       .catch(() => {
       })

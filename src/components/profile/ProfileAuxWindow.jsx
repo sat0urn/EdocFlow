@@ -40,7 +40,7 @@ const ProfileAuxWindow = observer(() => {
             </div>
             <button type={'button'}
                     className={'btn btn-primary w-100 py-2 rounded-4'}
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate('/createDocument')}
             >
               Create new document
             </button>

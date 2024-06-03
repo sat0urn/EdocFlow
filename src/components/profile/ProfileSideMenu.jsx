@@ -37,7 +37,7 @@ const ProfileSideMenu = observer(() => {
           <ul className={"nav nav-pills flex-column mt-3"}>
             {role === OFFICE_MANAGER ?
               <li className={"mb-1"}>
-                <Link to={"/createDocument"} className={"nav-link link-body-emphasis fw-medium px-0"}>
+                <Link to={"/"} className={"nav-link link-body-emphasis fw-medium px-0"}>
                   <img src={Dashboard} alt="dashboard" className={"img-fluid me-3"}/>
                   <span className={"small opacity-50 align-middle"}>
                     Dashboard
@@ -114,14 +114,14 @@ const ProfileSideMenu = observer(() => {
         <div>
           <hr/>
           <ul className={"nav nav-pills flex-column"}>
-            <li>
-              <Link to={"/support"} className={"nav-link link-body-emphasis fw-medium px-0"}>
-                <img src={Settings} alt="settings" width={'25px'} className={"img-fluid me-3"}/>
-                <span className="small opacity-50 align-middle">
-                  Settings
-                </span>
-              </Link>
-            </li>
+            {/*<li>*/}
+            {/*  <Link to={"/support"} className={"nav-link link-body-emphasis fw-medium px-0"}>*/}
+            {/*    <img src={Settings} alt="settings" width={'25px'} className={"img-fluid me-3"}/>*/}
+            {/*    <span className="small opacity-50 align-middle">*/}
+            {/*      Settings*/}
+            {/*    </span>*/}
+            {/*  </Link>*/}
+            {/*</li>*/}
             <li>
               <button type={'button'}
                       onClick={logout}

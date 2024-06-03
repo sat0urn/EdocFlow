@@ -17,7 +17,7 @@ const PDFViewer = observer((
     setRemark
   }
 ) => {
-  const {searchData, user} = useContext(AuthContext)
+  const {searchData} = useContext(AuthContext)
 
   const [searchTerm, setSearchTerm] = useState('')
   const [suggestions, setSuggestions] = useState([])
@@ -49,10 +49,7 @@ const PDFViewer = observer((
 
     if (value.length > 0) {
       const filteredEmails = searchData.emails
-        .filter(email =>
-          email.toLowerCase().includes(value.toLowerCase()) &&
-          email !== user._user.sub
-        )
+        .filter(email => email.toLowerCase().includes(value.toLowerCase()))
       setSuggestions(filteredEmails)
     } else {
       setSuggestions([])

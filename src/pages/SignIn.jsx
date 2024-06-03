@@ -9,20 +9,34 @@ const SignIn = observer(() => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const signIn = async (event) => {
-    event.preventDefault()
+  const signIn = async (e) => {
+    e.preventDefault()
+    if (!validateEmail(email) || !validatePassword(password)) {
+      e.stopPropagation()
+      return
+    }
+
     let data
     try {
       data = await login(email, password)
     } catch (e) {
       if (e.response.status === 403) {
-        alert("Wrong credentials!")
+        alert("User email or password is not correct")
       }
       return
     }
-    user.setIsAuth(true)
     user.setUser(data)
+    user.setIsAuth(true)
   }
+
+  const validatePassword = (password) => {
+    return password.length >= 6
+  }
+
+  const validateEmail = (email) => {
+    const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return re.test(String(email).toLowerCase())
+  };
 
   return (
     <section className="d-flex min-vh-100">
@@ -34,19 +48,22 @@ const SignIn = observer(() => {
                 Hi, Welcome Back!
               </div>
               <form onSubmit={signIn}>
-                <div className="mb-4">
+                <div className="mb-2">
                   <label htmlFor="exampleInputEmail" className="form-label opacity-75">
                     Email Address
                   </label>
                   <input
                     type="email"
-                    className="form-control p-3 rounded-4"
+                    className={`form-control p-3 rounded-4 ${validateEmail(email) ? 'is-valid' : 'is-invalid'}`}
                     id="exampleInputEmail"
                     placeholder="Enter your email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     required
                   />
+                  <div className="invalid-feedback">
+                    Invalid email format
+                  </div>
                 </div>
                 <div className="mb-4">
                   <label htmlFor="exampleInputPassword" className="form-label w-100">
@@ -59,13 +76,16 @@ const SignIn = observer(() => {
                   </label>
                   <input
                     type="password"
-                    className="form-control p-3 rounded-4"
+                    className={`form-control p-3 rounded-4 ${password.length >= 6 ? 'is-valid' : 'is-invalid'}`}
                     id="exampleInputPassword"
                     placeholder="Enter your password"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     required
                   />
+                  <div className="invalid-feedback">
+                    Password should contain at least 6 characters
+                  </div>
                 </div>
                 <button
                   type="submit"

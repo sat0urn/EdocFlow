@@ -3,6 +3,7 @@ import {registration} from "../http/userApi"
 import {Link} from 'react-router-dom'
 import {AuthContext} from "../context/index.js";
 import {observer} from "mobx-react-lite";
+import {citiesOfKazakhstan} from "../data/citiesOfKazakhstanData.js";
 
 const SignUp = observer(() => {
   const {user} = useContext(AuthContext)
@@ -12,30 +13,46 @@ const SignUp = observer(() => {
     lastName: '',
     phoneNumber: '',
     password: '',
-    country: '',
+    country: 'Kazakhstan',
     city: ''
   })
 
-  const signUp = async (event) => {
-    event.preventDefault()
-    let data
-    if (userForm.password.length >= 6) {
-      try {
-        data = await registration(userForm)
-      } catch (e) {
-        if (e.response.status === 409) {
-          alert("User already exists by email: " + userForm.email)
-        } else {
-          console.log(e)
-        }
-        return
-      }
-      user.setIsAuth(true)
-      user.setUser(data)
-    } else {
-      alert('Password should contain at least 6 characters')
+  const signUp = async (e) => {
+    e.preventDefault()
+    if (!validateEmail(userForm.email)
+      || !validatePhoneNumber(userForm.phoneNumber)
+      || !validatePassword(userForm.password)
+    ) {
+      e.stopPropagation()
+      return
     }
+
+    let data
+    try {
+      data = await registration(userForm)
+    } catch (e) {
+      if (e.response.status === 409) {
+        alert("User already exists by email: " + userForm.email)
+      }
+      return
+    }
+    user.setUser(data)
+    user.setIsAuth(true)
   }
+
+  const validatePassword = (password) => {
+    return password.length >= 6
+  }
+
+  const validateEmail = (email) => {
+    const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return re.test(String(email).toLowerCase())
+  };
+
+  const validatePhoneNumber = (phoneNumber) => {
+    const re = /^(?:\+77\d{2}\d{3}\d{4}|\+7 7\d{2} \d{3} \d{4}|87\d{2}\d{3}\d{4})$/;
+    return re.test(String(phoneNumber));
+  };
 
   return (
     <section className="d-flex min-vh-100">
@@ -48,16 +65,13 @@ const SignUp = observer(() => {
               </div>
               <form onSubmit={signUp}>
                 <div className="d-flex flex-sm-row flex-column justify-content-between mb-2">
-                  <div className="w-100 me-4 mb-sm-0 mb-2">
-                    <label
-                      htmlFor="exampleInputFirstName"
-                      className="form-label opacity-75"
-                    >
+                  <div className="w-100 me-4">
+                    <label htmlFor="exampleInputFirstName" className="form-label opacity-75">
                       First Name
                     </label>
                     <input
                       type="text"
-                      className="form-control p-3 rounded-4"
+                      className={`form-control p-3 rounded-4 ${userForm.firstName ? 'is-valid' : 'is-invalid'}`}
                       id="exampleInputFirstName"
                       placeholder="First Name"
                       value={userForm.firstName}
@@ -66,15 +80,12 @@ const SignUp = observer(() => {
                     />
                   </div>
                   <div className="w-100">
-                    <label
-                      htmlFor="exampleInputLastName1"
-                      className="form-label opacity-75"
-                    >
+                    <label htmlFor="exampleInputLastName1" className="form-label opacity-75">
                       Last Name
                     </label>
                     <input
                       type="text"
-                      className="form-control p-3 rounded-4"
+                      className={`form-control p-3 rounded-4 ${userForm.lastName ? 'is-valid' : 'is-invalid'}`}
                       id="exampleInputLastName1"
                       placeholder="Last Name"
                       value={userForm.lastName}
@@ -84,93 +95,90 @@ const SignUp = observer(() => {
                   </div>
                 </div>
                 <div className="mb-2">
-                  <label
-                    htmlFor="exampleInputEmail"
-                    className="form-label opacity-75"
-                  >
+                  <label htmlFor="exampleInputEmail" className="form-label opacity-75">
                     Email Address
                   </label>
                   <input
                     type="email"
-                    className="form-control p-3 rounded-4"
+                    className={`form-control p-3 rounded-4 ${validateEmail(userForm.email) ? 'is-valid' : 'is-invalid'}`}
                     id="exampleInputEmail"
                     placeholder="Email Address"
                     value={userForm.email}
                     onChange={e => setUserForm({...userForm, email: e.target.value})}
                     required
                   />
+                  <div className="invalid-feedback">
+                    Invalid email format
+                  </div>
                 </div>
                 <div className="mb-2">
-                  <label
-                    htmlFor="exampleInputPhone"
-                    className="form-label opacity-75"
-                  >
+                  <label htmlFor="exampleInputPhone" className="form-label opacity-75">
                     Phone Number
                   </label>
                   <input
-                    type="number"
-                    className="form-control p-3 rounded-4"
+                    type="text"
+                    className={`form-control p-3 rounded-4 ${validatePhoneNumber(userForm.phoneNumber) ? 'is-valid' : 'is-invalid'}`}
                     id="exampleInputPhone"
-                    placeholder="Phone Number"
+                    placeholder="Phone Number +7 or 8"
                     value={userForm.phoneNumber}
                     onChange={e => setUserForm({...userForm, phoneNumber: e.target.value})}
                     required
                   />
+                  <div className="invalid-feedback">
+                    Invalid phone number format
+                  </div>
                 </div>
                 <div className="d-flex flex-sm-row flex-column mb-2">
                   <div className="w-100 me-4 mb-sm-0 mb-2">
-                    <label
-                      htmlFor="exampleInputCountry"
-                      className="form-label opacity-75"
-                    >
+                    <label htmlFor="exampleInputCountry" className="form-label opacity-75">
                       Country
                     </label>
                     <input
                       type="text"
-                      className="form-control p-3 rounded-4"
+                      disabled
+                      className={`form-control p-3 rounded-4 is-valid`}
                       id="exampleInputCountry"
-                      placeholder="Country"
+                      placeholder={userForm.country}
                       value={userForm.country}
                       onChange={e => setUserForm({...userForm, country: e.target.value})}
                       required
                     />
                   </div>
                   <div className="w-100">
-                    <label
-                      htmlFor="exampleInputCity"
-                      className="form-label opacity-75"
-                    >
+                    <label htmlFor="exampleInputCity" className="form-label opacity-75">
                       City
                     </label>
-                    <input
-                      type="text"
-                      className="form-control p-3 rounded-4"
+                    <select
+                      className={`form-select p-3 rounded-4 ${userForm.city ? 'is-valid' : 'is-invalid'}`}
                       id="exampleInputCity"
-                      placeholder="City"
                       value={userForm.city}
                       onChange={e => setUserForm({...userForm, city: e.target.value})}
                       required
-                    />
+                    >
+                      <option value={''}>Choose...</option>
+                      {citiesOfKazakhstan.map((city, index) =>
+                        <option key={index} value={city}>{city}</option>
+                      )}
+                    </select>
                   </div>
                 </div>
                 <div className="mb-4">
-                  <label
-                    htmlFor="exampleInputPassword"
-                    className="form-label opacity-75"
-                  >
+                  <label htmlFor="exampleInputPassword" className="form-label opacity-75">
                     Password
                   </label>
                   <input
                     type="password"
-                    className="form-control p-3 rounded-4"
+                    className={`form-control p-3 rounded-4 ${userForm.password.length >= 6 ? 'is-valid' : 'is-invalid'}`}
                     id="exampleInputPassword"
                     placeholder="Password"
                     value={userForm.password}
                     onChange={e => setUserForm({...userForm, password: e.target.value})}
                     required
                   />
+                  <div className="invalid-feedback">
+                    Password should contain at least 6 characters
+                  </div>
                 </div>
-
                 <button type={"submit"} className="btn btn-primary w-100 p-3 rounded-4">
                   Sign Up
                 </button>
