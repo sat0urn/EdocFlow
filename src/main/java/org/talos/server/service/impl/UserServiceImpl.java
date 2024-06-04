@@ -19,10 +19,7 @@ import org.talos.server.repository.UserRepository;
 import org.talos.server.responses.AuthenticationResponse;
 import org.talos.server.service.UserService;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,10 +81,16 @@ public class UserServiceImpl implements UserService {
 
     var checkUser = userRepository.findUserByEmail(loginDTO.getEmail());
     if (checkUser.isPresent()) {
-
       String jwtToken = "";
-
       User user = checkUser.get();
+      var claims = new HashMap<String, Object>(Map.of(
+              "firstName", user.getFirstName(),
+              "lastName", user.getLastName(),
+              "phoneNumber", user.getPhoneNumber(),
+              "country", user.getCountry(),
+              "city", user.getCity(),
+              "role", user.getRole()
+      ));
 
       switch (user.getRole()) {
         case OFFICE_MANAGER:
@@ -95,30 +98,16 @@ public class UserServiceImpl implements UserService {
           if (checkDepartment.isEmpty()) {
             throw new DataNotFoundException("Department not found");
           }
-          jwtToken = jwtService.generateToken(Map.of(
-                  "companyBin", checkDepartment.get().getBin(),
-                  "companyName", checkDepartment.get().getDepartmentName(),
-                  "firstName", user.getFirstName(),
-                  "lastName", user.getLastName(),
-                  "phoneNumber", user.getPhoneNumber(),
-                  "country", user.getCountry(),
-                  "city", user.getCity(),
-                  "role", user.getRole()
-          ), user);
+          claims.put("companyBin", checkDepartment.get().getBin());
+          claims.put("companyName", checkDepartment.get().getDepartmentName());
+          jwtToken = jwtService.generateToken(claims, user);
           break;
         case EMPLOYEE:
           break;
         case ADMIN:
           break;
         default:
-          jwtToken = jwtService.generateToken(Map.of(
-                  "firstName", user.getFirstName(),
-                  "lastName", user.getLastName(),
-                  "phoneNumber", user.getPhoneNumber(),
-                  "country", user.getCountry(),
-                  "city", user.getCity(),
-                  "role", user.getRole()
-          ), user);
+          jwtToken = jwtService.generateToken(claims, user);
       }
 
       return AuthenticationResponse.builder()

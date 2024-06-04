@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.talos.server.entity.PDFDocument;
+import org.talos.server.entity.DocumentPDF;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,5 +21,5 @@ public class UserRegistrationDto {
     private String password;
     private String country;
     private String city;
-    private List<PDFDocument> documents = new ArrayList<>();
+    private List<DocumentPDF> documentPDFS = new ArrayList<>();
 }

@@ -8,7 +8,7 @@ import org.talos.server.entity.DocumentStatus;
 @NoArgsConstructor
 @ToString
 @Builder
-public class PDFDocumentDto {
+public class DocumentDto {
     private String name;
     private byte[] fileData;
     private String createdTime;

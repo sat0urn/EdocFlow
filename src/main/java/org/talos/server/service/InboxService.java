@@ -8,20 +8,19 @@ import java.util.List;
 import java.util.Optional;
 
 public interface InboxService {
-    void createInbox(InboxCreateDto inboxCreateDto, String senderEmail);
+  void createInbox(InboxCreateDto inboxCreateDto, String senderEmail);
 
-    List<AllInboxesDto> getInboxesByReceiver(String receiverEmail);
+  List<AllInboxesDto> getInboxesByReceiver(String receiverEmail);
 
-    InboxDto getInboxByIdAndUserEmail(String inboxId, String receiverEmail) throws IllegalAccessException;
+  InboxDto getInboxByIdAndUserEmail(String inboxId, String receiverEmail) throws IllegalAccessException;
 
-    Optional<Inbox> getInboxById(String inboxId);
+  Optional<Inbox> getInboxById(String inboxId);
 
-    void rejectDocument(InboxRejectDto rejectDocumentDto,String email) throws IllegalAccessException;
+  void rejectDocument(InboxRejectDto rejectDocumentDto, String email) throws IllegalAccessException;
 
+  void deleteInboxById(String id, String userEmail) throws IllegalAccessException;
 
-    void deleteInboxById(String id,String userEmail) throws IllegalAccessException;
+  List<AllSendInboxesDto> getAllSendInboxes(User user);
 
-    List<AllSendInboxesDto> getAllSendInboxes(User user);
-
-    Inbox signInbox(String inboxId, byte[] fileData,String signerEmail) throws IllegalAccessException;
+  Inbox signInbox(String inboxId, byte[] fileData, String signerEmail) throws IllegalAccessException;
 }

@@ -6,8 +6,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Builder
 public class InboxCreateDto {
     private String name;

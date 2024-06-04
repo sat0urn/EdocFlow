@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PDFDocument {
+public class DocumentPDF {
     @Id
     private String id;
     private String name;

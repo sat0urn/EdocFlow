@@ -27,5 +27,4 @@ public class DepartmentController {
       return ResponseEntity.ok(authenticationResponse);
     }
   }
-
 }
