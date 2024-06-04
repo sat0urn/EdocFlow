@@ -26,9 +26,11 @@ public class User implements UserDetails {
     private String password;
     private String country;
     private String city;
+    private String iin;
     private Role role;
+    private String position;
     private List<String> documentIds = new ArrayList<>();
-    private Department department;
+    private String organisationId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

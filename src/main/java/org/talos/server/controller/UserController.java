@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.talos.server.config.JwtService;
-import org.talos.server.dto.users_dto.SelectUsersToSignDto;
+
 import org.talos.server.dto.users_dto.UpdatePasswordDto;
 import org.talos.server.dto.users_dto.UserLoginDto;
 import org.talos.server.dto.users_dto.UserRegistrationDto;
@@ -87,13 +87,7 @@ public class UserController {
     return ResponseEntity.ok("Password updated successfully!");
   }
 
-  @GetMapping("/getAll/{id}")
-  private List<SelectUsersToSignDto> getAllUsersWorkingOnDepartment(
-          @PathParam("id") String id
-  ) {
-    Department department = userService.getDepartmentByUserId(id);
-    return userService.getAllUsersByDepartment(department);
-  }
+
 
   @GetMapping("/getAllEmails")
   private List<String> getAllEmails(

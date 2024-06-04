@@ -6,12 +6,14 @@ import org.talos.server.dto.document_dto.DocumentDto;
 import org.talos.server.dto.inboxes_dto.*;
 import org.talos.server.entity.*;
 import org.talos.server.exception.DataNotFoundException;
+import org.talos.server.repository.DepartmentRepository;
 import org.talos.server.repository.InboxRepository;
 import org.talos.server.repository.UserRepository;
 import org.talos.server.service.InboxService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -23,19 +25,43 @@ import java.util.stream.Collectors;
 public class InboxServiceImpl implements InboxService {
   private final InboxRepository inboxRepository;
   private final UserRepository userRepository;
+  private final DepartmentRepository departmentRepository;
   Logger logger = Logger.getLogger(InboxService.class.getName());
-
+  LocalDateTime currentDateTime = LocalDateTime.now();
   @Override
   public void createInbox(InboxCreateDto inboxCreateDto, String senderEmail) {
-    if (inboxCreateDto == null) {
-      throw new IllegalArgumentException("InboxCreateDto cannot be null");
-    }
+
 
     if (senderEmail == null || senderEmail.isEmpty()) {
       throw new IllegalArgumentException("Sender email cannot be null or empty");
     }
+    // Fetch sender user
+    Optional<User> senderOptional = userRepository.findUserByEmail(senderEmail);
+    if (senderOptional.isEmpty()) {
+      throw new DataNotFoundException("User with email " + senderEmail + " does not exist");
+    }
+    User sender = senderOptional.get();
 
-    LocalDateTime currentDateTime = LocalDateTime.now();
+    //this means that it is addressing for office manager
+    if(inboxCreateDto.getReceiversEmail().isEmpty())
+    {
+      //get office manager email
+      Optional<Department> departmentOptional = departmentRepository.findById(sender.getOrganisationId());
+      if(departmentOptional.isEmpty())
+        throw new DataNotFoundException("Department by id neither null or doesnt exist {}" +
+                sender.getOrganisationId());
+      Optional<User> managerOptional = userRepository.findById(departmentOptional.get().getManagerID());
+      if(managerOptional.isEmpty())
+        throw new DataNotFoundException("User by id {}" + departmentOptional.get().getId() + ", does not exist");
+      inboxCreateDto.setReceiversEmail(Collections.singletonList(managerOptional.get().getEmail()));
+    }
+
+    if (inboxCreateDto == null) {
+      throw new IllegalArgumentException("InboxCreateDto cannot be null");
+    }
+
+
+
 
     // Validate and create PDFDocument
     DocumentPDF documentPDF = DocumentPDF.builder()
@@ -45,12 +71,7 @@ public class InboxServiceImpl implements InboxService {
             .status(DocumentStatus.WAITING)
             .build();
 
-    // Fetch sender user
-    Optional<User> senderOptional = userRepository.findUserByEmail(senderEmail);
-    if (senderOptional.isEmpty()) {
-      throw new DataNotFoundException("User with email " + senderEmail + " does not exist");
-    }
-    User sender = senderOptional.get();
+
 
     // Fetch receiver users
     List<String> receiverEmails = inboxCreateDto.getReceiversEmail();
@@ -88,6 +109,37 @@ public class InboxServiceImpl implements InboxService {
     inboxRepository.save(inbox);
 
     logger.info("Inbox created successfully with ID: " + inbox.getId());
+  }
+
+  @Override
+  public void setNewReceiversToInbox(String inboxId, ReceiversAddInboxDto receiversAddInboxDto) {
+    Optional<Inbox> optionalInbox = inboxRepository.findById(inboxId);
+    if(optionalInbox.isEmpty())
+      throw new DataNotFoundException("Inbox by id does not exist {}" +inboxId);
+    if(receiversAddInboxDto.getEmails().isEmpty())
+      throw new IllegalArgumentException("Receivers list is null email");
+    Inbox inbox = optionalInbox.get();
+    //to validate that users email exist in the system
+    List<User> receivers = userRepository.findByEmails(receiversAddInboxDto.getEmails());
+    if (receivers.isEmpty()) {
+      throw new DataNotFoundException("No valid receivers found for provided emails");
+    }
+    List<InboxReceivers> signProcesses = new ArrayList<>();
+    for (String email : receiversAddInboxDto.getEmails()) {
+      signProcesses.add(InboxReceivers.builder()
+              .date(String.valueOf(currentDateTime))
+              .documentStatus(DocumentStatus.WAITING)
+              .userEmail(email)
+              .build());
+    }
+
+    // Set first user as signing
+    if (!signProcesses.isEmpty()) {
+      signProcesses.get(0).setDocumentStatus(DocumentStatus.SIGNING);
+    }
+    inbox.getReceivers().addAll(signProcesses);
+    inboxRepository.save(inbox);
+
   }
 
   @Override
@@ -303,4 +355,6 @@ public class InboxServiceImpl implements InboxService {
     inboxRepository.save(inbox);
     return inbox;
   }
+
+
 }

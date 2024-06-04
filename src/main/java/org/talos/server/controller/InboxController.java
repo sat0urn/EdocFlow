@@ -37,6 +37,13 @@ public class InboxController {
     inboxService.createInbox(inboxCreateDto, senderEmail);
     return ResponseEntity.ok("Inbox created successfully");
   }
+  @PostMapping("/update/{id}")
+  public ResponseEntity<?> setInboxReceivers(@PathVariable("id")String inboxId,
+                                             @RequestBody ReceiversAddInboxDto receiversAddInboxDto)
+  {
+    inboxService.setNewReceiversToInbox(inboxId,receiversAddInboxDto);
+    return ResponseEntity.ok("Inbox updated successfully");
+  }
 
   @GetMapping("/getAll")
   public List<AllInboxesDto> getAllInboxes(

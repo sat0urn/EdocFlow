@@ -23,4 +23,6 @@ public interface InboxService {
   List<AllSendInboxesDto> getAllSendInboxes(User user);
 
   Inbox signInbox(String inboxId, byte[] fileData, String signerEmail) throws IllegalAccessException;
+
+    void setNewReceiversToInbox(String inboxId, ReceiversAddInboxDto receiversAddInboxDto);
 }

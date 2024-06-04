@@ -1,5 +1,6 @@
 package org.talos.server.service;
 
+import org.talos.server.dto.employee_dto.EmployeeRegistrationDto;
 import org.talos.server.dto.users_dto.SelectUsersToSignDto;
 import org.talos.server.dto.users_dto.UserLoginDto;
 import org.talos.server.dto.users_dto.UserRegistrationDto;
@@ -19,13 +20,13 @@ public interface UserService {
 
     public Optional<User> getUserByEmail(String email);
 
-    public Department getDepartmentByUserId(String id);
-
-    public List<SelectUsersToSignDto> getAllUsersByDepartment(Department department);
-
     List<String> getAllUsersEmails(String email);
 
     public void updateUser(User existingUser);
 
     void saveUsersPdf(String documentId, String userEmail);
+
+    AuthenticationResponse registrateEmployee(EmployeeRegistrationDto employeeRegistrationDto);
+
+    List<SelectUsersToSignDto> getAllEmployeeByManagerEmail(String receiverEmail) throws IllegalAccessException;
 }

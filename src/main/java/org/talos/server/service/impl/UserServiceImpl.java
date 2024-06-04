@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.talos.server.config.JwtService;
+import org.talos.server.dto.employee_dto.EmployeeRegistrationDto;
 import org.talos.server.dto.users_dto.SelectUsersToSignDto;
 import org.talos.server.dto.users_dto.UserLoginDto;
 import org.talos.server.dto.users_dto.UserRegistrationDto;
@@ -153,26 +154,63 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public Department getDepartmentByUserId(String id) {
-    Optional<User> user = userRepository.findById(id);
-    if (user.isEmpty())
-      //throw exception
-      throw new DataNotFoundException("No such user by id{}" + id);
-    return user.get().getDepartment();
+  public AuthenticationResponse registrateEmployee(EmployeeRegistrationDto employeeRegistrationDto) {
+    var checkUser = userRepository.findUserByEmail(employeeRegistrationDto.getEmail());
 
+    if (checkUser.isEmpty()) {
+      var user = User.builder()
+              .firstName(employeeRegistrationDto.getName())
+              .lastName(employeeRegistrationDto.getSurname())
+              .phoneNumber(employeeRegistrationDto.getPhoneNumber())
+              .email(employeeRegistrationDto.getEmail())
+              // убрал тут добавление документа так как у юзера при регистраций не должно быть документов
+              .password(passwordEncoder.encode(employeeRegistrationDto.getPassword()))
+              .position(employeeRegistrationDto.getPosition())
+              .iin(employeeRegistrationDto.getIin())
+              .organisationId(employeeRegistrationDto.getDepartmentId())
+              .role(Role.EMPLOYEE)
+              .build();
 
+      userRepository.save(user);
+
+      var jwtToken = jwtService.generateToken(Map.of(
+              "firstName", user.getFirstName(),
+              "lastName", user.getLastName(),
+              "phoneNumber", user.getPhoneNumber(),
+              "role", user.getRole()
+      ), user);
+
+      return AuthenticationResponse.builder()
+              .token(jwtToken)
+              .build();
+    } else {
+      return AuthenticationResponse.builder()
+              .token("")
+              .build();
+    }
   }
 
   @Override
-  public List<SelectUsersToSignDto> getAllUsersByDepartment(Department department) {
-    if (department == null)
-      throw new IllegalArgumentException("Department is null");
-    List<User> users = userRepository.findAllByDepartment(department);
+  public List<SelectUsersToSignDto> getAllEmployeeByManagerEmail(String managerEmail) throws IllegalAccessException {
+    Optional<User> optionalUser = userRepository.findUserByEmail(managerEmail);
+    if(optionalUser.isEmpty())
+      throw new DataNotFoundException("user not found by email {}" + managerEmail);
+    User userManager = optionalUser.get();
+    if(!userManager.getRole().equals(Role.OFFICE_MANAGER))
+      throw  new IllegalAccessException("User by email {}" + managerEmail +", has not access to this api");
+    Optional<Department> optionalDepartment = departmentRepository.findDepartmentByManagerID(userManager.getId());
+    if(optionalDepartment.isEmpty())
+      throw new DataNotFoundException("Department by manager id  +" + userManager.getId() + ", does not exist");
+    List<User> userList = userRepository.findAllByOrganisationId(optionalDepartment.get().getId());
 
-    return users.stream()
-            .map(user -> new SelectUsersToSignDto(user.getFirstName(), user.getLastName()))
-            .collect(Collectors.toList());
+
+    return userList.stream().map(user -> SelectUsersToSignDto.builder()
+            .email(user.getEmail())
+            .position(user.getPosition())
+            .build()).collect(Collectors.toList());
   }
+
+
 
   @Override
   public List<String> getAllUsersEmails(String email) {
