@@ -45,8 +45,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                     authz.requestMatchers(
                                     "/api/users/login",
                                     "/api/users/registration",
-                                    "/api/department/create",
-                                    "/api/employee/registration"
+                                    "/api/department/create"
                             )
                             .permitAll()
                             .anyRequest()

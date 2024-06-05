@@ -19,6 +19,7 @@ import java.util.List;
 public class User implements UserDetails {
     @Id
     private String id;
+    // default user fields
     private String email;
     private String firstName;
     private String lastName;
@@ -26,11 +27,14 @@ public class User implements UserDetails {
     private String password;
     private String country;
     private String city;
-    private String iin;
-    private Role role;
-    private String position;
     private List<String> documentIds = new ArrayList<>();
+    // employee need fields
+    private String iin;
     private String organisationId;
+    private String position;
+    private String organizationBin;
+    // specific user role
+    private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

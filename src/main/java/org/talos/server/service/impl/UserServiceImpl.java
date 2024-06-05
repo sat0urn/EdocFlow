@@ -104,6 +104,9 @@ public class UserServiceImpl implements UserService {
           jwtToken = jwtService.generateToken(claims, user);
           break;
         case EMPLOYEE:
+          claims.put("orgId", user.getOrganisationId());
+          claims.put("position", user.getPosition());
+          jwtToken = jwtService.generateToken(claims, user);
           break;
         case ADMIN:
           break;
@@ -154,63 +157,76 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public AuthenticationResponse registrateEmployee(EmployeeRegistrationDto employeeRegistrationDto) {
-    var checkUser = userRepository.findUserByEmail(employeeRegistrationDto.getEmail());
+  public String registrateEmployee(EmployeeRegistrationDto employeeRegistrationDto, String authHeader) {
+    String managerEmail = jwtService.extractUsername(authHeader.substring(7));
+    var checkManager = userRepository.findUserByEmail(managerEmail);
 
-    if (checkUser.isEmpty()) {
-      var user = User.builder()
-              .firstName(employeeRegistrationDto.getName())
-              .lastName(employeeRegistrationDto.getSurname())
-              .phoneNumber(employeeRegistrationDto.getPhoneNumber())
-              .email(employeeRegistrationDto.getEmail())
-              // убрал тут добавление документа так как у юзера при регистраций не должно быть документов
-              .password(passwordEncoder.encode(employeeRegistrationDto.getPassword()))
-              .position(employeeRegistrationDto.getPosition())
-              .iin(employeeRegistrationDto.getIin())
-              .organisationId(employeeRegistrationDto.getDepartmentId())
-              .role(Role.EMPLOYEE)
-              .build();
+    if (checkManager.isPresent() && checkManager.get().getRole().equals(Role.OFFICE_MANAGER)) {
+      var checkUser = userRepository.findUserByEmailOrIin(employeeRegistrationDto.getEmail(), employeeRegistrationDto.getIin());
+      var checkDepartment = departmentRepository.findDepartmentByManagerID(checkManager.get().getId());
 
-      userRepository.save(user);
+      if (checkUser.isEmpty() && checkDepartment.isPresent()) {
+        String passFirstPart = Role.EMPLOYEE.name().toLowerCase();
+        String passSecondPart = employeeRegistrationDto.getIin().substring(0, 6);
+        String passThirdPart = String.valueOf(employeeRegistrationDto.getPhoneNumber());
+        String new_password = passFirstPart + passSecondPart + passThirdPart.substring(passThirdPart.length() - 4);
+        System.out.println(new_password);
+        var user = User.builder()
+                // default user fields
+                .firstName(employeeRegistrationDto.getName())
+                .lastName(employeeRegistrationDto.getSurname())
+                .phoneNumber(employeeRegistrationDto.getPhoneNumber())
+                .email(employeeRegistrationDto.getEmail())
+                .country(checkManager.get().getCountry())
+                .city(checkManager.get().getCity())
+                .password(passwordEncoder.encode(new_password))
+                // employee user fields
+                .position(employeeRegistrationDto.getPosition())
+                .iin(employeeRegistrationDto.getIin())
+                .organisationId(employeeRegistrationDto.getDepartmentId())
+                .organizationBin(checkDepartment.get().getBin())
+                // role
+                .role(Role.EMPLOYEE)
+                .build();
 
-      var jwtToken = jwtService.generateToken(Map.of(
-              "firstName", user.getFirstName(),
-              "lastName", user.getLastName(),
-              "phoneNumber", user.getPhoneNumber(),
-              "role", user.getRole()
-      ), user);
+        userRepository.save(user);
 
-      return AuthenticationResponse.builder()
-              .token(jwtToken)
-              .build();
+        return "EMPLOYEE_REGISTERED";
+      } else {
+        return "WARN_EMPLOYEE_EXISTS";
+      }
     } else {
-      return AuthenticationResponse.builder()
-              .token("")
-              .build();
+      return "WARN_MANAGER_DOES_NOT_EXIST";
     }
   }
 
   @Override
-  public List<SelectUsersToSignDto> getAllEmployeeByManagerEmail(String managerEmail) throws IllegalAccessException {
+  public List<SelectUsersToSignDto> getAllEmployeeByDepartment(
+          String managerEmail
+  ) throws IllegalAccessException {
     Optional<User> optionalUser = userRepository.findUserByEmail(managerEmail);
-    if(optionalUser.isEmpty())
+    if (optionalUser.isEmpty())
       throw new DataNotFoundException("user not found by email {}" + managerEmail);
+
     User userManager = optionalUser.get();
-    if(!userManager.getRole().equals(Role.OFFICE_MANAGER))
-      throw  new IllegalAccessException("User by email {}" + managerEmail +", has not access to this api");
+    if (!userManager.getRole().equals(Role.OFFICE_MANAGER))
+      throw new IllegalAccessException("User by email {}" + managerEmail + ", has not access to this api");
+
     Optional<Department> optionalDepartment = departmentRepository.findDepartmentByManagerID(userManager.getId());
-    if(optionalDepartment.isEmpty())
+    if (optionalDepartment.isEmpty())
       throw new DataNotFoundException("Department by manager id  +" + userManager.getId() + ", does not exist");
-    List<User> userList = userRepository.findAllByOrganisationId(optionalDepartment.get().getId());
 
+    List<User> userList = userRepository.findAllByOrganizationBin(optionalDepartment.get().getBin());
 
-    return userList.stream().map(user -> SelectUsersToSignDto.builder()
-            .email(user.getEmail())
-            .position(user.getPosition())
-            .build()).collect(Collectors.toList());
+    return userList.stream()
+            .map(user -> SelectUsersToSignDto.builder()
+                    .firstName(user.getFirstName())
+                    .lastName(user.getLastName())
+                    .orgId(user.getOrganisationId())
+                    .email(user.getEmail())
+                    .position(user.getPosition())
+                    .build()).collect(Collectors.toList());
   }
-
-
 
   @Override
   public List<String> getAllUsersEmails(String email) {
