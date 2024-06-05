@@ -1,26 +1,14 @@
 import {$authHost} from "./index";
 
-const upload = async (
-  formData
-) => {
-  const response = await $authHost.post(
-    '/documents/upload',
-    formData,
-    {headers: {'Content-Type': 'multipart/form-data'}}
-  )
-  return response.data
-}
-
-const createInbox = async (
-  data
-) => {
+const createInbox = async (data) => {
+  console.log(data)
   const response = await $authHost.post(
     '/inbox/create',
     {
       name: data.pdfName,
       fileData: data.fileData,
       remark: data.remark,
-      receiverEmail: data.receiverEmail
+      receiversEmail: data.receiversEmail
     },
     {headers: {'Content-Type': 'application/json'}}
   )
@@ -34,32 +22,21 @@ const getAllInboxes = async () => {
 }
 
 const getAllOutboxes = async() => {
-  const response = await $authHost.get('/inbox/send/getAll')
+  const response = await $authHost.get('/outbox/getAll')
   return response.data
 }
 
-const getInboxById = async (
-  inboxId
-) => {
-  const response = await $authHost.get(
-    `/inbox/get/${inboxId}`
-  )
+const getInboxById = async (inboxId) => {
+  const response = await $authHost.get(`/inbox/get/${inboxId}`)
   return response.data
 }
 
-const signInboxDocument = async (
-  data
-) => {
-  const response = await $authHost.post(
-    '/inbox/sign',
-    data
-  )
+const signInboxDocument = async (data) => {
+  const response = await $authHost.post('/inbox/sign', data)
   return response.data
 }
 
-const rejectInboxDocument = async (
-  data
-) => {
+const rejectInboxDocument = async (data) => {
   const response = await $authHost.post('/inbox/reject', data)
   return response.data
 }
@@ -70,12 +47,11 @@ const deleteInboxById = async (inboxId) => {
 }
 
 const getAllHistory = async () => {
-  const response = await $authHost.get('/documents')
+  const response = await $authHost.get('/document/getAll')
   return response.data
 }
 
 export {
-  upload,
   getAllHistory,
   createInbox,
   getAllInboxes,

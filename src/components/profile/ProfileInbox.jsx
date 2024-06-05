@@ -3,11 +3,12 @@ import {observer} from "mobx-react-lite";
 import {useContext, useMemo, useState} from "react";
 import {AuthContext} from "../../context/index.js";
 import InboxTableView from "./inboxParts/InboxTableView.jsx";
-import DocumentsPagination from "./commonParts/DocumentsPagination.jsx";
-import {useLocation, useNavigate} from "react-router-dom";
+import Pagination from "./commonParts/Pagination.jsx";
+import {useLocation} from "react-router-dom";
+import {ACCEPTED, REJECTED, WAITING} from "../../data/docStatusData.js";
 
 const ProfileInbox = observer(() => {
-  const {documents} = useContext(AuthContext)
+  const {user, documents} = useContext(AuthContext)
 
   const [searchQuery, setSearchQuery] = useState('')
   const [pages, setPages] = useState(Math.ceil(documents.inbox.length / 6))
@@ -36,13 +37,13 @@ const ProfileInbox = observer(() => {
           )
           break
         case 3:
-          filteredDocuments = filteredDocuments.filter(doc => doc.documentStatus === 'OnPROCESS')
+          filteredDocuments = filteredDocuments.filter(doc => doc.documentStatus === WAITING)
           break
         case 4:
-          filteredDocuments = filteredDocuments.filter(doc => doc.documentStatus === 'REJECTED')
+          filteredDocuments = filteredDocuments.filter(doc => doc.documentStatus === REJECTED)
           break
         case 5:
-          filteredDocuments = filteredDocuments.filter(doc => doc.documentStatus === 'ACCEPTED')
+          filteredDocuments = filteredDocuments.filter(doc => doc.documentStatus === ACCEPTED)
           break
       }
 
@@ -91,9 +92,12 @@ const ProfileInbox = observer(() => {
           </button>
         </div>
 
-        <InboxTableView documents={getSearchedDocuments}/>
+        <InboxTableView
+          email={user.user.sub}
+          documents={getSearchedDocuments}
+        />
 
-        <DocumentsPagination
+        <Pagination
           pages={pages}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}

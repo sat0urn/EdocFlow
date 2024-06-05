@@ -45,7 +45,7 @@ const ProfileSearchAndAccount = observer(() => {
   }
 
   return (
-    <div className={"container my-4"}>
+    <div className={"my-4"}>
       <div className={"row row-cols-2"}>
         <div className={"col-9"}>
           <div>
@@ -87,7 +87,7 @@ const ProfileSearchAndAccount = observer(() => {
                 <i className="fa-regular fa-user text-black"></i>
               </div>
               <span className={"fw-bold link-body-emphasis"}>
-                {user._user.firstName + ' ' + user._user.lastName}
+                {user.user.firstName + ' ' + user.user.lastName}
               </span>
             </Link>
           </div>

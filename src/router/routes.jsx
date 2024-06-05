@@ -119,6 +119,41 @@ export const officeManagerRoutes = [
   },
   {
     id: 4,
+    path: '/documentList',
+    element: <ProfileHistory/>
+  },
+  {
+    id: 5,
+    path: '/security',
+    element: <ProfileSecurity/>
+  },
+  {
+    id: 6,
+    path: '/inbox',
+    element: <ProfileInbox/>
+  },
+  {
+    id: 7,
+    path: '/outbox',
+    element: <ProfileInbox/>
+  },
+  {
+    id: 8,
+    path: '/support',
+    element: <ProfileSupport/>
+  },
+  {
+    id: 9,
+    path: '/viewAndSign',
+    element: <ProfileDocViewSign/>
+  },
+  {
+    id: 10,
+    path: '/reset',
+    element: <Reset/>
+  },
+  {
+    id: 11,
     path: '*',
     element: <Navigate to="/"/>
   }
@@ -132,6 +167,41 @@ export const employeeRoutes = [
   },
   {
     id: 1,
+    path: '/history',
+    element: <ProfileHistory/>
+  },
+  {
+    id: 2,
+    path: '/security',
+    element: <ProfileSecurity/>
+  },
+  {
+    id: 3,
+    path: '/inbox',
+    element: <ProfileInbox/>
+  },
+  {
+    id: 4,
+    path: '/outbox',
+    element: <ProfileInbox/>
+  },
+  {
+    id: 5,
+    path: '/support',
+    element: <ProfileSupport/>
+  },
+  {
+    id: 6,
+    path: '/viewAndSign',
+    element: <ProfileDocViewSign/>
+  },
+  {
+    id: 7,
+    path: '/reset',
+    element: <Reset/>
+  },
+  {
+    id: 8,
     path: '*',
     element: <Navigate to="/"/>
   }

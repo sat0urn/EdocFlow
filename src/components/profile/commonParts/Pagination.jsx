@@ -1,4 +1,4 @@
-const DocumentsPagination = (
+const Pagination = (
   {
     pages,
     currentPage,
@@ -9,14 +9,11 @@ const DocumentsPagination = (
     <>
       {pages > 1 &&
         <>
-          <div className={"fs-6 mx-auto border rounded-3 px-3 py-1 mb-4"}>
-            Page {currentPage + 1}
-          </div>
           <nav className={"mx-auto"}>
             <ul className={"pagination"}>
               {currentPage !== 0 &&
                 <li className="page-item">
-                  <button className="btn btn-outline-primary me-3"
+                  <button className="btn btn-outline-primary rounded-3 me-3"
                           aria-label="Previous"
                           onClick={() => setCurrentPage(currentPage - 1)}
                   >
@@ -27,7 +24,7 @@ const DocumentsPagination = (
               {Array.from(
                 new Array(pages),
                 (el, index) =>
-                  (<li key={'doc_' + index} className={"page-item"}>
+                  (<li key={'pag_' + index} className={"page-item"}>
                     <button type={"button"}
                             onClick={() => setCurrentPage(index)}
                             className={`btn ${(currentPage === index) ? 'btn-primary' : 'btn-outline-primary'} rounded-3 me-2`}
@@ -39,7 +36,7 @@ const DocumentsPagination = (
               )}
               {currentPage !== (pages - 1) &&
                 <li className="page-item">
-                  <button className="btn btn-outline-primary ms-2"
+                  <button className="btn btn-outline-primary rounded-3 ms-2"
                           aria-label="Previous"
                           onClick={() => setCurrentPage(currentPage + 1)}
                   >
@@ -55,4 +52,4 @@ const DocumentsPagination = (
   )
 }
 
-export default DocumentsPagination
+export default Pagination

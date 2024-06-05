@@ -9,11 +9,9 @@ const Profile = () => {
         <div className={"bg-white"}>
           <ProfileSideMenu/>
         </div>
-        <div className={"w-100"}>
+        <div className={"container w-100"}>
           <ProfileSearchAndAccount/>
-          <div className={"px-3"}>
-            <Outlet/>
-          </div>
+          <Outlet/>
         </div>
       </div>
     </section>

@@ -1,7 +1,17 @@
 import ProfileAuxWindow from "./ProfileAuxWindow.jsx";
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
+import {observer} from "mobx-react-lite";
+import {useContext} from "react";
+import {AuthContext} from "../../context/index.js";
 
-const ProfileEmployeeDocsView = () => {
+const ProfileEmployeeDocsView = observer(() => {
+  const {user} = useContext(AuthContext)
+
+  const location = useLocation()
+  const searchURL = new URLSearchParams(location.search)
+  const email = searchURL.get('email')
+  const exactEmployee = user.employees.find((emp) => emp.email === email)
+
   return (
     <div className={"row"}>
       <div className={"col-lg-9"}>
@@ -22,12 +32,12 @@ const ProfileEmployeeDocsView = () => {
                style={{width: '70px', height: '70px'}}>
           </div>
           <div>
-            <div className={"fs-5 fw-semibold mb-1"}>Kusainov Aslan</div>
+            <div className={"fs-5 fw-semibold mb-1"}>{exactEmployee.firstName + ' ' + exactEmployee.lastName}</div>
             <div className={"small fst-italic mb-1"}>
-              Employee ID - <span className={"text-decoration-underline opacity-50"}>{321321}</span>
+              Department - <span className={"text-decoration-underline opacity-50"}>#{exactEmployee.orgId}</span>
             </div>
             <div className={"small fst-italic"}>
-              Department - <span className={"text-decoration-underline opacity-50"}>{'Back-end developer'}</span>
+              Position - <span className={"text-decoration-underline opacity-50"}>{exactEmployee.position}</span>
             </div>
           </div>
         </div>
@@ -78,6 +88,6 @@ const ProfileEmployeeDocsView = () => {
       </div>
     </div>
   )
-}
+})
 
 export default ProfileEmployeeDocsView

@@ -202,7 +202,7 @@ const ProfileDocViewSign = observer(() => {
               </Document>
             </div>
 
-            {(status === 'OnPROCESS' && (user._user.sub !== senderInfo.email)) &&
+            {(status === 'OnPROCESS' && (user.user.sub !== senderInfo.email)) &&
               <div className={"ms-3"}>
                   <textarea className={"form-control rounded-4"}
                             rows={5}

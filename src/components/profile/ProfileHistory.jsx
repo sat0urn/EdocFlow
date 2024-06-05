@@ -3,7 +3,7 @@ import {observer} from "mobx-react-lite";
 import {AuthContext} from "../../context/index.js";
 import HistoryTableView from "./historyParts/HistoryTableView.jsx";
 import ProfileAuxWindow from "./ProfileAuxWindow.jsx";
-import DocumentsPagination from "./commonParts/DocumentsPagination.jsx";
+import Pagination from "./commonParts/Pagination.jsx";
 
 const ProfileHistory = observer(() => {
   const {user, documents} = useContext(AuthContext)
@@ -63,7 +63,7 @@ const ProfileHistory = observer(() => {
               getSearchedDocuments={getSearchedDocuments}
             />
 
-            <DocumentsPagination
+            <Pagination
               pages={pages}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}

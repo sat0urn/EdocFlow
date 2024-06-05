@@ -50,10 +50,11 @@ const ProfileDashboard = () => {
             <div className={"card bg-white p-4 rounded-4 border-0 shadow-sm h-100"}>
               <div className={"fs-4 fw-bold mb-2"}>All document list</div>
               <div className={"w-75 mb-4"}>
-                Add new documents, assign responsible ones, create new documents and track their status
+                Check out the list of documents received or sent by you. There, you can find documents deleted from
+                inbox
               </div>
               <div className={"mt-auto"}>
-                <Link to={'#'}
+                <Link to={'/documentList'}
                       className={"rounded-pill bg-primary d-inline-flex align-items-center py-1 px-2 text-decoration-none"}>
                   <div className={"text-white mx-3"}>
                     Edit now

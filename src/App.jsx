@@ -8,6 +8,8 @@ import Loader from './components/Loader'
 import {observer} from "mobx-react-lite";
 import {check, getAllEmails} from "./http/userApi.js"
 import {getAllHistory, getAllInboxes, getAllOutboxes} from "./http/docsApi.js";
+import {OFFICE_MANAGER} from "./data/userRolesData.js";
+import {getAllEmployees} from "./http/employeeApi.js";
 
 const App = observer(() => {
   const {user, documents, searchData} = useContext(AuthContext)
@@ -17,6 +19,7 @@ const App = observer(() => {
     check()
       .then(userData => {
         user.setUser(userData)
+        user.setRole(userData.role)
         user.setIsAuth(true)
         getAllEmails()
           .then(data => searchData.setEmails(data))
@@ -30,6 +33,10 @@ const App = observer(() => {
         getAllHistory()
           .then(data => documents.setHistory(data))
           .catch((e) => console.error(e))
+        if (userData.role === OFFICE_MANAGER)
+          getAllEmployees()
+            .then(data => user.setEmployees(data))
+            .catch((e) => console.error(e))
       })
       .catch(() => {
       })

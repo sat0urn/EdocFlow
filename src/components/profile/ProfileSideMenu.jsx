@@ -1,9 +1,11 @@
-import {Link} from "react-router-dom";
 import Dashboard from '../../assets/icons/dashboard.svg'
 import History from '../../assets/icons/history.svg'
 import Inbox from '../../assets/icons/inbox.svg'
-import Settings from '../../assets/icons/settings.png'
 import Logout from '../../assets/icons/logout.svg'
+import Outbox from '../../assets/icons/outbox.svg'
+import EmployeeList from '../../assets/icons/employee_list.svg'
+import DocumentList from '../../assets/icons/document_list.svg'
+import {Link} from "react-router-dom";
 import {observer} from "mobx-react-lite";
 import {useContext} from "react";
 import {AuthContext} from "../../context/index.js";
@@ -11,7 +13,7 @@ import {OFFICE_MANAGER} from "../../data/userRolesData.js";
 
 const ProfileSideMenu = observer(() => {
   const {user} = useContext(AuthContext)
-  const role = user.user.role
+  const role = user.role
 
   const logout = () => {
     user.setUser({})
@@ -64,29 +66,42 @@ const ProfileSideMenu = observer(() => {
             </li>
             <li className={"mb-1"}>
               <Link to={"/outbox"} className={"nav-link link-body-emphasis fw-medium px-0"}>
-                <img src={Inbox} alt="dashboard" className={"img-fluid me-3"}/>
+                <img src={Outbox} alt="dashboard" className={"img-fluid me-3"}/>
                 <span className={"small opacity-50 align-middle"}>
                   Outbox
                 </span>
               </Link>
             </li>
-            <li className={"mb-1"}>
-              <Link to={"/history"} className={"nav-link link-body-emphasis fw-medium px-0"}>
-                <img src={History} alt="history" className={"img-fluid me-3"}/>
-                <span className={"small opacity-50 align-middle"}>
-                  History
-                </span>
-              </Link>
-            </li>
-            {role === OFFICE_MANAGER &&
+            {role !== OFFICE_MANAGER &&
               <li className={"mb-1"}>
-                <Link to={"/employeeList"} className={"nav-link link-body-emphasis fw-medium px-0"}>
-                  <img src={History} alt="employee list" className={"img-fluid me-3"}/>
+                <Link to={"/history"} className={"nav-link link-body-emphasis fw-medium px-0"}>
+                  <img src={History} alt="history" className={"img-fluid me-3"}/>
                   <span className={"small opacity-50 align-middle"}>
-                    Employee list
+                    History
                   </span>
                 </Link>
-              </li>}
+              </li>
+            }
+            {role === OFFICE_MANAGER &&
+              <>
+                <li className={"mb-1"}>
+                  <Link to={"/employeeList"} className={"nav-link link-body-emphasis fw-medium px-0"}>
+                    <img src={EmployeeList} alt="employee list" className={"img-fluid me-3"}/>
+                    <span className={"small opacity-50 align-middle"}>
+                      Employee list
+                    </span>
+                  </Link>
+                </li>
+                <li className={"mb-1"}>
+                  <Link to={"/documentList"} className={"nav-link link-body-emphasis fw-medium px-0"}>
+                    <img src={DocumentList} alt="document list" className={"img-fluid me-3"}/>
+                    <span className={"small opacity-50 align-middle"}>
+                      Document list
+                    </span>
+                  </Link>
+                </li>
+              </>
+            }
           </ul>
           <hr/>
           {role === OFFICE_MANAGER &&
@@ -95,17 +110,13 @@ const ProfileSideMenu = observer(() => {
                 Company info
               </div>
               <ul className={"nav nav-pills flex-column mt-3"}>
-                <li className={"mb-2"}>
-                  <img src={Dashboard} alt="company dashboard" className={"img-fluid me-3"}/>
-                  <span className={"small opacity-75 align-middle"}>
-                    {user.user.companyName}
-                  </span>
+                <li className={"mb-2 small"}>
+                  <span className={"fw-semibold"}>Company </span>
+                  &quot;<span className={"opacity-75"}>{user.user.companyName}</span>&quot;
                 </li>
-                <li className={"mt-2"}>
-                  <img src={History} alt="document list" className={"img-fluid me-3"}/>
-                  <span className={"small opacity-75 align-middle"}>
-                    {user.user.companyBin}
-                  </span>
+                <li className={"mt-2 small"}>
+                  <span className={"fw-semibold"}>BIN </span>
+                  #<span className={"opacity-75"}>{user.user.companyBin}</span>
                 </li>
               </ul>
             </>

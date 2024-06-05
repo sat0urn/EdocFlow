@@ -13,28 +13,17 @@ export const ncaLayerStorageType = async () => {
 }
 
 export const prepareSignature = async (storageType, dataB64) => {
-  try {
-    return await ncaLayer.createCMSSignatureFromBase64(
-      storageType,
-      dataB64
-    )
-  } catch (e) {
-    console.error(e)
-  }
+  return await ncaLayer.createCMSSignatureFromBase64(storageType, dataB64)
 }
 
 export const registerSignature = async (
   pdfName, description, signature
 ) => {
-  try {
-    const response = await axios.post(
-      `${sigexURL}/api`,
-      {title: pdfName, description: description, signature}
-    )
-    return response.data
-  } catch (e) {
-    console.error(e)
-  }
+  const response = await axios.post(
+    `${sigexURL}/api`,
+    {title: pdfName, description: description, signature}
+  )
+  return response.data
 }
 
 export const addDocHash = async (documentId, dataB64) => {
@@ -43,29 +32,21 @@ export const addDocHash = async (documentId, dataB64) => {
     c => c.charCodeAt(0)
   ).buffer
 
-  try {
-    const response = await axios.post(
-      `${sigexURL}/api/${documentId}/data`,
-      dataToSend,
-      {headers: {'Content-Type': 'application/octet-stream'}}
-    )
+  const response = await axios.post(
+    `${sigexURL}/api/${documentId}/data`,
+    dataToSend,
+    {headers: {'Content-Type': 'application/octet-stream'}}
+  )
 
-    return response.data
-  } catch (e) {
-    console.error(e)
-  }
+  return response.data
 }
 
 export const addAnotherSign = async (documentId, signature) => {
-  try {
-    await axios.post(
-      `${sigexURL}/api/${documentId}`,
-      {signType: 'cms', signature},
-      {headers: {'Content-Type': 'application/json'}}
-    )
-  } catch (e) {
-    console.error(e)
-  }
+  return await axios.post(
+    `${sigexURL}/api/${documentId}`,
+    {signType: 'cms', signature},
+    {headers: {'Content-Type': 'application/json'}}
+  )
 }
 
 export const buildDDC = async (documentId, pdfName, dataB64) => {
@@ -74,17 +55,13 @@ export const buildDDC = async (documentId, pdfName, dataB64) => {
     c => c.charCodeAt(0)
   ).buffer
 
-  try {
-    const urlBuildDDC = `${sigexURL}/api/${documentId}/buildDDC?fileName=${pdfName}.pdf&language=ru`
-    const response = await axios.post(
-      urlBuildDDC,
-      dataToSend,
-      {headers: {'Content-Type': 'application/octet-stream'}}
-    )
-    return response.data
-  } catch (e) {
-    console.error(e)
-  }
+  const urlBuildDDC = `${sigexURL}/api/${documentId}/buildDDC?fileName=${pdfName}.pdf&language=ru`
+  const response = await axios.post(
+    urlBuildDDC,
+    dataToSend,
+    {headers: {'Content-Type': 'application/octet-stream'}}
+  )
+  return response.data
 }
 
 export const parseDDC = async (fileData) => {
@@ -92,14 +69,10 @@ export const parseDDC = async (fileData) => {
     atob(fileData),
     c => c.charCodeAt(0)
   ).buffer;
-  try {
-    const response = await axios.post(
-      `${sigexURL}/api/parseDDC?registerUnknownSignatures=true`,
-      dataToSend,
-      {headers: {'Content-Type': 'application/octet-stream'}}
-    )
-    return response.data
-  } catch (e) {
-    console.error(e)
-  }
+  const response = await axios.post(
+    `${sigexURL}/api/parseDDC?registerUnknownSignatures=true`,
+    dataToSend,
+    {headers: {'Content-Type': 'application/octet-stream'}}
+  )
+  return response.data
 }

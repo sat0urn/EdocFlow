@@ -21,7 +21,7 @@ const RenderRoutes = ({user}) => {
     )
   }
 
-  switch (user.user.role) {
+  switch (user.role) {
     case INDEPENDENT_USER:
       return (
         <Route path={'/'} element={<Profile/>}>

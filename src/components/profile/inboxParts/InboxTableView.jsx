@@ -1,8 +1,11 @@
 import {deleteInboxById} from "../../../http/docsApi.js";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
+import {ACCEPTED, REJECTED, SIGNING, WAITING} from "../../../data/docStatusData.js";
 
 const InboxTableView = ({documents}) => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const inboxPath = location.pathname === '/inbox'
 
   const removeInbox = (inboxId) => {
     deleteInboxById(inboxId)
@@ -20,11 +23,15 @@ const InboxTableView = ({documents}) => {
       <thead>
       <tr>
         <th scope="col" className="text-primary">Name</th>
-        <th scope="col" className="text-primary">Sender</th>
+        <th scope="col" className="text-primary">{!inboxPath ? 'Receiver' : 'Sender'}</th>
         <th scope="col" className="text-primary">Created Date</th>
         <th scope="col" className="text-primary">Status</th>
-        <th scope="col" className="text-primary">PDF</th>
-        <th scope="col" className="text-primary"></th>
+        {inboxPath &&
+          <>
+            <th scope="col" className="text-primary">PDF</th>
+            <th scope="col" className="text-primary"></th>
+          </>
+        }
       </tr>
       </thead>
       <tbody>
@@ -34,33 +41,37 @@ const InboxTableView = ({documents}) => {
             {inb.documentTitle}
           </td>
           <td className={""}>
-            {inb.senderEmail}
+            {inb.receivers[0].userEmail}
           </td>
           <td className={""}>
             {inb.createdDate.split('T')[0]}
           </td>
-          <td className={(inb.documentStatus === 'ACCEPTED') ? 'text-success' :
-            (inb.documentStatus === 'REJECTED') ? 'text-danger' :
-              (inb.documentStatus === 'OnPROCESS') && 'text-warning'}>
-            {
-              (inb.documentStatus === 'ACCEPTED') ? 'Accepted' :
-                (inb.documentStatus === 'REJECTED') ? 'Rejected' :
-                  (inb.documentStatus === 'OnPROCESS') && 'On process'
-            }
+          <td className=
+                {(inb.documentStatus === ACCEPTED) ? 'text-success' :
+                  (inb.documentStatus === REJECTED) ? 'text-danger' :
+                    (!inboxPath ?
+                        (inb.documentStatus === WAITING) && 'text-warning' :
+                        (inb.receivers[0].documentStatus === SIGNING && 'text-info')
+                    )}>
+            {!inboxPath ? inb.documentStatus : inb.receivers[0].documentStatus}
           </td>
-          <td className={""}>
-            <button className="nav-link text-primary text-decoration-underline fw-medium px-0"
-                    onClick={() => navigate(`/viewAndSign?id=${inb.inboxId}&status=${inb.documentStatus}`)}>
-              view
-            </button>
-          </td>
-          <td className="text-secondary">
-            <button className="nav-link text-danger text-decoration-underline fw-medium px-0"
-                    onClick={() => removeInbox(inb.inboxId)}
-            >
-              delete
-            </button>
-          </td>
+          {inboxPath &&
+            <>
+              <td className={""}>
+                <button className="nav-link text-primary text-decoration-underline fw-medium px-0"
+                        onClick={() => navigate(`/viewAndSign?id=${inb.inboxId}&status=${inb.documentStatus}`)}>
+                  view
+                </button>
+              </td>
+              <td className="text-secondary">
+                <button className="nav-link text-danger text-decoration-underline fw-medium px-0"
+                        onClick={() => removeInbox(inb.inboxId)}
+                >
+                  delete
+                </button>
+              </td>
+            </>
+          }
         </tr>)
       }
       </tbody>
