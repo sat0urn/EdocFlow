@@ -18,7 +18,7 @@ public interface InboxService {
 
   void rejectDocument(InboxRejectDto rejectDocumentDto, String email) throws IllegalAccessException;
 
-  void deleteInboxById(String id, String userEmail) throws IllegalAccessException;
+  void deleteInboxById(String id, String userEmail);
 
   List<AllSendInboxesDto> getAllSendInboxes(User user);
 

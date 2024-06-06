@@ -15,7 +15,7 @@ import java.util.List;
 public class InboxDto {
     private String inboxId;
     private DocumentDto documentDto;
-    private User sender;
+    private InboxViewDto sender;
     private List<InboxReceivers> receivers;
     private String remark;
 }

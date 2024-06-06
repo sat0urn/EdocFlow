@@ -87,13 +87,11 @@ public class UserController {
     return ResponseEntity.ok("Password updated successfully!");
   }
 
-
-
   @GetMapping("/getAllEmails")
   private List<String> getAllEmails(
           @RequestHeader("Authorization") String authHeader
   ) {
     String email = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
-    return userService.getAllUsersEmails(email);
+    return userService.getIndependentUsersEmails(email);
   }
 }

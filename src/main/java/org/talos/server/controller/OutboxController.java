@@ -30,7 +30,7 @@ public class OutboxController {
   public List<AllSendInboxesDto> getAllSend(
           @RequestHeader("Authorization") String authHeader
   ) {
-    String senderEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+    String senderEmail = jwtService.extractUsername(authHeader.substring(7));
     Optional<User> userSender = userService.getUserByEmail(senderEmail);
     if (userSender.isEmpty())
       throw new DataNotFoundException("User receiver by email" + senderEmail + ", does not exist");

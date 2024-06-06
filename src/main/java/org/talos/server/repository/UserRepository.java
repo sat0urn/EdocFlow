@@ -11,15 +11,15 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
-    Optional<User> findUserByEmail(String email);
+  Optional<User> findUserByEmail(String email);
 
-    Optional<User> findUserByEmailOrIin(String email, String iin);
+  Optional<User> findUserByEmailOrIin(String email, String iin);
 
-    List<User> findAllByOrganizationBin(String organisationBin);
+  List<User> findAllByOrganizationBin(String organisationBin);
 
-    @Query(value = "{}", fields = "{'email': 1}")
-    List<User> findAllEmails();
+  @Query(value = "{}", fields = "{'email': 1, 'role':  1}")
+  List<User> findAllEmailAndRoles();
 
-    @Query("{ 'email' : { $in: ?0 } }")
-    List<User> findByEmails(List<String> emails);
+  @Query("{ 'email' : { $in: ?0 } }")
+  List<User> findByEmails(List<String> emails);
 }

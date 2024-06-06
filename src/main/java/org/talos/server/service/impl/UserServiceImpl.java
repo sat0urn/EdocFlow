@@ -229,11 +229,11 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public List<String> getAllUsersEmails(String email) {
-    List<User> onlyEmails = userRepository.findAllEmails();
-    return onlyEmails.stream()
+  public List<String> getIndependentUsersEmails(String email) {
+    List<User> onlyEmailsAndRoles = userRepository.findAllEmailAndRoles();
+    return onlyEmailsAndRoles.stream()
+            .filter(er -> !er.getEmail().equals(email) && er.getRole().equals(Role.INDEPENDENT_USER))
             .map(User::getEmail)
-            .filter(e -> !e.equals(email))
             .toList();
   }
 }

@@ -37,11 +37,11 @@ public class InboxController {
     inboxService.createInbox(inboxCreateDto, senderEmail);
     return ResponseEntity.ok("Inbox created successfully");
   }
+
   @PostMapping("/update/{id}")
-  public ResponseEntity<?> setInboxReceivers(@PathVariable("id")String inboxId,
-                                             @RequestBody ReceiversAddInboxDto receiversAddInboxDto)
-  {
-    inboxService.setNewReceiversToInbox(inboxId,receiversAddInboxDto);
+  public ResponseEntity<?> setInboxReceivers(@PathVariable("id") String inboxId,
+                                             @RequestBody ReceiversAddInboxDto receiversAddInboxDto) {
+    inboxService.setNewReceiversToInbox(inboxId, receiversAddInboxDto);
     return ResponseEntity.ok("Inbox updated successfully");
   }
 
@@ -49,7 +49,7 @@ public class InboxController {
   public List<AllInboxesDto> getAllInboxes(
           @RequestHeader("Authorization") String authHeader
   ) {
-    String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+    String receiverEmail = jwtService.extractUsername(authHeader.substring(7));
     Optional<User> userReceiver = userService.getUserByEmail(receiverEmail);
     if (userReceiver.isEmpty())
       throw new DataNotFoundException("User receiver by email" + receiverEmail + ", does not exist");
@@ -62,7 +62,7 @@ public class InboxController {
           @RequestHeader("Authorization") String authHeader,
           @PathVariable("id") String inboxId
   ) throws IllegalAccessException {
-    String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+    String receiverEmail = jwtService.extractUsername(authHeader.substring(7));
     return inboxService.getInboxByIdAndUserEmail(inboxId, receiverEmail);
   }
 
@@ -73,9 +73,12 @@ public class InboxController {
           @RequestBody InboxToDocumentDto inboxToDocumentDto,
           @RequestHeader("Authorization") String authHeader
   ) throws IllegalAccessException {
-    String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
-    Inbox inbox = inboxService.signInbox(inboxToDocumentDto.getInboxId(),
-            inboxToDocumentDto.getFileData(), receiverEmail);
+    String receiverEmail = jwtService.extractUsername(authHeader.substring(7));
+    Inbox inbox = inboxService.signInbox(
+            inboxToDocumentDto.getInboxId(),
+            inboxToDocumentDto.getFileData(),
+            receiverEmail
+    );
 
     if (inbox.getDocumentPDF().getStatus().equals(DocumentStatus.COMPLETED)) {
       String documentId = documentService.saveDocument(inbox, inboxToDocumentDto.getFileData());
@@ -103,7 +106,7 @@ public class InboxController {
           @PathVariable("id") String id,
           @RequestHeader("Authorization") String authHeader
   ) throws IllegalAccessException {
-    String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+    String receiverEmail = jwtService.extractUsername(authHeader.substring(7));
     inboxService.deleteInboxById(id, receiverEmail);
     return ResponseEntity.ok("inbox deleted successfully");
   }

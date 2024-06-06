@@ -55,6 +55,7 @@ public class DocumentServiceImpl implements DocumentService {
     Optional<User> userOptional = userRepository.findUserByEmail(userEmail);
     if (userOptional.isEmpty())
       throw new DataNotFoundException("User by email " + userEmail + " does not exist in the system");
+
     List<String> documentIds = userOptional.get().getDocumentIds();
     return documentRepository.findAllByIdIn(documentIds);
   }

@@ -19,7 +19,7 @@ public interface UserService {
 
     Optional<User> getUserByEmail(String email);
 
-    List<String> getAllUsersEmails(String email);
+    List<String> getIndependentUsersEmails(String email);
 
     void updateUser(User existingUser);
 
