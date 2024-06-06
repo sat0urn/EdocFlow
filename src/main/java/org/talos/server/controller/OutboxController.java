@@ -2,10 +2,8 @@ package org.talos.server.controller;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.talos.server.config.JwtService;
 import org.talos.server.dto.inboxes_dto.AllSendInboxesDto;
 import org.talos.server.entity.User;
@@ -35,5 +33,15 @@ public class OutboxController {
     if (userSender.isEmpty())
       throw new DataNotFoundException("User receiver by email" + senderEmail + ", does not exist");
     return inboxService.getAllSendInboxes(userSender.get());
+  }
+
+  @DeleteMapping("/delete/{id}")
+  public ResponseEntity<?> deleteOutboxById(@PathVariable("id")String id,
+                                            @RequestHeader("Authorization") String authHeader)
+          throws IllegalAccessException {
+    String senderEmail = jwtService.extractUsername(authHeader.substring(7));
+    String inboxId = inboxService.deleteOutboxById(id,senderEmail);
+    return ResponseEntity.ok("Inbox by id " + inboxId + ", deleted successfully");
+
   }
 }

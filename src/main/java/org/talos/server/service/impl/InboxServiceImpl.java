@@ -138,6 +138,20 @@ public class InboxServiceImpl implements InboxService {
   }
 
   @Override
+  public String deleteOutboxById(String id, String senderEmail) throws IllegalAccessException {
+    Optional<Inbox> optionalInbox = inboxRepository.findById(id);
+    if(optionalInbox.isEmpty())
+      throw new DataNotFoundException("Inbox by id " + id + ", doesnt exist");
+    Inbox inbox = optionalInbox.get();
+    if(!inbox.getSender().getEmail().equals(senderEmail))
+    {
+      throw new IllegalAccessException("User by email" + senderEmail + ", doesnt have access to inbox by id " + id);
+    }
+    inboxRepository.delete(inbox);
+    return inbox.getId();
+  }
+
+  @Override
   public List<AllInboxesDto> getInboxesByReceiver(String receiverEmail) {
     // on this method receiver only can see sender email, but cannot see who
     // also will participate on signing process
