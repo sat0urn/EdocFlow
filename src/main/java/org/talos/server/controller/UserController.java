@@ -15,6 +15,7 @@ import org.talos.server.dto.users_dto.UpdatePasswordDto;
 import org.talos.server.dto.users_dto.UserLoginDto;
 import org.talos.server.dto.users_dto.UserRegistrationDto;
 import org.talos.server.entity.Department;
+import org.talos.server.entity.Inbox;
 import org.talos.server.entity.User;
 import org.talos.server.responses.AuthenticationResponse;
 import org.talos.server.service.UserService;

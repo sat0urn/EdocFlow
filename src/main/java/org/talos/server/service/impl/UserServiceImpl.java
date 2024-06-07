@@ -223,7 +223,9 @@ public class UserServiceImpl implements UserService {
                     .firstName(user.getFirstName())
                     .lastName(user.getLastName())
                     .orgId(user.getOrganisationId())
+                    .iin(user.getIin())
                     .email(user.getEmail())
+                    .phoneNumber(String.valueOf(user.getPhoneNumber()))
                     .position(user.getPosition())
                     .build()).collect(Collectors.toList());
   }
