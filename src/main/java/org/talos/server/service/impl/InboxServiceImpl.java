@@ -112,14 +112,17 @@ public class InboxServiceImpl implements InboxService {
     Optional<Inbox> optionalInbox = inboxRepository.findById(inboxId);
     if (optionalInbox.isEmpty())
       throw new DataNotFoundException("Inbox by id does not exist {}" + inboxId);
+
     if (receiversAddInboxDto.getEmails().isEmpty())
       throw new IllegalArgumentException("Receivers list is null email");
+
     Inbox inbox = optionalInbox.get();
     //to validate that users email exist in the system
     List<User> receivers = userRepository.findByEmails(receiversAddInboxDto.getEmails());
     if (receivers.isEmpty()) {
       throw new DataNotFoundException("No valid receivers found for provided emails");
     }
+
     List<InboxReceivers> signProcesses = new ArrayList<>();
     for (String email : receiversAddInboxDto.getEmails()) {
       signProcesses.add(InboxReceivers.builder()
@@ -133,6 +136,7 @@ public class InboxServiceImpl implements InboxService {
     if (!signProcesses.isEmpty()) {
       signProcesses.get(0).setDocumentStatus(DocumentStatus.SIGNING);
     }
+
     inbox.getReceivers().addAll(signProcesses);
     inboxRepository.save(inbox);
   }
@@ -304,6 +308,7 @@ public class InboxServiceImpl implements InboxService {
                     .documentStatus(inbox.getDocumentPDF().getStatus())
                     .receivers(inbox.getReceivers())
                     .createdDate(inbox.getDocumentPDF().getCreatedTime())
+                    .rejectReason(inbox.getRejectReason())
                     .documentTitle(inbox.getDocumentPDF().getName())
                     .build()
             )
@@ -316,8 +321,8 @@ public class InboxServiceImpl implements InboxService {
     if (optionalInbox.isEmpty()) {
       throw new DataNotFoundException("Inbox by id " + inboxId + " does not exist");
     }
-    Inbox inbox = optionalInbox.get();
 
+    Inbox inbox = optionalInbox.get();
     if (inbox.getDocumentPDF().getStatus().equals(DocumentStatus.REJECTED)) {
       throw new IllegalAccessException("Inbox by +" + inboxId + ", is rejected");
     }
@@ -348,8 +353,11 @@ public class InboxServiceImpl implements InboxService {
     }
 
     // Check if all signers have accepted
-    boolean allAccepted = inbox.getReceivers().stream()
-            .allMatch(signProcess -> signProcess.getDocumentStatus() == DocumentStatus.ACCEPTED);
+    boolean allAccepted = inbox.getReceivers()
+            .stream()
+            .allMatch(signProcess ->
+                    signProcess.getDocumentStatus() == DocumentStatus.ACCEPTED
+            );
 
     // Update the document's status based on allAccepted
     if (allAccepted) {

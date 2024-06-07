@@ -24,6 +24,7 @@ public interface InboxService {
 
   Inbox signInbox(String inboxId, byte[] fileData, String signerEmail) throws IllegalAccessException;
 
-    void setNewReceiversToInbox(String inboxId, ReceiversAddInboxDto receiversAddInboxDto);
- String deleteOutboxById(String id,String senderEmail) throws IllegalAccessException;
+  void setNewReceiversToInbox(String inboxId, ReceiversAddInboxDto receiversAddInboxDto);
+
+  String deleteOutboxById(String id, String senderEmail) throws IllegalAccessException;
 }

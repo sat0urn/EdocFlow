@@ -39,8 +39,10 @@ public class InboxController {
   }
 
   @PostMapping("/update/{id}")
-  public ResponseEntity<?> setInboxReceivers(@PathVariable("id") String inboxId,
-                                             @RequestBody ReceiversAddInboxDto receiversAddInboxDto) {
+  public ResponseEntity<?> setInboxReceivers(
+          @PathVariable("id") String inboxId,
+          @RequestBody ReceiversAddInboxDto receiversAddInboxDto
+  ) {
     inboxService.setNewReceiversToInbox(inboxId, receiversAddInboxDto);
     return ResponseEntity.ok("Inbox updated successfully");
   }
@@ -65,7 +67,6 @@ public class InboxController {
     String receiverEmail = jwtService.extractUsername(authHeader.substring(7));
     return inboxService.getInboxByIdAndUserEmail(inboxId, receiverEmail);
   }
-
 
   //here Aslan should provide signed document into inboxDto
   @PostMapping("/sign")

@@ -18,5 +18,6 @@ public class AllSendInboxesDto {
     private List<InboxReceivers> receivers;
     private String documentTitle;
     private String createdDate;
+    private String rejectReason;
     private DocumentStatus documentStatus;
 }
