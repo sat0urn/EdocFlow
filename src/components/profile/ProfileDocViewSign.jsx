@@ -1,8 +1,8 @@
-import {Link, useLocation, useNavigate} from "react-router-dom";
-import ProfileAuxWindow from "./ProfileAuxWindow.jsx";
+import {Link, useNavigate, useParams} from "react-router-dom";
+import ProfileAuxWindow from "./commonParts/ProfileAuxWindow.jsx";
 import {Document, Page} from "react-pdf";
 import {useContext, useEffect, useState} from "react";
-import {getInboxById, rejectInboxDocument, signInboxDocument} from "../../http/docsApi.js";
+import {getInboxById, rejectInboxDocument, signInboxDocument, updateInboxReceivers} from "../../http/docsApi.js";
 import Loader from "../Loader.jsx";
 import {
   addAnotherSign,
@@ -14,19 +14,29 @@ import {
 } from "../../http/sigexApi.js";
 import {observer} from "mobx-react-lite";
 import {AuthContext} from "../../context/index.js";
+import PageTitle from "../PageTitle.jsx";
+import {REJECTED, SIGNING} from "../../data/docStatusData.js";
+import {EMPLOYEE, OFFICE_MANAGER} from "../../data/userRolesData.js";
+import ProfileListEmployeeCheckbox from "./commonParts/ProfileListEmployeeCheckbox.jsx";
 
-const ProfileDocViewSign = observer(() => {
-  const {user} = useContext(AuthContext)
+const ProfileDocViewSign = observer(({title}) => {
+  const {user, documents, fetchChanges} = useContext(AuthContext)
   const navigate = useNavigate()
 
-  const location = useLocation()
-  const searchURL = new URLSearchParams(location.search)
-  const id = searchURL.get('id')
-  const status = searchURL.get('status')
+  const currentEmail = user.user.sub
+  const employees = user.employees
+  const [receiversEmail, setReceiversEmail] = useState([])
+  const isEmployeeRole = user.role === EMPLOYEE
+  const isRoleOfficeManager = user.role === OFFICE_MANAGER
+
+  const [isNextStep, setIsNextStep] = useState(false)
+
+  const {id} = useParams()
 
   const [pdfFile, setPdfFile] = useState(null)
   const [documentData, setDocumentData] = useState({})
   const [senderInfo, setSenderInfo] = useState({})
+  const [documentStatus, setDocumentStatus] = useState('')
   const [remark, setRemark] = useState('')
   const [inRemark, setInRemark] = useState('')
 
@@ -35,6 +45,7 @@ const ProfileDocViewSign = observer(() => {
   const [connecting, setConnecting] = useState(true)
   const [ncaLayerNotAvailable, setNcaLayerNotAvailable] = useState(false)
   const [awaitingSignature, setAwaitingSignature] = useState(false)
+  const [fullConnection, setFullConnection] = useState(true)
 
   const [storageType, setStorageType] = useState(null)
 
@@ -56,230 +67,370 @@ const ProfileDocViewSign = observer(() => {
         console.log("Connection established")
         ncaLayerStorageType()
           .then((storageTypes) => {
-            setStorageType(storageTypes.length === 0 ?
-              'PKCS12' : storageTypes[0])
+            setStorageType(storageTypes.length === 0 ? 'PKCS12' : storageTypes[0])
             console.log("Storage type selected")
           })
           .catch((e) => console.error(e))
       })
       .catch(() => setNcaLayerNotAvailable(true))
+      .finally(() => setFullConnection(false))
   }, [])
 
   useEffect(() => {
     getInboxById(id)
       .then((data) => {
-        console.log(data)
-        const pdfBytes = base64ToArrayBuffer(data.pdfDocumentDto.fileData)
+        const pdfBytes = base64ToArrayBuffer(data.documentDto.fileData)
         const blob = new Blob([pdfBytes], {type: 'application/pdf'});
         const url = URL.createObjectURL(blob);
+
+        const yourBox = data.receivers.find(r => r.userEmail === currentEmail)
+
         setPdfFile(url)
-        setDocumentData(data.pdfDocumentDto)
-        setSenderInfo({
-          firstName: data.sender.firstName,
-          lastName: data.sender.lastName,
-          email: data.sender.email,
-          rejectedReason: data.remark
-        })
+        setDocumentData(data.documentDto)
+        setSenderInfo(data.sender)
+        setDocumentStatus(yourBox.documentStatus ? yourBox.documentStatus : '')
+
         return () => URL.revokeObjectURL(url);
       })
-      .catch((e) => console.log(e))
+      .catch((e) => console.error(e))
   }, [id])
 
   const onDocumentLoadSuccess = ({numPages}) => {
     setNumPages(numPages)
   }
 
-  const signDocument = async () => {
-    let signature
-    const data = await parseDDC(documentData.fileData)
-    console.log('Document has parsed successfully!')
+  const handleSignDocument = async () => {
+
+    if (receiversEmail.length === 0) {
+      alert('Choose employee(-s) that need to sign the document!')
+      return
+    }
+
+    if (ncaLayerNotAvailable) {
+      alert("Connect to NCALayer")
+      return
+    }
+
+    setAwaitingSignature(true)
+    let signature, data
+
+    try {
+      data = await parseDDC(documentData.fileData)
+      console.log('Document has parsed successfully!')
+    } catch (e) {
+      console.error(e)
+      setAwaitingSignature(false)
+      return
+    }
 
     if (data.documentId) {
-      setAwaitingSignature(true)
       try {
         signature = await prepareSignature(storageType, data.document)
       } catch (e) {
-        console.error(e)
+        alert('Action was cancelled by user');
+        setAwaitingSignature(false)
         return
       }
       console.log('signature prepared')
 
-      await addAnotherSign(data.documentId, signature)
+      try {
+        await addAnotherSign(data.documentId, signature)
+      } catch (e) {
+        console.error(e)
+        setAwaitingSignature(false)
+        return
+      }
       console.log('another sign has been added')
 
-      const buildUpdatedDDC = await buildDDC(
-        data.documentId,
-        documentData.name,
-        data.document
-      )
-
-      console.log(buildUpdatedDDC)
-
-      if (buildUpdatedDDC.ddc) {
-        signInboxDocument({
-          fileData: buildUpdatedDDC.ddc,
-          inboxId: id
-        }).then(() => {
-          navigate('/inbox')
-          window.location.reload()
-        }).catch((e) => {
-          alert('Something went wrong')
-          console.error(e)
-        })
-      } else {
-        alert('Something went wrong')
+      try {
+        data = await buildDDC(data.documentId, documentData.name, data.document)
+      } catch (e) {
+        console.error(e)
+        setAwaitingSignature(false)
+        return
       }
-      setAwaitingSignature(false)
+      console.log(data)
+
+      if (data.ddc) {
+        if (!isRoleOfficeManager) {
+          signInboxDocument({
+            employeesEmail: receiversEmail,
+            fileData: data.ddc,
+            inboxId: id
+          })
+            .then(() => {
+              fetchChanges.toggleIsChanged()
+              navigate('/inbox')
+            })
+            .catch((e) => {
+              alert('Something went wrong')
+              console.error(e)
+            })
+        } else {
+          updateInboxReceivers(id, {emails: receiversEmail})
+            .then((data) => {
+              console.log(data)
+              fetchChanges.toggleIsChanged()
+              navigate('/inbox')
+            })
+            .catch((e) => {
+              alert('Something went wrong')
+              console.error(e)
+            })
+        }
+      }
+    }
+    setAwaitingSignature(false)
+  }
+
+  const handleRejectDocument = () => {
+    if (inRemark) {
+      rejectInboxDocument({
+        inboxId: id,
+        reasonToReject: inRemark
+      }).then(() => {
+        navigate('/inbox')
+        fetchChanges.toggleIsChanged()
+      }).catch((e) => {
+        alert('Something went wrong')
+        console.error(e)
+      })
+    } else {
+      alert('Please fill the rejection remark!')
     }
   }
 
-  const rejectDocument = () => {
-    rejectInboxDocument({
-      inboxId: id,
-      reasonToReject: inRemark
-    }).then(() => {
-      navigate('/inbox')
-      window.location.reload()
-    }).catch((e) => {
-      alert('Something went wrong')
-      console.error(e)
-    })
-  }
 
   const reloadPage = () => {
     window.location.reload()
   }
 
-  return (
-    <div className={"row"}>
-      <div className={"col-lg-9"}>
-        <Link to={(user.user.sub === senderInfo.email) ? '/outbox' : '/inbox'}
-              className={"rounded-pill bg-primary d-inline-flex align-items-center p-2 text-decoration-none"}>
-          <div className={"bg-white shadow rounded-circle d-inline-flex align-items-center justify-content-center"}
-               style={{width: '40px', height: '40px'}}>
-            <i className={"fa-solid fa-arrow-left"}></i>
-          </div>
-          <div className={"text-white mx-4"}>
-            Return to <span>{(user.user.sub === senderInfo.email) ? 'Outbox' : 'Inbox'}</span>
-          </div>
-        </Link>
-        <div className={"card border-0 rounded-4 shadow-sm p-5 my-4"}>
-          {(status === 'REJECTED') ?
-            ((user.user.sub === senderInfo.email) &&
-              <div className={"fw-light opacity-75 text-center"}>
-                <div className={"text-danger"}>
-                  Rejected <br/>
-                </div>
-                <div>
-                  Reason: {senderInfo.rejectedReason}
-                </div>
-              </div>)
-            :
-            <div className={"text-secondary fw-light opacity-50 text-center"}>
-              {documentData.name} was created by {senderInfo.firstName + ' ' + senderInfo.lastName}
-            </div>
-          }
-          <hr/>
-          <div className={"d-flex flex-row"}>
-            <div className={"overflow-y-auto card rounded-5 shadow-sm flex-fill"}
-                 style={{height: '650px'}}>
-              <Document file={pdfFile}
-                        onLoadSuccess={onDocumentLoadSuccess}
-                        loading={<Loader/>}
-                        noData={<Loader/>}
-              >
-                {Array.from(
-                  new Array(numPages),
-                  (el, index) => (
-                    <Page
-                      key={`page_${index + 1}`}
-                      pageNumber={index + 1}
-                      className="my-5 rounded-5"
-                      renderTextLayer={false}
-                      renderAnnotationLayer={false}
-                    />
-                  ))}
-              </Document>
-            </div>
+  if (!senderInfo || fullConnection) {
+    return <>
+      <PageTitle title={title}/>
+      <Loader/>
+    </>
+  }
 
-            {(status === 'OnPROCESS' && (user.user.sub !== senderInfo.email)) &&
-              <div className={"ms-3"}>
-                  <textarea className={"form-control rounded-4"}
-                            rows={5}
-                            placeholder={'Please justify your rejection!'}
-                            value={remark}
-                            onChange={(e) => setRemark(e.target.value)}
-                  />
-                {remark &&
-                  <button className={"btn btn-primary mt-3 w-100"}
-                          onClick={() => {
-                            setInRemark(remark)
-                            alert('Remark has been added!')
-                          }}
+  return (
+    <>
+      <PageTitle title={title}/>
+      <div className={"row"}>
+        <div className={"col-lg-9"}>
+          <Link to={(currentEmail === senderInfo.email) ? '/outbox' : '/inbox'}
+                className={"rounded-pill bg-primary d-inline-flex align-items-center p-2 text-decoration-none"}>
+            <div className={"bg-white shadow rounded-circle d-inline-flex align-items-center justify-content-center"}
+                 style={{width: '40px', height: '40px'}}>
+              <i className={"fa-solid fa-arrow-left"}></i>
+            </div>
+            <div className={"text-white mx-4"}>
+              Return to <span>{(currentEmail === senderInfo.email) ? 'Outbox' : 'Inbox'}</span>
+            </div>
+          </Link>
+          <div className={"card border-0 rounded-4 shadow-sm p-5 my-4"}>
+            {isRoleOfficeManager &&
+              <div className={"progress fw-semibold mb-3"} style={{height: '35px'}}>
+                <div className={"progress-bar border-end"}
+                     role="progressbar"
+                     style={{width: '50%'}}
+                     aria-valuenow="50"
+                     aria-valuemin="0"
+                     aria-valuemax="100">STEP 1: create document
+                </div>
+                <div className={`progress-bar ${!isNextStep && 'd-none'}`}
+                     role="progressbar"
+                     style={{width: '50%'}}
+                     aria-valuenow="50"
+                     aria-valuemin="0"
+                     aria-valuemax="100">STEP 2: assign and send
+                </div>
+              </div>
+            }
+
+            {isNextStep ?
+              <>
+                <ProfileListEmployeeCheckbox
+                  senderEmail={senderInfo.email}
+                  employees={employees}
+                  receiversEmail={receiversEmail}
+                  setReceiversEmail={setReceiversEmail}
+                />
+                <ul className={"list-group mb-4"}>
+                  <li className={"list-group-item"}>Distribution by employees:</li>
+                  {receiversEmail.map((email, index) =>
+                    <li key={index} className={"list-group-item"}>{email}</li>)}
+                </ul>
+                {!awaitingSignature ?
+                  <button
+                    className={"btn btn-success w-100"}
+                    onClick={handleSignDocument}
                   >
-                    Add remark
+                    Assign and Send
+                  </button>
+                  :
+                  <button
+                    type={"button"}
+                    className={"btn btn-success w-100"}
+                    disabled
+                  >
+                    <span className={"spinner-border spinner-border-sm"}></span>
                   </button>
                 }
-
-                {ncaLayerNotAvailable ?
-                  <div className={"text-center"}>
-                    <div className={"text-danger small my-3"}>
-                      Failed to detect <strong>NCALayer</strong>
+                {receiversEmail.length === 0 &&
+                  <button
+                    type={'button'}
+                    className={"btn btn-primary w-100 mt-2"}
+                    onClick={() => setIsNextStep(false)}
+                  >
+                    Previous Step
+                  </button>
+                }
+              </>
+              :
+              <>
+                {(documentStatus === REJECTED) && (currentEmail === senderInfo.email) ?
+                  <div className={"fw-light opacity-75 text-center"}>
+                    <div className={"text-danger"}>
+                      Rejected <br/>
                     </div>
-                    <div className={"card p-2 small"}>
-                      NCALayer is required
+                    <div>
+                      Reason: {senderInfo.remark}
                     </div>
-                    <button type={"button"}
-                            className={"btn btn-outline-danger w-100 mt-3"}
-                            onClick={reloadPage}>
-                      <span className={"small"}>
-                        Reload the page
-                      </span>
-                    </button>
                   </div>
                   :
-                  (connecting ?
-                    <div className={"row justify-content-center"}>
-                      <div className="col-md-auto">
-                        <div className="d-flex justify-content-center">
-                          <div className={"spinner-grow"}></div>
-                        </div>
-                        <p>Connecting to NCALayer...</p>
-                      </div>
-                    </div>
-                    :
-                    (!awaitingSignature ?
-                      <div className={"mt-3"}>
-                        {!remark ?
-                          <button className={"btn btn-success w-100"}
-                                  onClick={signDocument}>
-                            Sign
-                          </button>
-                          :
-                          <button className={"btn btn-danger w-100"}
-                                  onClick={rejectDocument}>
-                            Reject
-                          </button>
-                        }
-                      </div>
-                      :
-                      <button type={"button"}
-                              className={"btn btn-primary w-100 rounded-4 mt-3"}
-                              disabled>
-                        <span
-                          className={"spinner-border spinner-border-sm"}></span>
-                      </button>))
+                  <div className={"text-secondary fw-light opacity-50 text-center"}>
+                    {documentData.name} was created by {senderInfo.firstName + ' ' + senderInfo.lastName}
+                  </div>
                 }
-              </div>
+                <hr/>
+                <div className={"d-flex flex-row"}>
+                  <div className={"document-pdf-component vh-100 overflow-y-auto card rounded-0 shadow-sm flex-fill"}>
+                    <Document
+                      file={pdfFile}
+                      onLoadSuccess={onDocumentLoadSuccess}
+                      loading={<Loader/>}
+                      noData={<Loader/>}
+                    >
+                      {Array.from(
+                        new Array(numPages),
+                        (el, index) => (
+                          <Page
+                            key={`page_${index + 1}`}
+                            pageNumber={index + 1}
+                            className={"my-5"}
+                            renderTextLayer={false}
+                            renderAnnotationLayer={false}
+                          />
+                        ))}
+                    </Document>
+                  </div>
+
+                  {(documentStatus === SIGNING && currentEmail !== senderInfo.email) &&
+                    <div className={"ms-3"}>
+                      {(ncaLayerNotAvailable || fullConnection) ?
+                        <div className={"text-center"}>
+                          <div className={"text-danger small my-3"}>
+                            Failed to detect <strong>NCALayer</strong>
+                          </div>
+                          <div className={"card p-2 small"}>
+                            NCALayer is required
+                          </div>
+                          <button
+                            type={"button"}
+                            className={"btn btn-outline-danger w-100 mt-3"}
+                            onClick={reloadPage}
+                          >
+                            <span className={"small"}>
+                              Reload the page
+                            </span>
+                          </button>
+                        </div>
+                        :
+                        (connecting ?
+                            <div className={"row justify-content-center"}>
+                              <div className="col-md-auto">
+                                <div className="d-flex justify-content-center">
+                                  <div className={"spinner-grow"}></div>
+                                </div>
+                                <div className={"w-100 text-center"}>Connecting to NCALayer...</div>
+                              </div>
+                            </div>
+                            :
+                            (!awaitingSignature ?
+                                <>
+                                  <textarea
+                                    className={"form-control rounded-4"}
+                                    rows={5}
+                                    placeholder={'To reject the document, type your remark!'}
+                                    value={remark}
+                                    onChange={(e) => setRemark(e.target.value)}
+                                  />
+                                  {remark ?
+                                    <>
+                                      <button
+                                        className={"btn btn-primary mt-3 w-100"}
+                                        onClick={() => {
+                                          setInRemark(remark)
+                                          alert('Remark has been added!')
+                                        }}
+                                      >
+                                        Add remark
+                                      </button>
+                                      <button
+                                        className={"btn btn-danger w-100 mt-2"}
+                                        onClick={handleRejectDocument}
+                                      >
+                                        Reject
+                                      </button>
+                                    </>
+                                    :
+                                    <div className={"mt-3"}>
+                                      {isNextStep || !isRoleOfficeManager ?
+                                        <>
+                                          <button
+                                            type={handleSignDocument}
+                                            className={"btn btn-primary w-100 rounded-4 mt-3"}
+                                          >
+                                            Sign and Send
+                                          </button>
+                                        </>
+                                        :
+                                        <>
+                                          <button
+                                            type={'button'}
+                                            className={"btn btn-primary w-100"}
+                                            onClick={() => setIsNextStep(true)}
+                                          >
+                                            Next Step
+                                          </button>
+                                        </>
+                                      }
+                                    </div>
+                                  }
+                                </>
+                                :
+                                <button
+                                  type={"button"}
+                                  className={"btn btn-primary w-100 mt-3"}
+                                  disabled
+                                >
+                                  <span className={"spinner-border spinner-border-sm"}></span>
+                                </button>
+                            )
+                        )
+                      }
+                    </div>
+                  }
+                </div>
+              </>
             }
           </div>
         </div>
+        <div className="col-lg-3">
+          <ProfileAuxWindow/>
+        </div>
       </div>
-      <div className="col-lg-3">
-        <ProfileAuxWindow/>
-      </div>
-
-    </div>
+    </>
   )
 })
 

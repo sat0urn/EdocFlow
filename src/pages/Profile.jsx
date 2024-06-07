@@ -1,6 +1,6 @@
 import {Outlet} from "react-router-dom"
-import ProfileSideMenu from "../components/profile/ProfileSideMenu.jsx";
-import ProfileSearchAndAccount from "../components/profile/ProfileSearchAndAccount.jsx";
+import ProfileSideMenu from "../components/profile/commonParts/ProfileSideMenu.jsx";
+import ProfileSearchAndAccount from "../components/profile/commonParts/ProfileSearchAndAccount.jsx";
 
 const Profile = () => {
   return (

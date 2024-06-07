@@ -1,10 +1,15 @@
-import {useEffect, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import {allDocFormData} from "../../data/docFormData.js";
 import PDFViewer from './createDocumentParts/PDFViewer.jsx';
 import {PDFDocument, rgb, StandardFonts} from 'pdf-lib'
 import PDFEditor from './createDocumentParts/PDFEditor.jsx';
+import PageTitle from "../PageTitle.jsx";
+import {observer} from "mobx-react-lite";
+import {AuthContext} from "../../context/index.js";
 
-const ProfileCreateDocument = () => {
+const ProfileCreateDocument = observer(({title}) => {
+  const {searchData, user} = useContext(AuthContext)
+
   const [originalPdfBytes, setOriginalPdfBytes] = useState(null)
   const [updatedPdfBytes, setUpdatedPdfBytes] = useState(null)
 
@@ -12,8 +17,10 @@ const ProfileCreateDocument = () => {
   const [pdfTitle, setPdfTitle] = useState(allDocFormData[0].title)
   const [formData, setFormData] = useState(allDocFormData[0].data)
 
-  const [receiverEmail, setReceiverEmail] = useState('')
+  const [receiversEmail, setReceiversEmail] = useState([])
   const [remark, setRemark] = useState('')
+
+  const [isNextStep, setIsNextStep] = useState(false)
 
   useEffect(() => {
     fetch(pdfFile)
@@ -71,30 +78,40 @@ const ProfileCreateDocument = () => {
   };
 
   return (
-    <div className={"row mb-4"}>
-      <div className={"col-lg-9"}>
-        <PDFViewer
-          pdfTitle={pdfTitle}
-          pdfFile={pdfFile}
-          handleSelectChange={handleSelectChange}
-          receiverEmail={receiverEmail}
-          setReceiverEmail={setReceiverEmail}
-          setRemark={setRemark}
-          pdfBytes={updatedPdfBytes || originalPdfBytes}
-        />
+    <>
+      <PageTitle title={title}/>
+      <div className={"row mb-4"}>
+        <div className={"col-lg-9"}>
+          <PDFViewer
+            isNextStep={isNextStep}
+            searchData={searchData}
+            userRole={user.role}
+            employees={user.employees}
+            pdfTitle={pdfTitle}
+            pdfFile={pdfFile}
+            handleSelectChange={handleSelectChange}
+            receiversEmail={receiversEmail}
+            setReceiversEmail={setReceiversEmail}
+            setRemark={setRemark}
+            pdfBytes={updatedPdfBytes || originalPdfBytes}
+          />
+        </div>
+        <div className={"col-lg-3"}>
+          <PDFEditor
+            isNextStep={isNextStep}
+            setIsNextStep={setIsNextStep}
+            userRole={user.role}
+            remark={remark}
+            receiversEmail={receiversEmail}
+            formData={formData}
+            handleInputChange={handleInputChange}
+            updatedPdfBytes={updatedPdfBytes}
+            pdfFile={pdfFile}
+          />
+        </div>
       </div>
-      <div className={"col-lg-3"}>
-        <PDFEditor
-          remark={remark}
-          receiverEmail={receiverEmail}
-          formData={formData}
-          handleInputChange={handleInputChange}
-          updatedPdfBytes={updatedPdfBytes}
-          pdfFile={pdfFile}
-        />
-      </div>
-    </div>
+    </>
   )
-}
+})
 
 export default ProfileCreateDocument

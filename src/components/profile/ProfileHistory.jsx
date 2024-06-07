@@ -2,11 +2,12 @@ import {useContext, useMemo, useState} from "react"
 import {observer} from "mobx-react-lite";
 import {AuthContext} from "../../context/index.js";
 import HistoryTableView from "./historyParts/HistoryTableView.jsx";
-import ProfileAuxWindow from "./ProfileAuxWindow.jsx";
-import Pagination from "./commonParts/Pagination.jsx";
+import ProfileAuxWindow from "./commonParts/ProfileAuxWindow.jsx";
+import ProfilePagination from "./commonParts/ProfilePagination.jsx";
+import PageTitle from "../PageTitle.jsx";
 
-const ProfileHistory = observer(() => {
-  const {user, documents} = useContext(AuthContext)
+const ProfileHistory = observer(({title}) => {
+  const {documents} = useContext(AuthContext)
   const [searchQuery, setSearchQuery] = useState('')
   const [pages, setPages] = useState(Math.ceil(documents.history.length / 6))
   const [currentPage, setCurrentPage] = useState(0)
@@ -38,43 +39,45 @@ const ProfileHistory = observer(() => {
   }
 
   return (
-    <div className={"row"}>
-      <div className={"col-lg-9"}>
-        <div className={"card rounded-4 mb-5 p-4"}>
-          <div className={"input-group mb-3"}>
-            <div className={"d-flex align-items-center me-3"} style={{fontFamily: 'Arial, FontAwesome'}}>
-              <div className={"fs-5"}>
-                &#xF002;
+    <>
+      <PageTitle title={title}/>
+      <div className={"row"}>
+        <div className={"col-lg-9"}>
+          <div className={"card rounded-4 mb-5 p-4"}>
+            <div className={"input-group mb-3"}>
+              <div className={"d-flex align-items-center me-3"} style={{fontFamily: 'Arial, FontAwesome'}}>
+                <div className={"fs-5"}>
+                  &#xF002;
+                </div>
               </div>
+              <input
+                type="text"
+                className={"form-control shadow-sm"}
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search by document name"
+                style={{fontFamily: 'Arial, FontAwesome'}}
+              />
             </div>
-            <input
-              type="text"
-              className={"form-control shadow-sm"}
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search by document name"
-              style={{fontFamily: 'Arial, FontAwesome'}}
-            />
-          </div>
-          <div className="card rounded-4">
-            <HistoryTableView
-              userFullName={[user._user.firstName, user._user.lastName]}
-              openPdf={openPdf}
-              getSearchedDocuments={getSearchedDocuments}
-            />
+            <div className="card rounded-4">
+              <HistoryTableView
+                openPdf={openPdf}
+                getSearchedDocuments={getSearchedDocuments}
+              />
 
-            <Pagination
-              pages={pages}
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-            />
+              <ProfilePagination
+                pages={pages}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+              />
+            </div>
           </div>
         </div>
+        <div className={"col-lg-3"}>
+          <ProfileAuxWindow/>
+        </div>
       </div>
-      <div className={"col-lg-3"}>
-        <ProfileAuxWindow/>
-      </div>
-    </div>
+    </>
   )
 })
 

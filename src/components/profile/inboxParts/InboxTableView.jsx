@@ -1,21 +1,30 @@
-import {deleteInboxById} from "../../../http/docsApi.js";
-import {useLocation, useNavigate} from "react-router-dom";
-import {ACCEPTED, REJECTED, SIGNING, WAITING} from "../../../data/docStatusData.js";
+import {deleteInboxById, deleteOutboxById} from "../../../http/docsApi.js";
+import {useNavigate} from "react-router-dom";
+import {ACCEPTED, COMPLETED, REJECTED, SIGNING, WAITING} from "../../../data/docStatusData.js";
+import {observer} from "mobx-react-lite";
+import {useContext} from "react";
+import {AuthContext} from "../../../context/index.js";
 
-const InboxTableView = ({documents}) => {
+const InboxTableView = observer(({searchedDocuments, isInboxPath}) => {
+  const {fetchChanges} = useContext(AuthContext)
   const navigate = useNavigate()
-  const location = useLocation()
-  const inboxPath = location.pathname === '/inbox'
 
-  const removeInbox = (inboxId) => {
-    deleteInboxById(inboxId)
-      .then(() => {
-        window.location.reload()
-        alert('Inbox with id: ' + inboxId + ' has been removed!')
-      })
-      .catch((e) => {
-        console.error(e)
-      })
+  const removeInbox = (boxId) => {
+    if (isInboxPath) {
+      deleteInboxById(boxId)
+        .then(() => {
+          alert('Inbox with id: ' + boxId + ' has been removed!')
+          fetchChanges.toggleIsChanged()
+        })
+        .catch((e) => console.error(e))
+    } else {
+      deleteOutboxById(boxId)
+        .then(() => {
+          alert('Outbox with id: ' + boxId + ' has been removed!')
+          fetchChanges.toggleIsChanged()
+        })
+        .catch((e) => console.error(e))
+    }
   }
 
   return (
@@ -23,60 +32,60 @@ const InboxTableView = ({documents}) => {
       <thead>
       <tr>
         <th scope="col" className="text-primary">Name</th>
-        <th scope="col" className="text-primary">{!inboxPath ? 'Receiver' : 'Sender'}</th>
+        <th scope="col" className="text-primary">{!isInboxPath ? 'Receiver' : 'Sender'}</th>
         <th scope="col" className="text-primary">Created Date</th>
         <th scope="col" className="text-primary">Status</th>
-        {inboxPath &&
-          <>
-            <th scope="col" className="text-primary">PDF</th>
-            <th scope="col" className="text-primary"></th>
-          </>
-        }
+        <th scope="col" className="text-primary"></th>
+        <th scope="col" className="text-primary"></th>
       </tr>
       </thead>
       <tbody>
-      {documents.map((inb, index) =>
-        <tr key={index} className={"fw-medium small"}>
+      {searchedDocuments.map((inb, index) =>
+        <tr key={index} className={"fw-medium small align-middle"}>
           <td className={""}>
             {inb.documentTitle}
           </td>
           <td className={""}>
-            {inb.receivers[0].userEmail}
+            {isInboxPath ? inb.senderEmail : (inb.receivers.length > 0 ? inb.receivers[0].userEmail : 'Deleted by receiver')}
           </td>
           <td className={""}>
             {inb.createdDate.split('T')[0]}
           </td>
-          <td className=
-                {(inb.documentStatus === ACCEPTED) ? 'text-success' :
-                  (inb.documentStatus === REJECTED) ? 'text-danger' :
-                    (!inboxPath ?
-                        (inb.documentStatus === WAITING) && 'text-warning' :
-                        (inb.receivers[0].documentStatus === SIGNING && 'text-info')
-                    )}>
-            {!inboxPath ? inb.documentStatus : inb.receivers[0].documentStatus}
+          <td className={
+            inb.documentStatus === WAITING ? 'text-warning' :
+              inb.documentStatus === SIGNING ? 'text-info' :
+                inb.documentStatus === COMPLETED ? 'text-primary' :
+                  inb.documentStatus === ACCEPTED ? 'text-success' :
+                    inb.documentStatus === REJECTED && 'text-danger'
+          }>
+            {inb.documentStatus}
           </td>
-          {inboxPath &&
-            <>
+          {isInboxPath ?
+            <td className={""}>
+              <button className="nav-link text-primary text-decoration-underline fw-medium px-0"
+                      onClick={() => navigate(`/viewAndSign/${inb.inboxId}`)}>
+                view
+              </button>
+            </td>
+            :
+            (inb.documentStatus === REJECTED &&
               <td className={""}>
-                <button className="nav-link text-primary text-decoration-underline fw-medium px-0"
-                        onClick={() => navigate(`/viewAndSign?id=${inb.inboxId}&status=${inb.documentStatus}`)}>
-                  view
-                </button>
+                <input type="text" className={"form-control-sm w-100"} placeholder={inb.rejectReason} disabled/>
               </td>
-              <td className="text-secondary">
-                <button className="nav-link text-danger text-decoration-underline fw-medium px-0"
-                        onClick={() => removeInbox(inb.inboxId)}
-                >
-                  delete
-                </button>
-              </td>
-            </>
+            )
           }
+          <td className="text-secondary">
+            <button className="nav-link text-danger text-decoration-underline fw-medium px-0"
+                    onClick={() => removeInbox(inb.inboxId)}
+            >
+              delete
+            </button>
+          </td>
         </tr>)
       }
       </tbody>
     </table>
   )
-}
+})
 
 export default InboxTableView

@@ -12,6 +12,10 @@ input[type=number]::-webkit-outer-spin-button {
     margin: 0;
 }
 
+.document-pdf-component::-webkit-scrollbar {
+    width: 1px;
+}
+
 /* custom scrollbar */
 /* width */
 ::-webkit-scrollbar {

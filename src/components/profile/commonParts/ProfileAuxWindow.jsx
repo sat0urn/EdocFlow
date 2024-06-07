@@ -1,7 +1,7 @@
-import ProfileLogo from '../../assets/icons/profile_photo.svg'
+import ProfileLogo from '../../../assets/icons/profile_photo.svg'
 import {observer} from "mobx-react-lite";
 import {useContext} from "react";
-import {AuthContext} from "../../context/index.js";
+import {AuthContext} from "../../../context/index.js";
 import {useNavigate} from "react-router-dom";
 
 const ProfileAuxWindow = observer(() => {
@@ -10,7 +10,7 @@ const ProfileAuxWindow = observer(() => {
   const navigate = useNavigate()
 
   return (
-    <div className={"card h-100 p-4 rounded-5"}>
+    <div className={"card rounded-5 h-100 p-4"}>
       <div className={"fs-5 fw-medium"}>
         User profile
       </div>
@@ -18,7 +18,7 @@ const ProfileAuxWindow = observer(() => {
       <div className={"text-center"}>
         <img src={ProfileLogo} alt="" className={"my-4 card-img rounded-circle border border-dark border-opacity-25 p-2 w-50"}/>
         <div className={"fw-bold"}>
-          Welcome back, {user._user.firstName}
+          Welcome back, {user.user.firstName}
         </div>
         <div className={"fw-light text-secondary small"}>
           Enjoy your document work today too!
@@ -30,7 +30,7 @@ const ProfileAuxWindow = observer(() => {
               <div>Storage capacity</div>
               <div>{historyDocsLength}%</div>
             </div>
-            <div className="progress rounded-3 mb-5"
+            <div className={"progress rounded-3 mb-4"}
                  role="progressbar"
                  aria-valuenow={historyDocsLength}
                  aria-valuemin="0"

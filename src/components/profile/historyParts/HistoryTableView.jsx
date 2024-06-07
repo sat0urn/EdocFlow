@@ -1,4 +1,6 @@
-const HistoryTableView = ({userFullName, openPdf, getSearchedDocuments}) => {
+import {OFFICE_MANAGER} from "../../../data/userRolesData.js";
+
+const HistoryTableView = ({openPdf, getSearchedDocuments}) => {
   return (
     <table className="table table-hover m-4 w-auto">
       <thead className="text-center">
@@ -20,7 +22,7 @@ const HistoryTableView = ({userFullName, openPdf, getSearchedDocuments}) => {
             {doc.createdTime.split('T')[0]}
           </td>
           <td className="text-secondary">
-            {userFullName[0]} {userFullName[1]}
+            {OFFICE_MANAGER}
           </td>
           <td className={'fw-semibold text-success'}>
             {doc.status}

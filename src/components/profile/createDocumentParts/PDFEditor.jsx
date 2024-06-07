@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {
   addDocHash,
   buildDDC,
@@ -9,14 +9,24 @@ import {
 } from "../../../http/sigexApi.js";
 import {createInbox} from "../../../http/docsApi.js";
 import Loader from "../../Loader.jsx";
+import {EMPLOYEE, OFFICE_MANAGER} from "../../../data/userRolesData.js";
+import {observer} from "mobx-react-lite";
+import {AuthContext} from "../../../context/index.js";
 
-const PDFEditor = (
+const PDFEditor = observer((
   {
+    isNextStep, setIsNextStep,
+    userRole,
     formData, handleInputChange, updatedPdfBytes, pdfFile,
     remark,
-    receiverEmail
+    receiversEmail
   }
 ) => {
+  const {fetchChanges} = useContext(AuthContext)
+
+  const isRoleEmployee = userRole === EMPLOYEE
+  const isRoleOfficeManager = userRole === OFFICE_MANAGER
+
   const [connecting, setConnecting] = useState(true)
   const [ncaLayerNotAvailable, setNcaLayerNotAvailable] = useState(false)
   const [fullConnection, setFullConnection] = useState(true)
@@ -27,13 +37,10 @@ const PDFEditor = (
 
   const [pdfName, setPdfName] = useState('')
 
-  const [dataB64, setDataB64] = useState(null)
-
-  useEffect(() => {
-    if (updatedPdfBytes) {
-      setDataB64(arrayBufferToBase64(updatedPdfBytes))
-    }
-  }, [updatedPdfBytes])
+  // useEffect(() => {
+  //   if (updatedPdfBytes)
+  //     setDataB64(arrayBufferToBase64(updatedPdfBytes))
+  // }, [updatedPdfBytes])
 
   useEffect(() => {
     setPdfName(pdfFile.substring(pdfFile.lastIndexOf("/") + 1, pdfFile.length - 4))
@@ -62,7 +69,7 @@ const PDFEditor = (
     return window.btoa(binary)
   }
 
-  const documentSignPreparation = async () => {
+  const documentSignPreparation = async (dataB64) => {
     setAwaitingSignature(true)
     let signature, data
 
@@ -111,32 +118,50 @@ const PDFEditor = (
 
   const handleSignDocument = async (e) => {
     e.preventDefault()
+    if (!isNextStep && isRoleOfficeManager) {
+      e.stopPropagation()
+      setIsNextStep(true)
+      return
+    }
+
     if (ncaLayerNotAvailable) {
       alert("Connect to NCALayer")
       return
     }
 
-    const documentId = await documentSignPreparation()
+    const dataB64 = arrayBufferToBase64(updatedPdfBytes)
+
+    const documentId = await documentSignPreparation(dataB64)
     console.log(documentId)
 
-    let data
-    try {
-      data = await buildDDC(documentId, pdfName, dataB64)
-    } catch (e) {
-      console.log(e)
-      return
-    }
+    if (documentId) {
+      let data
+      try {
+        data = await buildDDC(documentId, pdfName, dataB64)
+      } catch (e) {
+        console.error(e)
+        return
+      }
 
-    if (data.ddc) {
-      createInbox({pdfName, fileData: data.ddc, remark, receiversEmail: [receiverEmail]})
-        .then(data => {
-          console.log(data)
-          window.location.reload()
-          alert('Document has been signed and sent successfully!')
+      if (data.ddc) {
+        createInbox({
+          pdfName,
+          fileData: data.ddc,
+          remark,
+          receiversEmail: receiversEmail
         })
-        .catch((e) => {
-          console.error(e)
-        })
+          .then(data => {
+            console.log(data)
+            fetchChanges.toggleIsChanged()
+            alert('Document has been signed and sent successfully!')
+          })
+          .catch((e) => {
+            alert('Something went wrong')
+            console.error(e)
+          })
+      }
+    } else {
+      alert('Something went wrong!')
     }
   }
 
@@ -151,7 +176,7 @@ const PDFEditor = (
   return (
     <>
       <form onSubmit={handleSignDocument}>
-        {!ncaLayerNotAvailable &&
+        {!isNextStep && !ncaLayerNotAvailable &&
           (Object.entries(formData).map(([key, {type, name, value}]) => {
             return (
               <div key={key} className="mb-2">
@@ -170,7 +195,7 @@ const PDFEditor = (
             )
           }))
         }
-        {ncaLayerNotAvailable || fullConnection ?
+        {(ncaLayerNotAvailable || fullConnection) ?
           <div className={"text-center"}>
             <div className={"text-danger mb-3"}>
               Failed to detect <strong>NCALayer</strong>
@@ -178,45 +203,91 @@ const PDFEditor = (
             <div className={"card p-2 border-0 shadow-sm"}>
               NCALayer is required for signing with digital signature documents (ЭЦП)
             </div>
-            <button type={"button"}
-                    className={"btn btn-outline-danger w-100 mt-3"}
-                    onClick={reloadPage}>
+            <button
+              type={"button"}
+              className={"btn btn-outline-danger w-100 mt-3"}
+              onClick={reloadPage}
+            >
               Reload the page and try again
             </button>
           </div>
           :
-          (receiverEmail ?
-            (connecting ?
-              <div className={"row justify-content-center"}>
-                <div className="col-md-auto">
-                  <div className="d-flex justify-content-center">
-                    <div className={"spinner-grow"}></div>
+          ((receiversEmail.length > 0 || isRoleEmployee) ?
+              (connecting ?
+                  <div className={"row justify-content-center"}>
+                    <div className="col-md-auto">
+                      <div className="d-flex justify-content-center">
+                        <div className={"spinner-grow"}></div>
+                      </div>
+                      <p>Connecting to NCALayer...</p>
+                    </div>
                   </div>
-                  <p>Connecting to NCALayer...</p>
-                </div>
-              </div>
+                  :
+                  (!awaitingSignature ?
+                      (isNextStep || !isRoleOfficeManager ?
+                          <>
+                            <button
+                              type={'submit'}
+                              className={"btn btn-primary w-100 rounded-4 mt-3"}
+                            >
+                              Sign and Send
+                            </button>
+                            {isRoleOfficeManager &&
+                              <>
+                                <button
+                                  type={'button'}
+                                  className={"btn btn-primary w-100 rounded-4 my-2"}
+                                  onClick={() => setIsNextStep(false)}
+                                >
+                                  Previous Step
+                                </button>
+                                <ul className="list-group">
+                                  {receiversEmail.map((email, index) =>
+                                    <li key={index} className="list-group-item">{email}</li>)}
+                                </ul>
+                              </>
+                            }
+                          </>
+                          :
+                          <button type={'submit'} className={"btn btn-primary w-100 rounded-4 mt-3"}>
+                            Next Step
+                          </button>
+                      )
+                      :
+                      <button type={"button"} className={"btn btn-primary w-100 rounded-4 mt-3"} disabled>
+                        <span className={"spinner-border spinner-border-sm"}></span>
+                      </button>
+                  )
+              )
               :
-              (!awaitingSignature ?
-                <button type={'submit'} className="btn btn-primary w-100 rounded-4 mt-3">
-                  Sign and Send
-                </button>
-                :
-                <button type={"button"} className={"btn btn-primary w-100 rounded-4 mt-3"} disabled>
-                  <span className={"spinner-border spinner-border-sm"}></span>
-                </button>))
-            :
-            <div className={"text-center"}>
-              <div className={"text-danger my-4"}>
-                Receiver email must be added
-              </div>
-              <div className={"text-success"}>
-                <strong>NCALayer</strong> connection is established!
-              </div>
-            </div>)
+              <>
+                {isNextStep ?
+                  <div className={"text-center"}>
+                    <div className={"text-danger my-4"}>
+                      Receiver email must be added
+                    </div>
+                    <div className={"text-success"}>
+                      <strong>NCALayer</strong> connection is established!
+                    </div>
+                    <button
+                      type={'button'}
+                      className={"btn btn-primary w-100 rounded-4 mt-4"}
+                      onClick={() => setIsNextStep(false)}
+                    >
+                      Previous Step
+                    </button>
+                  </div>
+                  :
+                  <button type={'submit'} className={"btn btn-primary w-100 rounded-4 mt-3"}>
+                    Next Step
+                  </button>
+                }
+              </>
+          )
         }
       </form>
     </>
   )
-}
+})
 
 export default PDFEditor

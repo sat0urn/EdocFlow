@@ -1,8 +1,8 @@
 import {Link} from "react-router-dom";
 import {useContext, useState} from "react";
-import {AuthContext} from "../../context/index.js";
+import {AuthContext} from "../../../context/index.js";
 import {observer} from "mobx-react-lite";
-import Notification from "../../assets/icons/notification.svg"
+import Notification from "../../../assets/icons/notification.svg"
 
 const ProfileSearchAndAccount = observer(() => {
   const {user, documents} = useContext(AuthContext)

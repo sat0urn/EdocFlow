@@ -1,23 +1,24 @@
-import Dashboard from '../../assets/icons/dashboard.svg'
-import History from '../../assets/icons/history.svg'
-import Inbox from '../../assets/icons/inbox.svg'
-import Logout from '../../assets/icons/logout.svg'
-import Outbox from '../../assets/icons/outbox.svg'
-import EmployeeList from '../../assets/icons/employee_list.svg'
-import DocumentList from '../../assets/icons/document_list.svg'
+import Dashboard from '../../../assets/icons/dashboard.svg'
+import History from '../../../assets/icons/history.svg'
+import Inbox from '../../../assets/icons/inbox.svg'
+import Logout from '../../../assets/icons/logout.svg'
+import Outbox from '../../../assets/icons/outbox.svg'
+import EmployeeList from '../../../assets/icons/employee_list.svg'
+import DocumentList from '../../../assets/icons/document_list.svg'
 import {Link} from "react-router-dom";
 import {observer} from "mobx-react-lite";
 import {useContext} from "react";
-import {AuthContext} from "../../context/index.js";
-import {OFFICE_MANAGER} from "../../data/userRolesData.js";
+import {AuthContext} from "../../../context/index.js";
+import {OFFICE_MANAGER} from "../../../data/userRolesData.js";
 
 const ProfileSideMenu = observer(() => {
-  const {user} = useContext(AuthContext)
-  const role = user.role
+  const {user, fetchChanges} = useContext(AuthContext)
+  const isOfficeManager = user.role === OFFICE_MANAGER
 
   const logout = () => {
     user.setUser({})
     user.setIsAuth(false)
+    fetchChanges.toggleIsChanged()
     localStorage.removeItem('token')
   }
 
@@ -37,7 +38,7 @@ const ProfileSideMenu = observer(() => {
             Services
           </div>
           <ul className={"nav nav-pills flex-column mt-3"}>
-            {role === OFFICE_MANAGER ?
+            {isOfficeManager ?
               <li className={"mb-1"}>
                 <Link to={"/"} className={"nav-link link-body-emphasis fw-medium px-0"}>
                   <img src={Dashboard} alt="dashboard" className={"img-fluid me-3"}/>
@@ -72,7 +73,7 @@ const ProfileSideMenu = observer(() => {
                 </span>
               </Link>
             </li>
-            {role !== OFFICE_MANAGER &&
+            {!isOfficeManager &&
               <li className={"mb-1"}>
                 <Link to={"/history"} className={"nav-link link-body-emphasis fw-medium px-0"}>
                   <img src={History} alt="history" className={"img-fluid me-3"}/>
@@ -82,7 +83,7 @@ const ProfileSideMenu = observer(() => {
                 </Link>
               </li>
             }
-            {role === OFFICE_MANAGER &&
+            {isOfficeManager &&
               <>
                 <li className={"mb-1"}>
                   <Link to={"/employeeList"} className={"nav-link link-body-emphasis fw-medium px-0"}>
@@ -104,7 +105,7 @@ const ProfileSideMenu = observer(() => {
             }
           </ul>
           <hr/>
-          {role === OFFICE_MANAGER &&
+          {isOfficeManager &&
             <>
               <div className={"fw-bold text-primary fs-5"}>
                 Company info
@@ -125,14 +126,6 @@ const ProfileSideMenu = observer(() => {
         <div>
           <hr/>
           <ul className={"nav nav-pills flex-column"}>
-            {/*<li>*/}
-            {/*  <Link to={"/support"} className={"nav-link link-body-emphasis fw-medium px-0"}>*/}
-            {/*    <img src={Settings} alt="settings" width={'25px'} className={"img-fluid me-3"}/>*/}
-            {/*    <span className="small opacity-50 align-middle">*/}
-            {/*      Settings*/}
-            {/*    </span>*/}
-            {/*  </Link>*/}
-            {/*</li>*/}
             <li>
               <button type={'button'}
                       onClick={logout}

@@ -1,4 +1,4 @@
-const Pagination = (
+const ProfilePagination = (
   {
     pages,
     currentPage,
@@ -52,4 +52,4 @@ const Pagination = (
   )
 }
 
-export default Pagination
+export default ProfilePagination

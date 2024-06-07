@@ -44,4 +44,8 @@ export default class UserStore {
   get employees() {
     return this._employess
   }
+
+  findEmployeeByEmail(email) {
+    return this._employess.find((e) => e.email === email)
+  }
 }
