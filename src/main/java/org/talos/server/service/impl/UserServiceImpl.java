@@ -231,6 +231,24 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public void updateEmployee(SelectUsersToSignDto userToChange) {
+    Optional<User> userOptional = userRepository.findUserByEmail(userToChange.getEmail());
+    if(userOptional.isEmpty())
+      throw new DataNotFoundException("user by email" + userToChange.getEmail() + ", does not exist");
+    User user = userOptional.get();
+    user.setFirstName(userToChange.getFirstName());
+    user.setLastName(userToChange.getLastName());
+    user.setOrganisationId(userToChange.getOrgId());
+    user.setIin(userToChange.getIin());
+    user.setPhoneNumber(Long.valueOf(userToChange.getPhoneNumber()));
+    user.setPosition(userToChange.getPosition());
+    userRepository.save(user);
+
+
+
+  }
+
+  @Override
   public List<String> getIndependentUsersEmails(String email) {
     List<User> onlyEmailsAndRoles = userRepository.findAllEmailAndRoles();
     return onlyEmailsAndRoles.stream()

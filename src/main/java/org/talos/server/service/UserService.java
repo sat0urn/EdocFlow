@@ -28,4 +28,6 @@ public interface UserService {
     String registrateEmployee(EmployeeRegistrationDto employeeRegistrationDto, String authHeader);
 
     List<SelectUsersToSignDto> getAllEmployeeByDepartment(String receiverEmail) throws IllegalAccessException;
+
+    void updateEmployee(SelectUsersToSignDto user);
 }
