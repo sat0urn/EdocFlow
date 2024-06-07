@@ -136,6 +136,11 @@ public class InboxServiceImpl implements InboxService {
     if (!signProcesses.isEmpty()) {
       signProcesses.get(0).setDocumentStatus(DocumentStatus.SIGNING);
     }
+    //setting office manager status as accepted
+    if(inbox.getReceivers().size() == 1)
+    {
+      inbox.getReceivers().get(0).setDocumentStatus(DocumentStatus.ACCEPTED);
+    }
 
     inbox.getReceivers().addAll(signProcesses);
     inboxRepository.save(inbox);
