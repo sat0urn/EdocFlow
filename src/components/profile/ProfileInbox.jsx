@@ -1,16 +1,26 @@
 import ProfileAuxWindow from "./commonParts/ProfileAuxWindow.jsx";
 import {observer} from "mobx-react-lite";
-import {useContext, useMemo, useState} from "react";
+import {useContext, useEffect, useMemo, useState} from "react";
 import {AuthContext} from "../../context/index.js";
 import InboxTableView from "./inboxParts/InboxTableView.jsx";
 import ProfilePagination from "./commonParts/ProfilePagination.jsx";
 import {useLocation} from "react-router-dom";
 import {ACCEPTED, COMPLETED, REJECTED, SIGNING, WAITING} from "../../data/docStatusData.js";
 import PageTitle from "../PageTitle.jsx";
+import {getAllInboxes, getAllOutboxes} from "../../http/docsApi.js";
 
 const ProfileInbox = observer(({title}) => {
-  const {user, documents} = useContext(AuthContext)
+  const {user, documents, fetchChanges} = useContext(AuthContext)
   const currentEmail = user.user.sub
+
+  useEffect(() => {
+    getAllInboxes()
+      .then(data => documents.setInbox(data))
+      .catch((e) => console.error(e))
+    getAllOutboxes()
+      .then(data => documents.setOutbox(data))
+      .catch((e) => console.error(e))
+  }, [fetchChanges.isChanged])
 
   const [searchQuery, setSearchQuery] = useState('')
   const [pages, setPages] = useState(Math.ceil(documents.inbox.length / 6))

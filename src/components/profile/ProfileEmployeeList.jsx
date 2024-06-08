@@ -65,7 +65,7 @@ const ProfileEmployeeList = observer(({title}) => {
       employeeData.position = position
       await addEmployee(employeeData)
       alert('Employee was added successfully!')
-      fetchChanges.toggleIsChanged()
+      fetchChanges.toggleIsOtherChanged()
     } catch (e) {
       console.log(e)
       if (e.response.status === 409) {

@@ -7,7 +7,7 @@ import OfficeManagerForm from "../components/auth/OfficeManagerForm.jsx";
 import PageTitle from "../components/PageTitle.jsx";
 
 const RegisterBusiness = observer(({title}) => {
-  const {user, fetchChanges} = useContext(AuthContext)
+  const {user} = useContext(AuthContext)
   const [isNextStep, setIsNextStep] = useState(false)
   const [businessForm, setBusinessForm] = useState({
     companyName: '',
@@ -51,7 +51,8 @@ const RegisterBusiness = observer(({title}) => {
     }
     user.setUser(data)
     user.setIsAuth(true)
-    fetchChanges.toggleIsChanged()
+    user.setEmployees([])
+    user.setRole(data.role)
   }
 
   const validateBinAndManagerIIN = (bin, managerIIN) => {

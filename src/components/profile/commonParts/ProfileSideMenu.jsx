@@ -12,13 +12,17 @@ import {AuthContext} from "../../../context/index.js";
 import {OFFICE_MANAGER} from "../../../data/userRolesData.js";
 
 const ProfileSideMenu = observer(() => {
-  const {user, fetchChanges} = useContext(AuthContext)
+  const {user, documents, searchData} = useContext(AuthContext)
   const isOfficeManager = user.role === OFFICE_MANAGER
 
   const logout = () => {
+    user.setEmployees([])
+    documents.setHistory([])
+    documents.setInbox([])
+    documents.setOutbox([])
+    searchData.setEmails([])
     user.setUser({})
     user.setIsAuth(false)
-    fetchChanges.toggleIsChanged()
     localStorage.removeItem('token')
   }
 

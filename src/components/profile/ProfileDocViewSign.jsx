@@ -26,7 +26,7 @@ const ProfileDocViewSign = observer(({title}) => {
   const currentEmail = user.user.sub
   const employees = user.employees
   const [receiversEmail, setReceiversEmail] = useState([])
-  const isEmployeeRole = user.role === EMPLOYEE
+  const isRoleEmployee = user.role === EMPLOYEE
   const isRoleOfficeManager = user.role === OFFICE_MANAGER
 
   const [isNextStep, setIsNextStep] = useState(false)
@@ -100,8 +100,7 @@ const ProfileDocViewSign = observer(({title}) => {
   }
 
   const handleSignDocument = async () => {
-
-    if (receiversEmail.length === 0) {
+    if (receiversEmail.length === 0 && isRoleOfficeManager) {
       alert('Choose employee(-s) that need to sign the document!')
       return
     }
@@ -149,7 +148,6 @@ const ProfileDocViewSign = observer(({title}) => {
         setAwaitingSignature(false)
         return
       }
-      console.log(data)
 
       if (data.ddc) {
         if (!isRoleOfficeManager) {
@@ -160,6 +158,7 @@ const ProfileDocViewSign = observer(({title}) => {
           })
             .then(() => {
               fetchChanges.toggleIsChanged()
+              fetchChanges.toggleIsHistoryChanged()
               navigate('/inbox')
             })
             .catch((e) => {
@@ -171,6 +170,7 @@ const ProfileDocViewSign = observer(({title}) => {
             .then((data) => {
               console.log(data)
               fetchChanges.toggleIsChanged()
+              fetchChanges.toggleIsHistoryChanged()
               navigate('/inbox')
             })
             .catch((e) => {
@@ -228,7 +228,7 @@ const ProfileDocViewSign = observer(({title}) => {
             </div>
           </Link>
           <div className={"card border-0 rounded-4 shadow-sm p-5 my-4"}>
-            {isRoleOfficeManager &&
+            {(isRoleOfficeManager && documentStatus === SIGNING) &&
               <div className={"progress fw-semibold mb-3"} style={{height: '35px'}}>
                 <div className={"progress-bar border-end"}
                      role="progressbar"
@@ -388,8 +388,9 @@ const ProfileDocViewSign = observer(({title}) => {
                                       {isNextStep || !isRoleOfficeManager ?
                                         <>
                                           <button
-                                            type={handleSignDocument}
-                                            className={"btn btn-primary w-100 rounded-4 mt-3"}
+                                            type={'button'}
+                                            onClick={handleSignDocument}
+                                            className={"btn btn-primary w-100"}
                                           >
                                             Sign and Send
                                           </button>

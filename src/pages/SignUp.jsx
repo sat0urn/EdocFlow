@@ -7,7 +7,7 @@ import {citiesOfKazakhstan} from "../data/citiesOfKazakhstanData.js";
 import PageTitle from "../components/PageTitle.jsx";
 
 const SignUp = observer(({title}) => {
-  const {user, fetchChanges} = useContext(AuthContext)
+  const {user} = useContext(AuthContext)
   const [userForm, setUserForm] = useState({
     email: '',
     firstName: '',
@@ -39,7 +39,8 @@ const SignUp = observer(({title}) => {
     }
     user.setUser(data)
     user.setIsAuth(true)
-    fetchChanges.toggleIsChanged()
+    user.setEmployees([])
+    user.setRole(data.role)
   }
 
   const validatePassword = (password) => {

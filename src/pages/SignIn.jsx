@@ -6,7 +6,7 @@ import {observer} from "mobx-react-lite";
 import PageTitle from "../components/PageTitle.jsx";
 
 const SignIn = observer(({title}) => {
-  const {user, fetchChanges} = useContext(AuthContext)
+  const {user} = useContext(AuthContext)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -28,7 +28,8 @@ const SignIn = observer(({title}) => {
     }
     user.setUser(data)
     user.setIsAuth(true)
-    fetchChanges.toggleIsChanged()
+    user.setEmployees([])
+    user.setRole(data.role)
   }
 
   const validatePassword = (password) => {

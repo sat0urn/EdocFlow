@@ -49,7 +49,7 @@ const InboxTableView = observer(({searchedDocuments, isInboxPath}) => {
             {isInboxPath ? inb.senderEmail : (inb.receivers.length > 0 ? inb.receivers[0].userEmail : 'Deleted by receiver')}
           </td>
           <td className={""}>
-            {inb.createdDate.split('T')[0]}
+            {inb.createdDate.split('T')[0] + ' / ' + inb.createdDate.split('T')[1].substring(0, 8)}
           </td>
           <td className={
             inb.documentStatus === WAITING ? 'text-warning' :

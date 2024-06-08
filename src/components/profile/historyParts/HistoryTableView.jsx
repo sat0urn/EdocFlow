@@ -19,7 +19,7 @@ const HistoryTableView = ({openPdf, getSearchedDocuments}) => {
             {doc.name}
           </td>
           <td className="text-secondary">
-            {doc.createdTime.split('T')[0]}
+            {doc.createdTime.split('T')[0] + ' / ' + doc.createdTime.split('T')[1].substring(0, 8)}
           </td>
           <td className="text-secondary">
             {OFFICE_MANAGER}
