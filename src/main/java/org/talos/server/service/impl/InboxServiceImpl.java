@@ -367,8 +367,6 @@ public class InboxServiceImpl implements InboxService {
     // Update the document's status based on allAccepted
     if (allAccepted) {
       inbox.getDocumentPDF().setStatus(DocumentStatus.COMPLETED);
-      inboxRepository.save(inbox);
-      return inbox;
     } else {
       inbox.getDocumentPDF().setStatus(DocumentStatus.WAITING);
     }
