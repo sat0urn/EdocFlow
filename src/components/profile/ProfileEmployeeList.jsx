@@ -1,7 +1,7 @@
 import ProfileAuxWindow from "./commonParts/ProfileAuxWindow.jsx";
 import {useNavigate} from "react-router-dom";
 import {useContext, useMemo, useState} from "react";
-import {addEmployee} from "../../http/employeeApi.js";
+import {addEmployee, updateEmployee} from "../../http/employeeApi.js";
 import {allDepartments, positionsByDepartment} from "../../data/departmentPositionData.js";
 import {observer} from "mobx-react-lite";
 import {AuthContext} from "../../context/index.js";
@@ -75,6 +75,26 @@ const ProfileEmployeeList = observer(({title}) => {
           alert('Error with department')
         }
       }
+    }
+  }
+
+  const updateCurrentEmployee = async (e) => {
+    e.preventDefault()
+    if (!validateEmail(updatedEmployeeData.email)
+      || !validatePhoneNumber(updatedEmployeeData.phoneNumber)
+      || !validateIin(updatedEmployeeData.iin)
+    ) {
+      e.stopPropagation()
+      return
+    }
+
+    try {
+      updatedEmployeeData.position = updatePosition
+      const data = await updateEmployee(employeeData)
+      alert(data)
+      fetchChanges.toggleIsOtherChanged()
+    } catch (e) {
+      console.log(e)
     }
   }
 
@@ -158,15 +178,10 @@ const ProfileEmployeeList = observer(({title}) => {
                           <div className="modal-dialog modal-dialog-centered">
                             <div className="modal-content">
                               <div className="modal-header">
-                                <h1 className="modal-title fs-5" id={"staticBackdropLabel_" + index}>Update employee</h1>
-                                <button
-                                  type="button"
-                                  className="btn-close"
-                                  data-bs-dismiss="modal"
-                                  aria-label="Close"
-                                ></button>
+                                <h1 className="modal-title fs-5" id={"staticBackdropLabel_" + index}>Update
+                                  employee</h1>
                               </div>
-                              <form>
+                              <form onSubmit={updateCurrentEmployee}>
                                 <div className="modal-body">
                                   <div className={"input-group mb-2"}>
                                     <input
@@ -214,9 +229,9 @@ const ProfileEmployeeList = observer(({title}) => {
                                       required
                                     >
                                       <option value={''}>Position</option>
-                                      {updatedEmployeeData.departmentId &&
+                                      {(updatedEmployeeData.departmentId || employee.orgId) &&
                                         positionsByDepartment
-                                          .find(({department}) => department === updatedEmployeeData.departmentId)['positions']
+                                          .find(({department}) => department === (updatedEmployeeData.departmentId || employee.orgId))['positions']
                                           .map((pos, index) => <option key={index} value={pos}>{pos}</option>)
                                       }
                                     </select>
@@ -234,9 +249,6 @@ const ProfileEmployeeList = observer(({title}) => {
                                         })}
                                         required
                                       />
-                                      <div className={"invalid-feedback text-center"}>
-                                        IIN must contain 12 digits
-                                      </div>
                                     </div>
                                     <div>
                                       <input
@@ -250,9 +262,6 @@ const ProfileEmployeeList = observer(({title}) => {
                                         })}
                                         required
                                       />
-                                      <div className={"invalid-feedback text-center"}>
-                                        Email format is not correct
-                                      </div>
                                     </div>
                                   </div>
                                   <input
@@ -268,8 +277,23 @@ const ProfileEmployeeList = observer(({title}) => {
                                   />
                                 </div>
                                 <div className="modal-footer">
-                                  <button type="submit" className="btn btn-primary">Update</button>
-                                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close
+                                  <button type={'submit'} className="btn btn-primary">Update</button>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setUpdatedEmployeeData({
+                                        name: '',
+                                        surname: '',
+                                        departmentId: '',
+                                        iin: '',
+                                        email: '',
+                                        phoneNumber: ''
+                                      })
+                                    }
+                                    className="btn btn-secondary"
+                                    data-bs-dismiss="modal"
+                                  >
+                                    Close
                                   </button>
                                 </div>
                               </form>

@@ -5,6 +5,11 @@ const addEmployee = async (data) => {
   return response.data
 }
 
+const updateEmployee = async (data) => {
+  const response = await $authHost.patch('/employee/update', data)
+  return response.data
+}
+
 const getAllEmployees = async () => {
   const response = await $authHost.get('/employee/getAll')
   return response.data
@@ -12,5 +17,6 @@ const getAllEmployees = async () => {
 
 export {
   addEmployee,
+  updateEmployee,
   getAllEmployees
 }
