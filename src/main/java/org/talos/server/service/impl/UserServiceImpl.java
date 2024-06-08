@@ -273,7 +273,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public boolean verifyCode(String email, String code) {
     Boolean result = code.equals(verificationCodes.get(email));
-    //deleteting users gmail and its code
+    //deleting users gmail and its code
     verificationCodes.remove(verificationCodes.get(email));
     return result;
   }

@@ -13,6 +13,7 @@ import org.talos.server.config.JwtService;
 
 import org.talos.server.dto.other.EmailDTO;
 import org.talos.server.dto.other.VerificationRequestDto;
+import org.talos.server.dto.users_dto.ForgetPasswordDto;
 import org.talos.server.dto.users_dto.UpdatePasswordDto;
 import org.talos.server.dto.users_dto.UserLoginDto;
 import org.talos.server.dto.users_dto.UserRegistrationDto;
@@ -100,6 +101,11 @@ public class UserController {
 
   @PostMapping("/validate-email")
   public ResponseEntity<?> validateEmail(@RequestBody EmailDTO emailDTO) {
+    Optional<User> optionalUser = userService.getUserByEmail(emailDTO.getEmail());
+    if(optionalUser.isPresent())
+    {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User by gmail" + emailDTO.getEmail() + "  exist");
+    }
     if (!userService.isValidGmail(emailDTO.getEmail())) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Gmail address.");
     }
@@ -117,5 +123,26 @@ public class UserController {
 
 
     return ResponseEntity.ok("User verified successfully");
+  }
+  @PatchMapping("/forget-password")
+  public ResponseEntity<String> forgetPasswordUpdate(
+          @RequestBody ForgetPasswordDto forgetPasswordDto,
+          @RequestHeader("Authorization") String authHeader
+  ) {
+    String email = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+
+    Optional<User> user = userService.getUserByEmail(email);
+
+    if (user.isEmpty())
+      return ResponseEntity
+              .status(HttpStatus.NOT_FOUND)
+              .body("User not found for email: " + email);
+
+    User existingUser = user.get();
+
+
+    existingUser.setPassword(passwordEncoder.encode(forgetPasswordDto.getPassword()));
+    userService.updateUser(existingUser);
+    return ResponseEntity.ok("Password updated successfully!");
   }
 }
