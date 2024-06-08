@@ -30,4 +30,10 @@ public interface UserService {
     List<SelectUsersToSignDto> getAllEmployeeByDepartment(String receiverEmail) throws IllegalAccessException;
 
     void updateEmployee(SelectUsersToSignDto user);
+
+    boolean isValidGmail(String email);
+
+    void sendVerificationCode(String email);
+
+    boolean verifyCode(String email, String code);
 }

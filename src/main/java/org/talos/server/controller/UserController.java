@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.talos.server.config.JwtService;
 
+import org.talos.server.dto.other.EmailDTO;
+import org.talos.server.dto.other.VerificationRequestDto;
 import org.talos.server.dto.users_dto.UpdatePasswordDto;
 import org.talos.server.dto.users_dto.UserLoginDto;
 import org.talos.server.dto.users_dto.UserRegistrationDto;
@@ -94,5 +96,26 @@ public class UserController {
   ) {
     String email = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
     return userService.getIndependentUsersEmails(email);
+  }
+
+  @PostMapping("/validate-email")
+  public ResponseEntity<?> validateEmail(@RequestBody EmailDTO emailDTO) {
+    if (!userService.isValidGmail(emailDTO.getEmail())) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Gmail address.");
+    }
+
+    userService.sendVerificationCode(emailDTO.getEmail());
+    return ResponseEntity.ok("Verification code sent.");
+  }
+  @PostMapping("/verify-code")
+  public ResponseEntity<?> verifyCode(@RequestBody VerificationRequestDto request) {
+    boolean isValid = userService.verifyCode(request.getEmail(), request.getCode());
+
+    if (!isValid) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid verification code.");
+    }
+
+
+    return ResponseEntity.ok("User verified successfully");
   }
 }

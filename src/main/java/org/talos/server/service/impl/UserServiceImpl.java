@@ -18,9 +18,11 @@ import org.talos.server.exception.DataNotFoundException;
 import org.talos.server.repository.DepartmentRepository;
 import org.talos.server.repository.UserRepository;
 import org.talos.server.responses.AuthenticationResponse;
+import org.talos.server.service.MailSendService;
 import org.talos.server.service.UserService;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +34,8 @@ public class UserServiceImpl implements UserService {
 
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
-
+  private final Map<String, String> verificationCodes = new HashMap<>();
+  private final MailSendService mailSendService;
   @Override
   public AuthenticationResponse registrateUser(UserRegistrationDto userRegistrationDto) {
     var checkUser = userRepository.findUserByEmail(userRegistrationDto.getEmail());
@@ -244,6 +247,35 @@ public class UserServiceImpl implements UserService {
     user.setPhoneNumber(Long.valueOf(userToChange.getPhoneNumber()));
     user.setPosition(userToChange.getPosition());
     userRepository.save(user);
+  }
+
+  @Override
+  public boolean isValidGmail(String email) {
+    if (email == null)
+      return false;
+    String regex = "^[a-zA-Z0-9._%+-]+@gmail\\.com$";
+    return email.matches(regex);
+  }
+
+  @Override
+  public void sendVerificationCode(String email) {
+    String code = generateVerificationCode();
+    verificationCodes.put(email, code);
+
+    mailSendService.sendEmail(email, "Your verification code", "Your verification code is " + code);
+  }
+  private String generateVerificationCode() {
+    Random random = new Random();
+    int code = 1000 + random.nextInt(9000); // Generates a 4-digit number
+    return String.valueOf(code);
+  }
+
+  @Override
+  public boolean verifyCode(String email, String code) {
+    Boolean result = code.equals(verificationCodes.get(email));
+    //deleteting users gmail and its code
+    verificationCodes.remove(verificationCodes.get(email));
+    return result;
   }
 
   @Override
