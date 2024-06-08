@@ -46,25 +46,25 @@ public class EmployeeController {
   }
 
   @PatchMapping("/update")
-  private ResponseEntity<?> updateEmployee(@RequestHeader("Authorization") String authHeader,
-                                           @RequestBody SelectUsersToSignDto user)
-  {
+  private ResponseEntity<?> updateEmployee(
+          @RequestHeader("Authorization") String authHeader,
+          @RequestBody SelectUsersToSignDto employee
+  ) {
     String managerEmail = jwtService.extractUsername(authHeader.substring(7));
     Optional<User> optionalManager = userService.getUserByEmail(managerEmail);
-    if(optionalManager.isEmpty() || !optionalManager.get().getRole().equals(Role.OFFICE_MANAGER))
-      return new ResponseEntity<>("You dont have access to change employee parameters",
-              HttpStatus.BAD_REQUEST);
-    if(user.getEmail() == null)
-    {
-      return new ResponseEntity<>("Missing required parameter: " + user.getEmail(), HttpStatus.BAD_REQUEST);
-    }
-    Optional<User> userOptional = userService.getUserByEmail(user.getEmail());
-    if(userOptional.isEmpty())
-      return new ResponseEntity<>("User by email " + user.getEmail()+ ",doesnt exist in the system",
+    if (optionalManager.isEmpty() || !optionalManager.get().getRole().equals(Role.OFFICE_MANAGER))
+      return new ResponseEntity<>("You dont have access to change employee parameters", HttpStatus.BAD_REQUEST);
+
+    if (employee.getEmail() == null)
+      return new ResponseEntity<>("Missing required parameter: email", HttpStatus.BAD_REQUEST);
+
+    Optional<User> userOptional = userService.getUserByEmail(employee.getEmail());
+    if (userOptional.isEmpty())
+      return new ResponseEntity<>("User by email " + employee.getEmail() + ",doesnt exist in the system",
               HttpStatus.BAD_REQUEST);
 
-    userService.updateEmployee(user);
+    userService.updateEmployee(employee);
 
-    return ResponseEntity.ok("User parameters by email " + user.getEmail() + ", updated successfully");
+    return ResponseEntity.ok("User parameters by email " + employee.getEmail() + ", updated successfully");
   }
 }

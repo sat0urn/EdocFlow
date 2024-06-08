@@ -233,8 +233,9 @@ public class UserServiceImpl implements UserService {
   @Override
   public void updateEmployee(SelectUsersToSignDto userToChange) {
     Optional<User> userOptional = userRepository.findUserByEmail(userToChange.getEmail());
-    if(userOptional.isEmpty())
+    if (userOptional.isEmpty())
       throw new DataNotFoundException("user by email" + userToChange.getEmail() + ", does not exist");
+
     User user = userOptional.get();
     user.setFirstName(userToChange.getFirstName());
     user.setLastName(userToChange.getLastName());
@@ -243,9 +244,6 @@ public class UserServiceImpl implements UserService {
     user.setPhoneNumber(Long.valueOf(userToChange.getPhoneNumber()));
     user.setPosition(userToChange.getPosition());
     userRepository.save(user);
-
-
-
   }
 
   @Override
