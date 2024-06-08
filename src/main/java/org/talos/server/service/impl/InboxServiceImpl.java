@@ -266,11 +266,15 @@ public class InboxServiceImpl implements InboxService {
         foundAndUpdated.set(true); // Update flag using AtomicBoolean
       }
       return signProcess;
-    }).collect(Collectors.toList());
+      //remove whose status is waiting
+    }).collect(Collectors.toList()).stream().
+            filter(inboxReceivers -> !inboxReceivers.getDocumentStatus().equals(DocumentStatus.WAITING))
+            .collect(Collectors.toList());
 
     if (!foundAndUpdated.get()) { // Check the flag using AtomicBoolean
       throw new IllegalAccessException("User by email " + email + " does not have access to reject this document");
     }
+
 
     // Update the list of receivers in the inbox
     inbox.setReceivers(updatedSignProcesses);
