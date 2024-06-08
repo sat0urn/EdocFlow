@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import org.talos.server.config.JwtService;
 import org.talos.server.dto.employee_dto.EmployeeRegistrationDto;
 import org.talos.server.dto.users_dto.SelectUsersToSignDto;
+import org.talos.server.entity.Role;
+import org.talos.server.entity.User;
 import org.talos.server.service.UserService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/employee")
@@ -40,5 +43,28 @@ public class EmployeeController {
   ) throws IllegalAccessException {
     String managerEmail = jwtService.extractUsername(authHeader.substring(7));
     return userService.getAllEmployeeByDepartment(managerEmail);
+  }
+
+  @PatchMapping("/update")
+  private ResponseEntity<?> updateEmployee(@RequestHeader("Authorization") String authHeader,
+                                           @RequestBody SelectUsersToSignDto user)
+  {
+    String managerEmail = jwtService.extractUsername(authHeader.substring(7));
+    Optional<User> optionalManager = userService.getUserByEmail(managerEmail);
+    if(optionalManager.isEmpty() || !optionalManager.get().getRole().equals(Role.OFFICE_MANAGER))
+      return new ResponseEntity<>("You dont have access to change employee parameters",
+              HttpStatus.BAD_REQUEST);
+    if(user.getEmail() == null)
+    {
+      return new ResponseEntity<>("Missing required parameter: " + user.getEmail(), HttpStatus.BAD_REQUEST);
+    }
+    Optional<User> userOptional = userService.getUserByEmail(user.getEmail());
+    if(userOptional.isEmpty())
+      return new ResponseEntity<>("User by email " + user.getEmail()+ ",doesnt exist in the system",
+              HttpStatus.BAD_REQUEST);
+
+    userService.updateEmployee(user);
+
+    return ResponseEntity.ok("User parameters by email " + user.getEmail() + ", updated successfully");
   }
 }
