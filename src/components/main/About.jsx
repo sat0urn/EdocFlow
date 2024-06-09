@@ -21,19 +21,15 @@ const About = () => {
             <div className="d-xxl-inline-flex d-none btn-group w-75 mt-3" role="group">
               <button
                 type="button"
-                className="btn btn-outline-primary me-3"
-                onClick={() => {
-                  navigate('/login')
-                }}
+                className="btn btn-outline-primary rounded-pill me-3"
+                onClick={() => navigate('/login')}
               >
                 Login
               </button>
               <button
                 type="button"
-                className="btn btn-primary"
-                onClick={() => {
-                  navigate('/register')
-                }}
+                className="btn btn-primary rounded-pill"
+                onClick={() => navigate('/register')}
               >
                 Sign-up
               </button>

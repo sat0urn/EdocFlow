@@ -9,6 +9,8 @@ import {AuthContext} from "../../context/index.js";
 
 const ProfileCreateDocument = observer(({title}) => {
   const {searchData, user} = useContext(AuthContext)
+  const userRole = user.role
+  const userEmployees = user.employees
 
   const [originalPdfBytes, setOriginalPdfBytes] = useState(null)
   const [updatedPdfBytes, setUpdatedPdfBytes] = useState(null)
@@ -85,8 +87,8 @@ const ProfileCreateDocument = observer(({title}) => {
           <PDFViewer
             isNextStep={isNextStep}
             searchData={searchData}
-            userRole={user.role}
-            employees={user.employees}
+            userRole={userRole}
+            employees={userEmployees}
             pdfTitle={pdfTitle}
             pdfFile={pdfFile}
             handleSelectChange={handleSelectChange}
@@ -100,7 +102,7 @@ const ProfileCreateDocument = observer(({title}) => {
           <PDFEditor
             isNextStep={isNextStep}
             setIsNextStep={setIsNextStep}
-            userRole={user.role}
+            userRole={userRole}
             remark={remark}
             receiversEmail={receiversEmail}
             formData={formData}

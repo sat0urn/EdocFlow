@@ -135,7 +135,7 @@ const SignUp = observer(({title}) => {
                           type="email"
                           className={`form-control p-3 rounded-4 ${validateEmail(userForm.email) ? 'is-valid' : 'is-invalid'}`}
                           id="exampleInputEmail"
-                          placeholder="Email Address"
+                          placeholder="Email Verification"
                           value={userForm.email}
                           onChange={e => setUserForm({...userForm, email: e.target.value})}
                           required
@@ -145,14 +145,29 @@ const SignUp = observer(({title}) => {
                         </div>
                       </div>
                       {isLoading ?
-                        <button type={'button'} className="btn btn-primary w-100 p-3 rounded-4" disabled>
+                        <button
+                          type={'button'}
+                          className={"btn btn-primary w-100 p-3 rounded-4 mt-4"}
+                          disabled
+                        >
                           <span className={"spinner-border spinner-border-sm"}></span>
                         </button>
                         :
-                        <button type={"submit"} className="btn btn-primary w-100 p-3 rounded-4">
+                        <button type={"submit"} className={"btn btn-primary w-100 p-3 rounded-4 mt-2"}>
                           Verify email
                         </button>
                       }
+                      <div className={"text-center mt-4"}>
+                        <span className={"opacity-75"}>
+                          You already Have an Account?
+                        </span>
+                        {' '}
+                        <span>
+                          <Link to={'/login'}>
+                            Sign In
+                          </Link>
+                        </span>
+                      </div>
                     </div>
                   </form>
                   :
@@ -259,17 +274,6 @@ const SignUp = observer(({title}) => {
                         <button type={"submit"} className="btn btn-primary w-100 p-3 rounded-4">
                           Sign Up
                         </button>
-                        <div className={"text-center mt-4"}>
-                          <span className={"opacity-75"}>
-                            You already Have an Account?
-                          </span>
-                          {' '}
-                          <span>
-                            <Link to='/login'>
-                              Sign In
-                            </Link>
-                          </span>
-                        </div>
                       </form>
                       :
                       <form onSubmit={sendCodeVerification}>

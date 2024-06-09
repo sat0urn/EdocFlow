@@ -34,7 +34,7 @@ const InboxTableView = observer(({searchedDocuments, isInboxPath}) => {
         <th scope="col" className="text-primary">Name</th>
         <th scope="col" className="text-primary">{!isInboxPath ? 'Receiver' : 'Sender'}</th>
         <th scope="col" className="text-primary">Created Date</th>
-        <th scope="col" className="text-primary">Document Status</th>
+        <th scope="col" className="text-primary">Status</th>
         <th scope="col" className="text-primary"></th>
         <th scope="col" className="text-primary"></th>
       </tr>
@@ -90,10 +90,15 @@ const InboxTableView = observer(({searchedDocuments, isInboxPath}) => {
               </button>
             </td>
             :
-            (inb.documentStatus === REJECTED &&
-              <td className={""}>
-                <input type="text" className={"form-control-sm w-100"} placeholder={inb.rejectReason} disabled/>
-              </td>
+            (inb.documentStatus === REJECTED ?
+                (!inb.senderEmail &&
+                  <td className={"text-start"}>
+                    <textarea className={"form-control-sm"} placeholder={inb.rejectReason} disabled/>
+                  </td>
+                )
+                :
+                <td>
+                </td>
             )
           }
           <td className="text-secondary">

@@ -71,6 +71,7 @@ const PDFViewer = (
 
   return (
     <div className={"card border-0 rounded-4 shadow-sm p-5"}>
+
       {isOfficeManagerRole &&
         <div className={"progress fw-semibold mb-3"} style={{height: '35px'}}>
           <div
@@ -102,8 +103,8 @@ const PDFViewer = (
         :
         <>
           <div className={"d-flex align-items-center"}>
-            <div className={"flex-fill"}>
-              <div className={"text-primary fs-3 fw-medium"}>
+            <div className={"d-inline-flex flex-fill align-items-center"}>
+              <div className={"mx-auto text-primary fs-3 fw-medium"}>
                 Document: &quot;<span className={"text-decoration-underline"}>{pdfTitle}</span>&quot;
               </div>
             </div>
@@ -170,13 +171,13 @@ const PDFViewer = (
             </Document>
 
             <form className={"ms-3"} onSubmit={handleAddingRemark}>
-              <textarea
-                className={"form-control rounded-4"}
-                rows={5}
-                value={inRemark}
-                onChange={(e) => setInRemark(e.target.value)}
-                required
-              />
+                      <textarea
+                        className={"form-control rounded-4"}
+                        rows={5}
+                        value={inRemark}
+                        onChange={(e) => setInRemark(e.target.value)}
+                        required
+                      />
               <button type={"submit"} className={"btn btn-primary mt-3 w-100"}>
                 Add remark
               </button>

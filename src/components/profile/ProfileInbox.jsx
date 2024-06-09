@@ -13,6 +13,13 @@ const ProfileInbox = observer(({title}) => {
   const {user, documents, fetchChanges} = useContext(AuthContext)
   const currentEmail = user.user.sub
 
+  const [searchQuery, setSearchQuery] = useState('')
+  const [currentPage, setCurrentPage] = useState(0)
+  const [filterOrder, setFilterOrder] = useState(0)
+
+  const location = useLocation()
+  const isInboxPath = location.pathname === '/inbox'
+
   useEffect(() => {
     getAllInboxes()
       .then(data => documents.setInbox(data))
@@ -22,14 +29,7 @@ const ProfileInbox = observer(({title}) => {
       .catch((e) => console.error(e))
   }, [fetchChanges.isChanged])
 
-  const [searchQuery, setSearchQuery] = useState('')
   const [pages, setPages] = useState(Math.ceil(documents.inbox.length / 6))
-  const [currentPage, setCurrentPage] = useState(0)
-
-  const [filterOrder, setFilterOrder] = useState(0)
-
-  const location = useLocation()
-  const isInboxPath = location.pathname === '/inbox'
 
   const getSearchedDocuments = useMemo(() => {
     let filteredDocuments = isInboxPath ? documents.inbox : documents.outbox
@@ -41,23 +41,23 @@ const ProfileInbox = observer(({title}) => {
       )
 
       switch (filterOrder) {
-        case 1:
+        case 0:
           break
-        case 2:
+        case 1:
           filteredDocuments = filteredDocuments.filter(
             doc => ((new Date().getTime() - new Date(doc.createdDate).getTime()) / (1000 * 3600 * 24)) < 7
           )
           break
-        case 3:
+        case 2:
           filteredDocuments = filteredDocuments.filter(doc =>
             doc.documentStatus === WAITING
             || doc.documentStatus === SIGNING)
           break
-        case 4:
+        case 3:
           filteredDocuments = filteredDocuments.filter(doc =>
             doc.documentStatus === REJECTED)
           break
-        case 5:
+        case 4:
           filteredDocuments = filteredDocuments.filter(doc =>
             doc.documentStatus === ACCEPTED
             || doc.documentStatus === COMPLETED)
@@ -76,7 +76,7 @@ const ProfileInbox = observer(({title}) => {
       <div className={"row"}>
         <div className={"col-lg-9"}>
           <div className={"rounded-pill bg-primary text-white d-flex justify-content-between w-50 p-3"}>
-            <div>New and Active documents</div>
+            <div>Total {isInboxPath ? 'inbox' : 'outbox'} documents</div>
             <div>{getSearchedDocuments.length} in total</div>
           </div>
 
@@ -89,24 +89,39 @@ const ProfileInbox = observer(({title}) => {
           />
 
           <div className={"d-flex flex-row"}>
-            <button className={"btn btn-primary rounded-3 me-3 px-4"}
-                    onClick={() => setFilterOrder(1)}>
+            <button
+              className={`btn ${filterOrder === 0 ? 'btn-primary' : 'btn-outline-primary '} rounded-3 me-3 px-4`}
+              onClick={() => setFilterOrder(0)}
+              disabled={filterOrder === 0}
+            >
               Get all
             </button>
-            <button className={"btn btn-outline-primary rounded-3 me-3 px-4"}
-                    onClick={() => setFilterOrder(2)}>
+            <button
+              className={`btn ${filterOrder === 1 ? 'btn-primary' : 'btn-outline-primary'} rounded-3 me-3 px-4`}
+              onClick={() => setFilterOrder(1)}
+              disabled={filterOrder === 1}
+            >
               All new
             </button>
-            <button className={"btn btn-primary rounded-3 me-3 px-4"}
-                    onClick={() => setFilterOrder(3)}>
+            <button
+              className={`btn ${filterOrder === 2 ? 'btn-primary' : 'btn-outline-primary'} rounded-3 me-3 px-4`}
+              onClick={() => setFilterOrder(2)}
+              disabled={filterOrder === 2}
+            >
               Requested to sign
             </button>
-            <button className={"btn btn-outline-primary rounded-3 me-3 px-4"}
-                    onClick={() => setFilterOrder(4)}>
+            <button
+              className={`btn ${filterOrder === 3 ? 'btn-primary' : 'btn-outline-primary'} rounded-3 me-3 px-4`}
+              onClick={() => setFilterOrder(3)}
+              disabled={filterOrder === 3}
+            >
               Rejected to signer
             </button>
-            <button className={"btn btn-primary rounded-3 px-4"}
-                    onClick={() => setFilterOrder(5)}>
+            <button
+              className={`btn ${filterOrder === 4 ? 'btn-primary' : 'btn-outline-primary'} rounded-3 px-4`}
+              onClick={() => setFilterOrder(4)}
+              disabled={filterOrder === 4}
+            >
               Viewed
             </button>
           </div>

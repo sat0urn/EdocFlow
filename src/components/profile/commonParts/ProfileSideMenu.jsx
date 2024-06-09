@@ -14,6 +14,7 @@ import {OFFICE_MANAGER} from "../../../data/userRolesData.js";
 const ProfileSideMenu = observer(() => {
   const {user, documents, searchData} = useContext(AuthContext)
   const isOfficeManager = user.role === OFFICE_MANAGER
+  const currentUser = user.user
 
   const logout = () => {
     user.setEmployees([])
@@ -77,17 +78,7 @@ const ProfileSideMenu = observer(() => {
                 </span>
               </Link>
             </li>
-            {!isOfficeManager &&
-              <li className={"mb-1"}>
-                <Link to={"/history"} className={"nav-link link-body-emphasis fw-medium px-0"}>
-                  <img src={History} alt="history" className={"img-fluid me-3"}/>
-                  <span className={"small opacity-50 align-middle"}>
-                    History
-                  </span>
-                </Link>
-              </li>
-            }
-            {isOfficeManager &&
+            {isOfficeManager ?
               <>
                 <li className={"mb-1"}>
                   <Link to={"/employeeList"} className={"nav-link link-body-emphasis fw-medium px-0"}>
@@ -106,6 +97,15 @@ const ProfileSideMenu = observer(() => {
                   </Link>
                 </li>
               </>
+              :
+              <li className={"mb-1"}>
+                <Link to={"/history"} className={"nav-link link-body-emphasis fw-medium px-0"}>
+                  <img src={History} alt="history" className={"img-fluid me-3"}/>
+                  <span className={"small opacity-50 align-middle"}>
+                    History
+                  </span>
+                </Link>
+              </li>
             }
           </ul>
           <hr/>
@@ -115,13 +115,13 @@ const ProfileSideMenu = observer(() => {
                 Company info
               </div>
               <ul className={"nav nav-pills flex-column mt-3"}>
-                <li className={"mb-2 small"}>
-                  <span className={"fw-semibold"}>Company </span>
-                  &quot;<span className={"opacity-75"}>{user.user.companyName}</span>&quot;
+                <li className={"mb-2 small d-inline-flex justify-content-between"}>
+                  <span className={"fw-semibold"}>Company</span>
+                  <span className={"opacity-75"}>&quot;{currentUser.companyName}&quot;</span>
                 </li>
-                <li className={"mt-2 small"}>
-                  <span className={"fw-semibold"}>BIN </span>
-                  #<span className={"opacity-75"}>{user.user.companyBin}</span>
+                <li className={"mt-2 small d-inline-flex justify-content-between"}>
+                  <span className={"fw-semibold"}>BIN</span>
+                  <span className={"opacity-75"}>#{currentUser.companyBin}</span>
                 </li>
               </ul>
             </>

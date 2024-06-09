@@ -44,7 +44,7 @@ const ProfileSecurity = observer(({title}) => {
   }
 
   const validatePasswordEquals = () => {
-    return oldPassword >= 6 && (oldPassword !== newPassword)
+    return oldPassword !== newPassword
   }
 
   return (
@@ -60,7 +60,7 @@ const ProfileSecurity = observer(({title}) => {
             <div className={"d-flex justify-content-between align-items-center"}>
               <div className={""}>
                 <h6 className={"fw-bold"}>Password</h6>
-                <p className={"text-secondary m-0"}>Last updated 1 month ago</p>
+                <p className={"text-secondary m-0"}>Setting new password panel</p>
               </div>
               <button
                 type={"button"}

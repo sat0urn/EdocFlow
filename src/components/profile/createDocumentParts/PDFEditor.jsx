@@ -12,6 +12,7 @@ import Loader from "../../Loader.jsx";
 import {EMPLOYEE, INDEPENDENT_USER, OFFICE_MANAGER} from "../../../data/userRolesData.js";
 import {observer} from "mobx-react-lite";
 import {AuthContext} from "../../../context/index.js";
+import {useNavigate} from "react-router-dom";
 
 const PDFEditor = observer((
   {
@@ -23,10 +24,10 @@ const PDFEditor = observer((
   }
 ) => {
   const {fetchChanges} = useContext(AuthContext)
+  const navigate = useNavigate()
 
   const isRoleEmployee = userRole === EMPLOYEE
   const isRoleOfficeManager = userRole === OFFICE_MANAGER
-  const isRoleIndependentUser = userRole === INDEPENDENT_USER
 
   const [connecting, setConnecting] = useState(true)
   const [ncaLayerNotAvailable, setNcaLayerNotAvailable] = useState(false)
@@ -149,6 +150,7 @@ const PDFEditor = observer((
           .then(() => {
             fetchChanges.toggleIsChanged()
             alert('Document has been signed and sent successfully!')
+            navigate('/outbox')
           })
           .catch((e) => {
             alert('Something went wrong')
@@ -273,15 +275,14 @@ const PDFEditor = observer((
                     </button>
                   </div>
                   :
-                  (receiversEmail.length === 0 ?
+                  ((receiversEmail.length === 0 && userRole === INDEPENDENT_USER) ?
                       <button type={'button'} disabled className={"btn btn-primary w-100 rounded-4 mt-3"}>
                         Please choose receiver email
                       </button>
                       :
                       <button type={'submit'} className={"btn btn-primary w-100 rounded-4 mt-3"}>
-                        Sign and Send
+                        {userRole === INDEPENDENT_USER ? 'Sign and Send' : 'Next Step'}
                       </button>
-
                   )
                 }
               </>
