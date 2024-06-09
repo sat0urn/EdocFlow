@@ -97,7 +97,7 @@ public class InboxController {
           @RequestBody InboxRejectDto rejectDocumentDto,
           @RequestHeader("Authorization") String authHeader
   ) throws IllegalAccessException {
-    String receiverEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+    String receiverEmail = jwtService.extractUsername(authHeader.substring(7));
     inboxService.rejectDocument(rejectDocumentDto, receiverEmail);
     return ResponseEntity.ok("document rejected successfully");
   }

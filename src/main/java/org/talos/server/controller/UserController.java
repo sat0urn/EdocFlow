@@ -65,7 +65,7 @@ public class UserController {
           @RequestBody UpdatePasswordDto updatePasswordDto,
           @RequestHeader("Authorization") String authHeader
   ) {
-    String email = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+    String email = jwtService.extractUsername(authHeader.substring(7));
 
     Optional<User> user = userService.getUserByEmail(email);
 
@@ -89,7 +89,7 @@ public class UserController {
   private List<String> getAllEmails(
           @RequestHeader("Authorization") String authHeader
   ) {
-    String email = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+    String email = jwtService.extractUsername(authHeader.substring(7));
     return userService.getIndependentUsersEmails(email);
   }
 
