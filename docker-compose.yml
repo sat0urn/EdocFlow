@@ -41,6 +41,8 @@ services:
       - CLIENT_APP_ADDRESSES_ENV=http://localhost
       - MONGO_DB_USERNAME=root
       - MONGO_DB_PASSWORD=123456
+      - SPRING_MAIL_USERNAME=zeyin03@gmail.com
+      - SPRING_MAIL_PASSWORD=jlfdqdqcguruxelq
     networks:
       - webnet
     depends_on:
