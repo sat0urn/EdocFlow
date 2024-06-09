@@ -110,20 +110,14 @@ public class UserController {
   @PostMapping("/verify-code")
   public ResponseEntity<?> verifyCode(@RequestBody VerificationRequestDto request) {
     boolean isValid = userService.verifyCode(request.getEmail(), request.getCode());
-
     if (!isValid) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid verification code.");
     }
-
     return ResponseEntity.ok("User verified successfully");
   }
   @PatchMapping("/forget-password")
   public ResponseEntity<String> forgetPasswordUpdate(
-          @RequestBody ForgetPasswordDto forgetPasswordDto
-
-  ) {
-
-
+          @RequestBody ForgetPasswordDto forgetPasswordDto) {
     Optional<User> user = userService.getUserByEmail(forgetPasswordDto.getGmail());
 
     if (user.isEmpty())

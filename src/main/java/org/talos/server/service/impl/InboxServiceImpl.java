@@ -27,10 +27,11 @@ public class InboxServiceImpl implements InboxService {
   private final UserRepository userRepository;
   private final DepartmentRepository departmentRepository;
   Logger logger = Logger.getLogger(InboxService.class.getName());
-  LocalDateTime currentDateTime = LocalDateTime.now();
+
 
   @Override
   public void createInbox(InboxCreateDto inboxCreateDto, String senderEmail) {
+    LocalDateTime currentDateTime = LocalDateTime.now();
     if (senderEmail == null || senderEmail.isEmpty()) {
       throw new IllegalArgumentException("Sender email cannot be null or empty");
     }
@@ -109,12 +110,13 @@ public class InboxServiceImpl implements InboxService {
 
   @Override
   public void setNewReceiversToInbox(String inboxId, ReceiversAddInboxDto receiversAddInboxDto) {
+    LocalDateTime currentDateTime = LocalDateTime.now();
     Optional<Inbox> optionalInbox = inboxRepository.findById(inboxId);
     if (optionalInbox.isEmpty())
       throw new DataNotFoundException("Inbox by id does not exist {}" + inboxId);
 
     if (receiversAddInboxDto.getEmails().isEmpty())
-      throw new IllegalArgumentException("Receivers list is null email");
+      throw new IllegalArgumentException("Receivers emails list is null ");
 
     Inbox inbox = optionalInbox.get();
     //to validate that users email exist in the system
@@ -139,6 +141,7 @@ public class InboxServiceImpl implements InboxService {
     //setting office manager status as accepted
     if(inbox.getReceivers().size() == 1)
     {
+      inbox.getReceivers().get(0).setDate(currentDateTime.toString());
       inbox.getReceivers().get(0).setDocumentStatus(DocumentStatus.ACCEPTED);
     }
 
@@ -249,6 +252,7 @@ public class InboxServiceImpl implements InboxService {
 
   @Override
   public void rejectDocument(InboxRejectDto rejectDocumentDto, String email) throws IllegalAccessException {
+    LocalDateTime currentDateTime = LocalDateTime.now();
     Optional<Inbox> optionalInbox = inboxRepository.findById(rejectDocumentDto.getInboxId());
     if (optionalInbox.isEmpty()) {
       throw new DataNotFoundException("Inbox by id " + rejectDocumentDto.getInboxId() + " does not exist");
@@ -262,6 +266,7 @@ public class InboxServiceImpl implements InboxService {
     // Find and update the SignProcess for the given email
     List<InboxReceivers> updatedSignProcesses = inbox.getReceivers().stream().map(signProcess -> {
       if (signProcess.getUserEmail().equals(email)) {
+        signProcess.setDate(String.valueOf(currentDateTime));
         signProcess.setDocumentStatus(DocumentStatus.REJECTED);
         foundAndUpdated.set(true); // Update flag using AtomicBoolean
       }
@@ -280,7 +285,7 @@ public class InboxServiceImpl implements InboxService {
     inbox.setReceivers(updatedSignProcesses);
 
     // Set the reject reason and update the document status to REJECTED
-    inbox.setRejectReason(rejectDocumentDto.getReasonToReject());
+    inbox.setRejectReason("Rejected by " + email + ", reason:" + rejectDocumentDto.getReasonToReject());
     inbox.getDocumentPDF().setStatus(DocumentStatus.REJECTED);
 
     // Save the updated Inbox
@@ -326,6 +331,7 @@ public class InboxServiceImpl implements InboxService {
 
   @Override
   public Inbox signInbox(String inboxId, byte[] fileData, String signerEmail) throws IllegalAccessException {
+    LocalDateTime currentDateTime = LocalDateTime.now();
     Optional<Inbox> optionalInbox = inboxRepository.findById(inboxId);
     if (optionalInbox.isEmpty()) {
       throw new DataNotFoundException("Inbox by id " + inboxId + " does not exist");
@@ -351,6 +357,7 @@ public class InboxServiceImpl implements InboxService {
 
     // Update the current signer's status to ACCEPTED
     matchingSignProcess.setDocumentStatus(DocumentStatus.ACCEPTED);
+    matchingSignProcess.setDate(String.valueOf(currentDateTime));
 
     // Find the index of the current SignProcess
     int currentIndex = inbox.getReceivers().indexOf(matchingSignProcess);
@@ -359,6 +366,7 @@ public class InboxServiceImpl implements InboxService {
     // Update the next signer's status to SIGNING if they exist
     if (nextIndex < inbox.getReceivers().size()) {
       inbox.getReceivers().get(nextIndex).setDocumentStatus(DocumentStatus.SIGNING);
+      inbox.getReceivers().get(nextIndex).setDate(String.valueOf(currentDateTime));
     }
 
     // Check if all signers have accepted
@@ -371,6 +379,7 @@ public class InboxServiceImpl implements InboxService {
     // Update the document's status based on allAccepted
     if (allAccepted) {
       inbox.getDocumentPDF().setStatus(DocumentStatus.COMPLETED);
+      inbox.getDocumentPDF().setCreatedTime(String.valueOf(currentDateTime));
     } else {
       inbox.getDocumentPDF().setStatus(DocumentStatus.WAITING);
     }
