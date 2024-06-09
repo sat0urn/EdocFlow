@@ -11,4 +11,5 @@ import lombok.Setter;
 @Getter
 public class EmailDTO {
    private String email;
+   private Boolean isExists;
 }

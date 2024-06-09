@@ -95,11 +95,16 @@ public class UserController {
 
   @PostMapping("/validate-email")
   public ResponseEntity<?> validateEmail(@RequestBody EmailDTO emailDTO) {
-    System.out.println(emailDTO.getEmail());
     Optional<User> optionalUser = userService.getUserByEmail(emailDTO.getEmail());
-    if (optionalUser.isPresent()) {
+
+    if (!emailDTO.getIsExists() && optionalUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User by gmail" + emailDTO.getEmail() + "  exist");
     }
+
+    if (emailDTO.getIsExists() && optionalUser.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User by gmail " + emailDTO.getEmail() + "  does not exist");
+    }
+
     if (!userService.isValidGmail(emailDTO.getEmail())) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Gmail address.");
     }
@@ -110,8 +115,6 @@ public class UserController {
 
   @PostMapping("/verify-code")
   public ResponseEntity<?> verifyCode(@RequestBody VerificationRequestDto request) {
-    System.out.println(request.getEmail());
-    System.out.println(request.getCode());
     boolean isValid = userService.verifyCode(request.getEmail(), request.getCode());
 
     if (!isValid) {
@@ -124,10 +127,7 @@ public class UserController {
   @PatchMapping("/forget-password")
   public ResponseEntity<String> forgetPasswordUpdate(
           @RequestBody ForgetPasswordDto forgetPasswordDto
-
   ) {
-
-
     Optional<User> user = userService.getUserByEmail(forgetPasswordDto.getGmail());
 
     if (user.isEmpty())
@@ -136,7 +136,6 @@ public class UserController {
               .body("User not found for email: " + forgetPasswordDto.getGmail());
 
     User existingUser = user.get();
-
 
     existingUser.setPassword(passwordEncoder.encode(forgetPasswordDto.getPassword()));
     userService.updateUser(existingUser);

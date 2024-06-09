@@ -14,26 +14,24 @@ import org.talos.server.service.MailSendService;
 @RequiredArgsConstructor
 public class MailSendServiceImpl implements MailSendService {
 
-    @Value("${spring.mail.username}")
-    private String senderEmail;
-    private final JavaMailSender javaMailSender;
+  @Value("${spring.mail.username}")
+  private String senderEmail;
+  private final JavaMailSender javaMailSender;
 
-    @Override
-    public void sendEmail(String toEmail, String subject, String text) {
-        String sub = "Edoc-flow," + subject;
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(senderEmail);
-        message.setTo(toEmail);
-        message.setSubject(sub);
-        message.setText(text);
+  @Override
+  public void sendEmail(String toEmail, String subject, String text) {
+    String sub = "Edoc-flow," + subject;
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setFrom(senderEmail);
+    message.setTo(toEmail);
+    message.setSubject(sub);
+    message.setText(text);
 
-        try {
-            javaMailSender.send(message);
-
-        } catch (MailException ex) {
-            throw new DataNotFoundException("Email by gmail:" +toEmail + ", does not exist");
-            // Handle the exception as needed
-        }
-
+    try {
+      javaMailSender.send(message);
+    } catch (MailException ex) {
+      throw new DataNotFoundException("Email by gmail: " + toEmail + " , does not exist");
     }
+
+  }
 }

@@ -33,7 +33,7 @@ public class InboxController {
           @RequestBody InboxCreateDto inboxCreateDto,
           @RequestHeader("Authorization") String authHeader
   ) {
-    String senderEmail = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+    String senderEmail = jwtService.extractUsername(authHeader.substring(7));
     inboxService.createInbox(inboxCreateDto, senderEmail);
     return ResponseEntity.ok("Inbox created successfully");
   }
