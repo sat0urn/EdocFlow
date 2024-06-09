@@ -2,7 +2,6 @@ import {Link} from "react-router-dom";
 import {useContext, useState} from "react";
 import {AuthContext} from "../../../context/index.js";
 import {observer} from "mobx-react-lite";
-import Notification from "../../../assets/icons/notification.svg"
 
 const ProfileSearchAndAccount = observer(() => {
   const {user, documents} = useContext(AuthContext)
@@ -49,12 +48,13 @@ const ProfileSearchAndAccount = observer(() => {
       <div className={"row row-cols-2"}>
         <div className={"col-9"}>
           <div>
-            <input type="text"
-                   className={"form-control shadow-sm rounded-pill"}
-                   placeholder="&#xF002;   Search your documents. . ."
-                   style={{fontFamily: 'Arial, FontAwesome'}}
-                   value={searchTerm}
-                   onChange={handleSearch}
+            <input
+              type="text"
+              className={"form-control shadow-sm rounded-pill"}
+              placeholder="&#xF002;   Search your documents. . ."
+              style={{fontFamily: 'Arial, FontAwesome'}}
+              value={searchTerm}
+              onChange={handleSearch}
             />
             {suggestions.length > 0 && (
               <ul className={"list-group position-absolute w-50 z-1"}>
@@ -72,16 +72,9 @@ const ProfileSearchAndAccount = observer(() => {
             )}
           </div>
         </div>
-        <div className={"col-3 d-flex flex-row"}>
-          <div className={"me-3"}>
-            <Link to="#"
-                  className={"bg-white shadow rounded-circle text-decoration-none d-inline-flex align-items-center justify-content-center"}
-                  style={{width: '40px', height: '40px'}}>
-              <img src={Notification} className={"img-fluid"} alt="notification"/>
-            </Link>
-          </div>
+        <div className={"col-3"}>
           <div className={"border-start border-2 ps-3"}>
-            <Link to="/security" className={"text-decoration-none"}>
+            <Link to={"/security"} className={"text-decoration-none"}>
               <div className={"d-inline-flex shadow rounded-circle align-items-center justify-content-center me-3"}
                    style={{width: '40px', height: '40px'}}>
                 <i className="fa-regular fa-user text-black"></i>

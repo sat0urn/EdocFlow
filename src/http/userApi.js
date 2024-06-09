@@ -30,9 +30,22 @@ const updatePassword = async (
 }
 
 const getAllEmails = async () => {
-  const response = await $authHost.get(
-    '/users/getAllEmails'
-  )
+  const response = await $authHost.get('/users/getAllEmails')
+  return response.data
+}
+
+const validateEmailToSend = async (data) => {
+  const response = await $authHost.post('/users/validate-email', data)
+  return response.data
+}
+
+const verifyCodeToEnter = async (data) => {
+  const response = await $authHost.post('/users/verify-code', data)
+  return response.data
+}
+
+const forgetPasswordUpdate = async (data) => {
+  const response = await $authHost.patch('/users/forget-password', data)
   return response.data
 }
 
@@ -47,5 +60,8 @@ export {
   login,
   updatePassword,
   check,
-  getAllEmails
+  getAllEmails,
+  validateEmailToSend,
+  verifyCodeToEnter,
+  forgetPasswordUpdate
 }

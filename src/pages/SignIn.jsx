@@ -24,8 +24,10 @@ const SignIn = observer(({title}) => {
       if (e.response.status === 403) {
         alert("User email or password is not correct")
       }
+      console.log(e)
       return
     }
+
     user.setUser(data)
     user.setIsAuth(true)
     user.setEmployees([])

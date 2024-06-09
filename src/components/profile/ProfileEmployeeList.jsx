@@ -7,9 +7,11 @@ import {observer} from "mobx-react-lite";
 import {AuthContext} from "../../context/index.js";
 import ProfilePagination from "./commonParts/ProfilePagination.jsx";
 import PageTitle from "../PageTitle.jsx";
+import {SIGNING} from "../../data/docStatusData.js";
 
 const ProfileEmployeeList = observer(({title}) => {
-  const {user, fetchChanges} = useContext(AuthContext)
+  const {user, documents, fetchChanges} = useContext(AuthContext)
+
   const navigate = useNavigate()
   const [employeeData, setEmployeeData] = useState({
     name: '',
@@ -17,19 +19,19 @@ const ProfileEmployeeList = observer(({title}) => {
     departmentId: '',
     iin: '',
     email: '',
-    phoneNumber: ''
+    phoneNumber: '',
+    position: ''
   })
-  const [position, setPosition] = useState('')
 
   const [updatedEmployeeData, setUpdatedEmployeeData] = useState({
-    name: '',
-    surname: '',
-    departmentId: '',
+    firstName: '',
+    lastName: '',
+    orgId: '',
     iin: '',
+    phoneNumber: '',
     email: '',
-    phoneNumber: ''
+    position: ''
   })
-  const [updatePosition, setUpdatePosition] = useState('')
 
   const [searchQuery, setSearchQuery] = useState('')
   const [pages, setPages] = useState(Math.ceil(user.employees.length / 4))
@@ -62,7 +64,6 @@ const ProfileEmployeeList = observer(({title}) => {
     }
 
     try {
-      employeeData.position = position
       await addEmployee(employeeData)
       alert('Employee was added successfully!')
       fetchChanges.toggleIsOtherChanged()
@@ -78,8 +79,19 @@ const ProfileEmployeeList = observer(({title}) => {
     }
   }
 
-  const updateCurrentEmployee = async (e) => {
+  const updateCurrentEmployee = async (e, employee) => {
     e.preventDefault()
+    if (updatedEmployeeData.orgId && !updatedEmployeeData.position) {
+      alert('Please, fill the position by your chosen department!')
+      return
+    }
+
+    Object.keys(updatedEmployeeData).forEach(
+      (key) => {
+        if (updatedEmployeeData[key] === '') updatedEmployeeData[key] = employee[key]
+      }
+    )
+
     if (!validateEmail(updatedEmployeeData.email)
       || !validatePhoneNumber(updatedEmployeeData.phoneNumber)
       || !validateIin(updatedEmployeeData.iin)
@@ -89,12 +101,21 @@ const ProfileEmployeeList = observer(({title}) => {
     }
 
     try {
-      updatedEmployeeData.position = updatePosition
-      const data = await updateEmployee(employeeData)
-      alert(data)
+      const data = await updateEmployee(updatedEmployeeData)
       fetchChanges.toggleIsOtherChanged()
+      alert(data)
+      setUpdatedEmployeeData({
+        firstName: '',
+        lastName: '',
+        orgId: '',
+        iin: '',
+        phoneNumber: '',
+        email: '',
+        position: ''
+      })
     } catch (e) {
-      console.log(e)
+      console.error(e)
+      alert('Got an issue with updating this employee!')
     }
   }
 
@@ -151,9 +172,11 @@ const ProfileEmployeeList = observer(({title}) => {
                     </div>
                     <div className={"d-flex flex-column justify-content-between text-end"}>
                       <div>
-                        <button type={'button'}
-                                className={"btn btn-outline-primary px-4 py-1 me-2 rounded-3"}
-                                onClick={() => navigate(`/employeeView/${employee.email}`)}>
+                        <button
+                          type={'button'}
+                          className={"btn btn-outline-primary px-4 py-1 me-2 rounded-3"}
+                          onClick={() => navigate(`/employeeView/${employee.email}`)}
+                        >
                           view
                         </button>
                         <button
@@ -181,41 +204,42 @@ const ProfileEmployeeList = observer(({title}) => {
                                 <h1 className="modal-title fs-5" id={"staticBackdropLabel_" + index}>Update
                                   employee</h1>
                               </div>
-                              <form onSubmit={updateCurrentEmployee}>
+                              <form onSubmit={(e) => updateCurrentEmployee(e, employee)}>
                                 <div className="modal-body">
                                   <div className={"input-group mb-2"}>
                                     <input
                                       type="text"
-                                      className={`form-control me-2 rounded-pill ${updatedEmployeeData.name ? 'is-valid' : 'is-invalid'}`}
-                                      placeholder={"Name"}
-                                      value={updatedEmployeeData.name || employee.firstName}
-                                      onChange={e => setUpdatedEmployeeData({
-                                        ...updatedEmployeeData,
-                                        name: e.target.value
-                                      })}
-                                      required
+                                      className={`form-control me-2 rounded-pill ${updatedEmployeeData.firstName ? 'is-valid' : 'is-invalid'}`}
+                                      placeholder={employee.firstName}
+                                      value={updatedEmployeeData.firstName}
+                                      onChange={e =>
+                                        setUpdatedEmployeeData({
+                                          ...updatedEmployeeData,
+                                          firstName: (e.target.value === employee.firstName) ? '' : e.target.value
+                                        })}
                                     />
                                     <input
                                       type="text"
-                                      className={`form-control rounded-pill ${updatedEmployeeData.surname ? 'is-valid' : 'is-invalid'}`}
-                                      placeholder={"Surname"}
-                                      value={updatedEmployeeData.surname || employee.lastName}
+                                      className={`form-control rounded-pill ${updatedEmployeeData.lastName ? 'is-valid' : 'is-invalid'}`}
+                                      placeholder={employee.lastName}
+                                      value={updatedEmployeeData.lastName}
                                       onChange={e => setUpdatedEmployeeData({
                                         ...updatedEmployeeData,
-                                        surname: e.target.value
+                                        lastName: (e.target.value === employee.lastName) ? '' : e.target.value
                                       })}
-                                      required
                                     />
                                   </div>
                                   <div className={"input-group mb-2"}>
                                     <select
-                                      className={`form-select me-2 rounded-pill ${updatedEmployeeData.departmentId ? 'is-valid' : 'is-invalid'}`}
-                                      value={updatedEmployeeData.departmentId || employee.orgId}
+                                      className={`form-select me-2 rounded-pill ${updatedEmployeeData.orgId ? 'is-valid' : 'is-invalid'}`}
+                                      value={updatedEmployeeData.orgId || employee.orgId}
                                       onChange={(e) => {
-                                        setUpdatedEmployeeData({...updatedEmployeeData, departmentId: e.target.value})
-                                        setUpdatePosition('')
+                                        setUpdatedEmployeeData({
+                                          ...updatedEmployeeData,
+                                          orgId: (e.target.value === employee.orgId) ? '' : e.target.value,
+                                          position: ''
+                                        })
                                       }}
-                                      required
                                     >
                                       <option value={''}>Department</option>
                                       {allDepartments.map((dep, index) =>
@@ -223,15 +247,17 @@ const ProfileEmployeeList = observer(({title}) => {
                                       )}
                                     </select>
                                     <select
-                                      className={`form-select rounded-pill ${updatePosition ? 'is-valid' : 'is-invalid'}`}
-                                      value={updatePosition || employee.position}
-                                      onChange={e => setUpdatePosition(e.target.value)}
-                                      required
+                                      className={`form-select rounded-pill ${updatedEmployeeData.position ? 'is-valid' : 'is-invalid'}`}
+                                      value={updatedEmployeeData.position || employee.position}
+                                      onChange={e => setUpdatedEmployeeData({
+                                        ...updatedEmployeeData,
+                                        position: (e.target.value === employee.position) ? '' : e.target.value
+                                      })}
                                     >
                                       <option value={''}>Position</option>
-                                      {(updatedEmployeeData.departmentId || employee.orgId) &&
+                                      {(updatedEmployeeData.orgId || employee.orgId) &&
                                         positionsByDepartment
-                                          .find(({department}) => department === (updatedEmployeeData.departmentId || employee.orgId))['positions']
+                                          .find(({department}) => department === (updatedEmployeeData.orgId || employee.orgId))['positions']
                                           .map((pos, index) => <option key={index} value={pos}>{pos}</option>)
                                       }
                                     </select>
@@ -241,53 +267,56 @@ const ProfileEmployeeList = observer(({title}) => {
                                       <input
                                         type="number"
                                         className={`form-control rounded-pill ${validateIin(updatedEmployeeData.iin) ? 'is-valid' : 'is-invalid'}`}
-                                        placeholder={"IIN"}
-                                        value={updatedEmployeeData.iin || employee.iin}
+                                        placeholder={employee.iin}
+                                        value={updatedEmployeeData.iin}
                                         onChange={e => setUpdatedEmployeeData({
                                           ...updatedEmployeeData,
-                                          iin: e.target.value
+                                          iin: (e.target.value === employee.iin) ? '' : e.target.value
                                         })}
-                                        required
                                       />
                                     </div>
                                     <div>
                                       <input
                                         type="text"
                                         className={`form-control rounded-pill ${validateEmail(updatedEmployeeData.email) ? 'is-valid' : 'is-invalid'}`}
-                                        placeholder={"Email"}
-                                        value={updatedEmployeeData.email || employee.email}
+                                        placeholder={employee.email}
+                                        value={updatedEmployeeData.email}
                                         onChange={e => setUpdatedEmployeeData({
                                           ...updatedEmployeeData,
-                                          email: e.target.value
+                                          email: (e.target.value === employee.email) ? '' : e.target.value
                                         })}
-                                        required
                                       />
                                     </div>
                                   </div>
                                   <input
                                     type="number"
                                     className={`form-control rounded-pill ${validatePhoneNumber(updatedEmployeeData.phoneNumber) ? 'is-valid' : 'is-invalid'}`}
-                                    placeholder={"Phone Number"}
-                                    value={updatedEmployeeData.phoneNumber || employee.phoneNumber}
+                                    placeholder={employee.phoneNumber}
+                                    value={updatedEmployeeData.phoneNumber}
                                     onChange={e => setUpdatedEmployeeData({
                                       ...updatedEmployeeData,
-                                      phoneNumber: e.target.value
+                                      phoneNumber: (e.target.value === employee.phoneNumber) ? '' : e.target.value
                                     })}
-                                    required
                                   />
                                 </div>
                                 <div className="modal-footer">
-                                  <button type={'submit'} className="btn btn-primary">Update</button>
+                                  <button
+                                    type={'submit'}
+                                    className="btn btn-primary"
+                                  >
+                                    Update
+                                  </button>
                                   <button
                                     type="button"
                                     onClick={() =>
                                       setUpdatedEmployeeData({
-                                        name: '',
-                                        surname: '',
-                                        departmentId: '',
+                                        firstName: '',
+                                        lastName: '',
+                                        orgId: '',
                                         iin: '',
+                                        phoneNumber: '',
                                         email: '',
-                                        phoneNumber: ''
+                                        position: ''
                                       })
                                     }
                                     className="btn btn-secondary"
@@ -303,8 +332,15 @@ const ProfileEmployeeList = observer(({title}) => {
                         {/* Employee edit modal */}
                       </div>
                       <div className={"small opacity-50"} style={{fontSize: '12px'}}>
-                        <span className={"me-3"}>{15} active documents</span>
-                        <span>{50} in total</span>
+                        <span className={"me-3"}>
+                          {documents.history
+                            .filter(({id, documentStatus}) =>
+                              employee.documentIds.includes(id) && documentStatus === SIGNING).length} active documents
+                        </span>
+                        <span>
+                          {documents.history
+                            .filter(({id}) => employee.documentIds.includes(id)).length} in total
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -346,10 +382,11 @@ const ProfileEmployeeList = observer(({title}) => {
                     <select
                       className={`form-select me-2 rounded-pill ${employeeData.departmentId ? 'is-valid' : 'is-invalid'}`}
                       value={employeeData.departmentId}
-                      onChange={(e) => {
-                        setEmployeeData({...employeeData, departmentId: e.target.value})
-                        setPosition('')
-                      }}
+                      onChange={(e) => setEmployeeData({
+                        ...employeeData,
+                        departmentId: e.target.value,
+                        position: ''
+                      })}
                       required
                     >
                       <option value={''}>Department</option>
@@ -358,9 +395,12 @@ const ProfileEmployeeList = observer(({title}) => {
                       )}
                     </select>
                     <select
-                      className={`form-select rounded-pill ${position ? 'is-valid' : 'is-invalid'}`}
-                      value={position}
-                      onChange={e => setPosition(e.target.value)}
+                      className={`form-select rounded-pill ${employeeData.position ? 'is-valid' : 'is-invalid'}`}
+                      value={employeeData.position}
+                      onChange={e => setEmployeeData({
+                        ...employeeData,
+                        position: e.target.value
+                      })}
                       required
                     >
                       <option value={''}>Position</option>

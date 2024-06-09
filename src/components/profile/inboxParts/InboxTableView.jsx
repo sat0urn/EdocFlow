@@ -34,7 +34,7 @@ const InboxTableView = observer(({searchedDocuments, isInboxPath}) => {
         <th scope="col" className="text-primary">Name</th>
         <th scope="col" className="text-primary">{!isInboxPath ? 'Receiver' : 'Sender'}</th>
         <th scope="col" className="text-primary">Created Date</th>
-        <th scope="col" className="text-primary">Status</th>
+        <th scope="col" className="text-primary">Document Status</th>
         <th scope="col" className="text-primary"></th>
         <th scope="col" className="text-primary"></th>
       </tr>
@@ -46,7 +46,29 @@ const InboxTableView = observer(({searchedDocuments, isInboxPath}) => {
             {inb.documentTitle}
           </td>
           <td className={""}>
-            {isInboxPath ? inb.senderEmail : (inb.receivers.length > 0 ? inb.receivers[0].userEmail : 'Deleted by receiver')}
+            {isInboxPath ? inb.senderEmail : (inb.receivers.length > 0 ?
+              (inb.receivers.map((r, index) =>
+                <div key={index} className={"d-flex"}>
+                  <div className={"flex-fill"}>{r.userEmail}</div>
+                  <div className={"flex-fill"}>
+                    {r.date.split('T')[0]}
+                  </div>
+                  <div className={"flex-fill"}>
+                    <span className={
+                      r.documentStatus === WAITING ? 'text-warning' :
+                        r.documentStatus === SIGNING ? 'text-info' :
+                          r.documentStatus === COMPLETED ? 'text-primary' :
+                            r.documentStatus === ACCEPTED ? 'text-success' :
+                              r.documentStatus === REJECTED && 'text-danger'
+                    }>
+                      {r.documentStatus}
+                    </span>
+                  </div>
+                </div>
+              ))
+              :
+              'Deleted by receiver')
+            }
           </td>
           <td className={""}>
             {inb.createdDate.split('T')[0] + ' / ' + inb.createdDate.split('T')[1].substring(0, 8)}
@@ -60,7 +82,7 @@ const InboxTableView = observer(({searchedDocuments, isInboxPath}) => {
           }>
             {inb.documentStatus}
           </td>
-          {isInboxPath ?
+          {(isInboxPath && inb.documentStatus === SIGNING) ?
             <td className={""}>
               <button className="nav-link text-primary text-decoration-underline fw-medium px-0"
                       onClick={() => navigate(`/viewAndSign/${inb.inboxId}`)}>

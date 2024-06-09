@@ -3,7 +3,6 @@ import Main from "../pages/Main"
 import SignIn from "../pages/SignIn"
 import SignUp from "../pages/SignUp"
 import Recover from "../pages/Recover"
-import Reset from "../pages/Reset"
 import ProfileHistory from "../components/profile/ProfileHistory.jsx"
 import ProfileCreateDocument from "../components/profile/ProfileCreateDocument.jsx"
 import ProfileSecurity from "../components/profile/ProfileSecurity.jsx";
@@ -80,11 +79,6 @@ export const independentUserRoutes = [
   },
   {
     id: 6,
-    path: '/reset',
-    element: <Reset title={"Reset"}/>
-  },
-  {
-    id: 7,
     path: '*',
     element: <Navigate to="/"/>
   }
@@ -138,11 +132,6 @@ export const officeManagerRoutes = [
   },
   {
     id: 9,
-    path: '/reset',
-    element: <Reset title={"Reset"}/>
-  },
-  {
-    id: 10,
     path: '*',
     element: <Navigate to="/"/>
   }
@@ -181,11 +170,6 @@ export const employeeRoutes = [
   },
   {
     id: 6,
-    path: '/reset',
-    element: <Reset title={"Reset"}/>
-  },
-  {
-    id: 7,
     path: '*',
     element: <Navigate to="/"/>
   }

@@ -1,7 +1,7 @@
 import ProfileAuxWindow from "./commonParts/ProfileAuxWindow.jsx";
 import {Link, useParams} from "react-router-dom";
 import {observer} from "mobx-react-lite";
-import {useContext, useEffect, useState} from "react";
+import {useContext} from "react";
 import {AuthContext} from "../../context/index.js";
 import PageTitle from "../PageTitle.jsx";
 
@@ -9,12 +9,11 @@ const ProfileEmployeeDocsView = observer(({title}) => {
   const {user, documents} = useContext(AuthContext)
 
   const {email} = useParams()
-  const [exactEmployee, setExactEmployee] = useState({})
+  const exactEmployee = user.findEmployeeByEmail(email)
 
-  useEffect(() => {
-    const employeeData = user.findEmployeeByEmail(email)
-    setExactEmployee(employeeData)
-  }, [email])
+  const exactEmployeeDocuments = documents.history.filter(({id}) => exactEmployee.documentIds.includes(id))
+
+  console.log(exactEmployeeDocuments)
 
   return (
     <>
@@ -57,17 +56,19 @@ const ProfileEmployeeDocsView = observer(({title}) => {
               </tr>
               </thead>
               <tbody>
-              <tr>
-                <td className={"text-secondary"}>
-                  {'Employee Contract'}
-                </td>
-                <td className={'fw-semibold text-success'}>
-                  {'status'}
-                </td>
-                <td className="text-secondary">
-                  {'22-06-2024'}
-                </td>
-              </tr>
+              {exactEmployeeDocuments.map(({name, status, createdTime}, index) =>
+                <tr key={index}>
+                  <td className={"text-secondary"}>
+                    {name}
+                  </td>
+                  <td className={'fw-semibold text-success'}>
+                    {status}
+                  </td>
+                  <td className="text-secondary">
+                    {createdTime.split('T')[0] + ' / ' + createdTime.split('T')[1].substring(0, 8)}
+                  </td>
+                </tr>
+              )}
               </tbody>
             </table>
           </div>

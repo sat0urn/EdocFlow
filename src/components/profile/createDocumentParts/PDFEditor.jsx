@@ -9,7 +9,7 @@ import {
 } from "../../../http/sigexApi.js";
 import {createInbox} from "../../../http/docsApi.js";
 import Loader from "../../Loader.jsx";
-import {EMPLOYEE, OFFICE_MANAGER} from "../../../data/userRolesData.js";
+import {EMPLOYEE, INDEPENDENT_USER, OFFICE_MANAGER} from "../../../data/userRolesData.js";
 import {observer} from "mobx-react-lite";
 import {AuthContext} from "../../../context/index.js";
 
@@ -26,6 +26,7 @@ const PDFEditor = observer((
 
   const isRoleEmployee = userRole === EMPLOYEE
   const isRoleOfficeManager = userRole === OFFICE_MANAGER
+  const isRoleIndependentUser = userRole === INDEPENDENT_USER
 
   const [connecting, setConnecting] = useState(true)
   const [ncaLayerNotAvailable, setNcaLayerNotAvailable] = useState(false)
@@ -36,11 +37,6 @@ const PDFEditor = observer((
   const [awaitingSignature, setAwaitingSignature] = useState(false)
 
   const [pdfName, setPdfName] = useState('')
-
-  // useEffect(() => {
-  //   if (updatedPdfBytes)
-  //     setDataB64(arrayBufferToBase64(updatedPdfBytes))
-  // }, [updatedPdfBytes])
 
   useEffect(() => {
     setPdfName(pdfFile.substring(pdfFile.lastIndexOf("/") + 1, pdfFile.length - 4))
@@ -150,8 +146,7 @@ const PDFEditor = observer((
           remark,
           receiversEmail: receiversEmail
         })
-          .then(data => {
-            console.log(data)
+          .then(() => {
             fetchChanges.toggleIsChanged()
             alert('Document has been signed and sent successfully!')
           })
@@ -278,9 +273,16 @@ const PDFEditor = observer((
                     </button>
                   </div>
                   :
-                  <button type={'submit'} className={"btn btn-primary w-100 rounded-4 mt-3"}>
-                    Next Step
-                  </button>
+                  (receiversEmail.length === 0 ?
+                      <button type={'button'} disabled className={"btn btn-primary w-100 rounded-4 mt-3"}>
+                        Please choose receiver email
+                      </button>
+                      :
+                      <button type={'submit'} className={"btn btn-primary w-100 rounded-4 mt-3"}>
+                        Sign and Send
+                      </button>
+
+                  )
                 }
               </>
           )

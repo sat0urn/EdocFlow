@@ -1,7 +1,6 @@
 import {$authHost} from "./index";
 
 const createInbox = async (data) => {
-  console.log(data)
   const response = await $authHost.post(
     '/inbox/create',
     {
@@ -12,7 +11,6 @@ const createInbox = async (data) => {
     },
     {headers: {'Content-Type': 'application/json'}}
   )
-  console.log(response)
   return response
 }
 

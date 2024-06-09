@@ -27,7 +27,7 @@ const ProfileDashboard = ({title}) => {
               </Link>
             </div>
           </div>
-          <div className={"row mt-3"}>
+          <div className={"row mt-4"}>
             <div className={"col-6"}>
               <div className={"card bg-white p-4 rounded-4 border-0 shadow-sm h-100"}>
                 <div className={"fs-4 fw-bold mb-2"}>Employee List</div>

@@ -1,6 +1,6 @@
 import ProfileLogo from '../../../assets/icons/profile_photo.svg'
 import {observer} from "mobx-react-lite";
-import {useContext} from "react";
+import {memo, useContext} from "react";
 import {AuthContext} from "../../../context/index.js";
 import {useNavigate} from "react-router-dom";
 

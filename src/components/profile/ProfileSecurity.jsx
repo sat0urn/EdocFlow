@@ -17,7 +17,7 @@ const ProfileSecurity = observer(({title}) => {
     if (!validatePassword(newPassword)
       || !validatePassword(oldPassword)) {
       e.stopPropagation()
-      alert('New password should contain at least 6 characters')
+      alert('Password should contain at least 6 characters')
       return
     }
 
@@ -30,6 +30,8 @@ const ProfileSecurity = observer(({title}) => {
     try {
       const data = await updatePassword(oldPassword, newPassword)
       alert(data)
+      setNewPassword('')
+      setOldPassword('')
     } catch (e) {
       if (e.response.status === 403) {
         alert(e.response.data)
@@ -70,28 +72,16 @@ const ProfileSecurity = observer(({title}) => {
               </button>
             </div>
           </div>
-          <div className={"py-5 border-bottom border-2"}>
-            <div className={"d-flex justify-content-between align-items-center"}>
-              <div className={""}>
-                <h6 className={"fw-bold"}>Restore password</h6>
-                <p className={"text-secondary m-0"}>Last updated 1 month ago</p>
-              </div>
-              <button
-                type={"button"}
-                className={"btn btn-outline-secondary rounded-pill fw-bolder px-4"}
-                data-bs-toggle="modal"
-                data-bs-target="#restorePassword"
-              >
-                Restore password
-              </button>
-            </div>
-          </div>
           {/*Change password modal*/}
-          <div className="modal fade"
-               id="changePassword"
-               tabIndex="-1"
-               aria-labelledby="exampleModalLabel"
-               aria-hidden="true">
+          <div
+            className="modal fade"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false"
+            id="changePassword"
+            tabIndex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header">
@@ -103,20 +93,21 @@ const ProfileSecurity = observer(({title}) => {
                     className="btn-close"
                     data-bs-dismiss="modal"
                     aria-label="Close"
+                    onClick={() => {
+                      setNewPassword('')
+                      setOldPassword('')
+                    }}
                   ></button>
                 </div>
                 <form onSubmit={update}>
                   <div className="modal-body">
-                    <div className="my-4 mx-auto w-75">
-                      <label
-                        htmlFor="exampleInputOldPassword"
-                        className="form-label opacity-75"
-                      >
+                    <div className="mb-2">
+                      <label htmlFor="exampleInputOldPassword" className="form-label opacity-75">
                         Old password
                       </label>
                       <input
                         type="password"
-                        className={`form-control p-3 ${validatePassword(oldPassword) && validatePassword() ? 'is-valid' : 'is-invalid'}`}
+                        className={`form-control p-3 ${validatePassword(oldPassword) ? 'is-valid' : 'is-invalid'}`}
                         id="exampleInputOldPassword"
                         placeholder="Old password"
                         value={oldPassword}
@@ -124,23 +115,16 @@ const ProfileSecurity = observer(({title}) => {
                         required
                       />
                       <div className={"invalid-feedback"}>
-                        {validatePasswordEquals() ?
-                          'Old password is the same with new one!'
-                          :
-                          'Old password should contain at least 6 characters'
-                        }
+                        Old password should contain at least 6 characters
                       </div>
                     </div>
-                    <div className="mb-4 mx-auto w-75">
-                      <label
-                        htmlFor="exampleInputNewPassword"
-                        className="form-label opacity-75"
-                      >
+                    <div className="mb-2">
+                      <label htmlFor="exampleInputNewPassword" className="form-label opacity-75">
                         New password
                       </label>
                       <input
                         type="password"
-                        className={`form-control p-3 ${validatePassword(newPassword) ? 'is-valid' : 'is-invalid'}`}
+                        className={`form-control p-3 ${validatePassword(newPassword) && validatePasswordEquals() ? 'is-valid' : 'is-invalid'}`}
                         id="exampleInputNewPassword"
                         placeholder="New password"
                         value={newPassword}
@@ -148,82 +132,21 @@ const ProfileSecurity = observer(({title}) => {
                         required
                       />
                       <div className={"invalid-feedback"}>
-                        New password should contain at least 6 characters
+                        {validatePasswordEquals() ?
+                          'New password should contain at least 6 characters'
+                          :
+                          'New password is the same with old one!'
+                        }
                       </div>
                     </div>
                   </div>
                   <div className="modal-footer justify-content-center">
-                    <button type={'submit'} className="btn btn-primary w-100 p-2">
+                    <button
+                      type={'submit'}
+                      className="btn btn-primary w-100 p-2"
+                      data-bs-dismiss="modal"
+                    >
                       Update
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-
-          {/*Restore password modal*/}
-          <div className="modal fade"
-               id="restorePassword"
-               tabIndex="-1"
-               aria-labelledby="exampleModalLabel"
-               aria-hidden="true">
-            <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h1 className="modal-title fs-5" id="exampleModalLabel">
-                    Update password
-                  </h1>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  ></button>
-                </div>
-                <form onSubmit={() => {
-                }}>
-                  <div className="modal-body">
-                    <div className="my-4 mx-auto w-75">
-                      <label htmlFor="restoreEmail"
-                             className="form-label opacity-75">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        className="form-control p-3"
-                        id="restoreEmail"
-                        placeholder="Enter email address"
-                      />
-                    </div>
-                    <div className="mb-4 mx-auto w-75">
-                      <label htmlFor="restoreNewPassword"
-                             className="form-label opacity-75">
-                        New password
-                      </label>
-                      <input
-                        type="password"
-                        className="form-control p-3"
-                        id="restoreNewPassword"
-                        placeholder="Enter new password"
-                      />
-                    </div>
-                    <div className="mb-4 mx-auto w-75">
-                      <label htmlFor="restoreConfirmPassword"
-                             className="form-label opacity-75">
-                        Confirm New password
-                      </label>
-                      <input
-                        type="password"
-                        className="form-control p-3"
-                        id="restoreConfirmPassword"
-                        placeholder="Enter new password again"
-                      />
-                    </div>
-                  </div>
-                  <div className="modal-footer justify-content-center">
-                    <button type="submit" className="btn btn-primary w-100 p-2">
-                      Restore
                     </button>
                   </div>
                 </form>

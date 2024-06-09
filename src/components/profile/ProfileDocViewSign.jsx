@@ -16,17 +16,16 @@ import {observer} from "mobx-react-lite";
 import {AuthContext} from "../../context/index.js";
 import PageTitle from "../PageTitle.jsx";
 import {REJECTED, SIGNING} from "../../data/docStatusData.js";
-import {EMPLOYEE, OFFICE_MANAGER} from "../../data/userRolesData.js";
+import {OFFICE_MANAGER} from "../../data/userRolesData.js";
 import ProfileListEmployeeCheckbox from "./commonParts/ProfileListEmployeeCheckbox.jsx";
 
 const ProfileDocViewSign = observer(({title}) => {
-  const {user, documents, fetchChanges} = useContext(AuthContext)
+  const {user, fetchChanges} = useContext(AuthContext)
   const navigate = useNavigate()
 
   const currentEmail = user.user.sub
   const employees = user.employees
   const [receiversEmail, setReceiversEmail] = useState([])
-  const isRoleEmployee = user.role === EMPLOYEE
   const isRoleOfficeManager = user.role === OFFICE_MANAGER
 
   const [isNextStep, setIsNextStep] = useState(false)
@@ -158,8 +157,8 @@ const ProfileDocViewSign = observer(({title}) => {
           })
             .then(() => {
               fetchChanges.toggleIsChanged()
-              fetchChanges.toggleIsHistoryChanged()
               navigate('/inbox')
+              fetchChanges.toggleIsHistoryChanged()
             })
             .catch((e) => {
               alert('Something went wrong')
@@ -167,11 +166,10 @@ const ProfileDocViewSign = observer(({title}) => {
             })
         } else {
           updateInboxReceivers(id, {emails: receiversEmail})
-            .then((data) => {
-              console.log(data)
+            .then(() => {
               fetchChanges.toggleIsChanged()
-              fetchChanges.toggleIsHistoryChanged()
               navigate('/inbox')
+              fetchChanges.toggleIsHistoryChanged()
             })
             .catch((e) => {
               alert('Something went wrong')

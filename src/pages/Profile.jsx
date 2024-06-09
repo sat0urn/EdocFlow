@@ -2,7 +2,7 @@ import {Outlet} from "react-router-dom"
 import ProfileSideMenu from "../components/profile/commonParts/ProfileSideMenu.jsx";
 import ProfileSearchAndAccount from "../components/profile/commonParts/ProfileSearchAndAccount.jsx";
 import {observer} from "mobx-react-lite";
-import {useContext, useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {AuthContext} from "../context/index.js";
 import {getAllHistory} from "../http/docsApi.js";
 import {INDEPENDENT_USER, OFFICE_MANAGER} from "../data/userRolesData.js";
