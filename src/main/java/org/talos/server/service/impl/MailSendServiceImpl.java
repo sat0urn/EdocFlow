@@ -3,9 +3,11 @@ package org.talos.server.service.impl;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.talos.server.exception.DataNotFoundException;
 import org.talos.server.service.MailSendService;
 
 @Service
@@ -25,7 +27,13 @@ public class MailSendServiceImpl implements MailSendService {
         message.setSubject(sub);
         message.setText(text);
 
-        javaMailSender.send(message);
+        try {
+            javaMailSender.send(message);
+
+        } catch (MailException ex) {
+            throw new DataNotFoundException("Email by gmail:" +toEmail + ", does not exist");
+            // Handle the exception as needed
+        }
 
     }
 }
