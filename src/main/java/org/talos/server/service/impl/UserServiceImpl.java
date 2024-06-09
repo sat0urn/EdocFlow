@@ -261,6 +261,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public void sendVerificationCode(String email) {
     String code = generateVerificationCode();
+    verificationCodes.remove(email);
     verificationCodes.put(email, code);
     mailSendService.sendEmail(email, "Your verification code", "Your verification code is " + code);
   }
