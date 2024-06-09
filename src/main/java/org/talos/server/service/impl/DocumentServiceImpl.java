@@ -52,6 +52,7 @@ public class DocumentServiceImpl implements DocumentService {
   @Override
   public List<DocumentPDF> listUserDocuments(String authHeader) {
     String userEmail = jwtService.extractUsername(authHeader.substring(7));
+
     Optional<User> userOptional = userRepository.findUserByEmail(userEmail);
     if (userOptional.isEmpty())
       throw new DataNotFoundException("User by email " + userEmail + " does not exist in the system");

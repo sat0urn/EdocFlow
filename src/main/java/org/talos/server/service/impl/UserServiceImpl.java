@@ -230,6 +230,7 @@ public class UserServiceImpl implements UserService {
                     .email(user.getEmail())
                     .phoneNumber(String.valueOf(user.getPhoneNumber()))
                     .position(user.getPosition())
+                    .documentIds(user.getDocumentIds())
                     .build()).collect(Collectors.toList());
   }
 
@@ -261,7 +262,6 @@ public class UserServiceImpl implements UserService {
   public void sendVerificationCode(String email) {
     String code = generateVerificationCode();
     verificationCodes.put(email, code);
-
     mailSendService.sendEmail(email, "Your verification code", "Your verification code is " + code);
   }
   private String generateVerificationCode() {

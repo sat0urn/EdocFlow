@@ -1,24 +1,18 @@
 package org.talos.server.controller;
 
 import io.jsonwebtoken.Claims;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.talos.server.config.JwtService;
-
 import org.talos.server.dto.other.EmailDTO;
 import org.talos.server.dto.other.VerificationRequestDto;
 import org.talos.server.dto.users_dto.ForgetPasswordDto;
 import org.talos.server.dto.users_dto.UpdatePasswordDto;
 import org.talos.server.dto.users_dto.UserLoginDto;
 import org.talos.server.dto.users_dto.UserRegistrationDto;
-import org.talos.server.entity.Department;
-import org.talos.server.entity.Inbox;
 import org.talos.server.entity.User;
 import org.talos.server.responses.AuthenticationResponse;
 import org.talos.server.service.UserService;
@@ -102,8 +96,7 @@ public class UserController {
   @PostMapping("/validate-email")
   public ResponseEntity<?> validateEmail(@RequestBody EmailDTO emailDTO) {
     Optional<User> optionalUser = userService.getUserByEmail(emailDTO.getEmail());
-    if(optionalUser.isPresent())
-    {
+    if(optionalUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User by gmail" + emailDTO.getEmail() + "  exist");
     }
     if (!userService.isValidGmail(emailDTO.getEmail())) {
@@ -113,6 +106,7 @@ public class UserController {
     userService.sendVerificationCode(emailDTO.getEmail());
     return ResponseEntity.ok("Verification code sent.");
   }
+
   @PostMapping("/verify-code")
   public ResponseEntity<?> verifyCode(@RequestBody VerificationRequestDto request) {
     boolean isValid = userService.verifyCode(request.getEmail(), request.getCode());
@@ -120,7 +114,6 @@ public class UserController {
     if (!isValid) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid verification code.");
     }
-
 
     return ResponseEntity.ok("User verified successfully");
   }
