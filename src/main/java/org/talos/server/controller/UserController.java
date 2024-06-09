@@ -119,17 +119,17 @@ public class UserController {
   }
   @PatchMapping("/forget-password")
   public ResponseEntity<String> forgetPasswordUpdate(
-          @RequestBody ForgetPasswordDto forgetPasswordDto,
-          @RequestHeader("Authorization") String authHeader
-  ) {
-    String email = jwtService.extractClaim(authHeader.substring(7), Claims::getSubject);
+          @RequestBody ForgetPasswordDto forgetPasswordDto
 
-    Optional<User> user = userService.getUserByEmail(email);
+  ) {
+
+
+    Optional<User> user = userService.getUserByEmail(forgetPasswordDto.getGmail());
 
     if (user.isEmpty())
       return ResponseEntity
               .status(HttpStatus.NOT_FOUND)
-              .body("User not found for email: " + email);
+              .body("User not found for email: " + forgetPasswordDto.getGmail());
 
     User existingUser = user.get();
 
