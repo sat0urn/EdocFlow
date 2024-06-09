@@ -95,8 +95,9 @@ public class UserController {
 
   @PostMapping("/validate-email")
   public ResponseEntity<?> validateEmail(@RequestBody EmailDTO emailDTO) {
+    System.out.println(emailDTO.getEmail());
     Optional<User> optionalUser = userService.getUserByEmail(emailDTO.getEmail());
-    if(optionalUser.isPresent()) {
+    if (optionalUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User by gmail" + emailDTO.getEmail() + "  exist");
     }
     if (!userService.isValidGmail(emailDTO.getEmail())) {
@@ -109,6 +110,8 @@ public class UserController {
 
   @PostMapping("/verify-code")
   public ResponseEntity<?> verifyCode(@RequestBody VerificationRequestDto request) {
+    System.out.println(request.getEmail());
+    System.out.println(request.getCode());
     boolean isValid = userService.verifyCode(request.getEmail(), request.getCode());
 
     if (!isValid) {
@@ -117,6 +120,7 @@ public class UserController {
 
     return ResponseEntity.ok("User verified successfully");
   }
+
   @PatchMapping("/forget-password")
   public ResponseEntity<String> forgetPasswordUpdate(
           @RequestBody ForgetPasswordDto forgetPasswordDto,
