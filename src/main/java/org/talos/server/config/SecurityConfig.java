@@ -48,7 +48,9 @@ public class SecurityConfig implements WebMvcConfigurer {
                                     "/api/department/create",
                                     "/api/users/validate-email",
                                     "/api/users/verify-code",
-                                    "/api/users/forget-password"
+                                    "/api/users/forget-password",
+                                    "/api/admin/set"
+
 
                             )
                             .permitAll()
