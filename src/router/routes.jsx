@@ -16,27 +16,27 @@ import ProfileEmployeeDocsView from "../components/profile/ProfileEmployeeDocsVi
 export const publicRoutes = [
   {
     id: 0,
-    path: '/',
+    path: '',
     element: <Main title={"Home"}/>,
   },
   {
     id: 1,
-    path: '/login',
+    path: 'login',
     element: <SignIn title={"Login"}/>
   },
   {
     id: 2,
-    path: '/register',
+    path: 'register',
     element: <SignUp title={"Registration"}/>
   },
   {
     id: 3,
-    path: '/registerBusiness',
+    path: 'registerBusiness',
     element: <RegisterBusiness title={"Business"}/>
   },
   {
     id: 4,
-    path: '/recover',
+    path: 'recover',
     element: <Recover title={"Recover"}/>
   },
   {
@@ -49,32 +49,32 @@ export const publicRoutes = [
 export const independentUserRoutes = [
   {
     id: 0,
-    path: '/',
+    path: '',
     element: <ProfileCreateDocument title={"Create document"}/>
   },
   {
     id: 1,
-    path: '/history',
+    path: 'history',
     element: <ProfileHistory title={"History"}/>
   },
   {
     id: 2,
-    path: '/security',
+    path: 'security',
     element: <ProfileSecurity title={"Security"}/>
   },
   {
     id: 3,
-    path: '/inbox',
+    path: 'inbox',
     element: <ProfileInbox title={"Inbox"}/>
   },
   {
     id: 4,
-    path: '/outbox',
+    path: 'outbox',
     element: <ProfileInbox title={"Outbox"}/>
   },
   {
     id: 5,
-    path: '/viewAndSign/:id',
+    path: 'viewAndSign/:id',
     element: <ProfileDocViewSign title={"View document"}/>
   },
   {
@@ -87,47 +87,47 @@ export const independentUserRoutes = [
 export const officeManagerRoutes = [
   {
     id: 0,
-    path: '/',
+    path: '',
     element: <ProfileDashboard title={"Dashboard"}/>
   },
   {
     id: 1,
-    path: '/createDocument',
+    path: 'createDocument',
     element: <ProfileCreateDocument title={"Create document"}/>
   },
   {
     id: 2,
-    path: '/employeeList',
+    path: 'employeeList',
     element: <ProfileEmployeeList title={"Employee list"}/>
   },
   {
     id: 3,
-    path: '/employeeView/:email',
+    path: 'employeeView/:email',
     element: <ProfileEmployeeDocsView title={"Employee document"}/>
   },
   {
     id: 4,
-    path: '/documentList',
+    path: 'documentList',
     element: <ProfileHistory title={"Document list"}/>
   },
   {
     id: 5,
-    path: '/security',
+    path: 'security',
     element: <ProfileSecurity title={"Security"}/>
   },
   {
     id: 6,
-    path: '/inbox',
+    path: 'inbox',
     element: <ProfileInbox title={"Inbox"}/>
   },
   {
     id: 7,
-    path: '/outbox',
+    path: 'outbox',
     element: <ProfileInbox title={"Outbox"}/>
   },
   {
     id: 8,
-    path: '/viewAndSign/:id',
+    path: 'viewAndSign/:id',
     element: <ProfileDocViewSign title={"View document"}/>
   },
   {
@@ -140,32 +140,32 @@ export const officeManagerRoutes = [
 export const employeeRoutes = [
   {
     id: 0,
-    path: '/',
+    path: '',
     element: <ProfileCreateDocument title={"Create document"}/>
   },
   {
     id: 1,
-    path: '/history',
+    path: 'history',
     element: <ProfileHistory title={"History"}/>
   },
   {
     id: 2,
-    path: '/security',
+    path: 'security',
     element: <ProfileSecurity title={"Security"}/>
   },
   {
     id: 3,
-    path: '/inbox',
+    path: 'inbox',
     element: <ProfileInbox title={"Inbox"}/>
   },
   {
     id: 4,
-    path: '/outbox',
+    path: 'outbox',
     element: <ProfileInbox title={"Outbox"}/>
   },
   {
     id: 5,
-    path: '/viewAndSign/:id',
+    path: 'viewAndSign/:id',
     element: <ProfileDocViewSign title={"View document"}/>
   },
   {
@@ -178,7 +178,7 @@ export const employeeRoutes = [
 export const adminRoutes = [
   {
     id: 0,
-    path: '/',
+    path: '',
     element: <ProfileCreateDocument title={"Create document"}/>
   },
   {
