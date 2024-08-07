@@ -144,7 +144,6 @@ const ProfileSecurity = observer(({title}) => {
                     <button
                       type={'submit'}
                       className="btn btn-primary w-100 p-2"
-                      data-bs-dismiss="modal"
                     >
                       Update
                     </button>

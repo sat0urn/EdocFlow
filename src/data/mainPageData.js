@@ -4,14 +4,14 @@ import ServicePic3 from "../assets/service_pics/service3.png"
 import ServicePic4 from "../assets/service_pics/service4.png"
 
 export const advantageData = [{
-    id: 0,
-    bgColor: '#151516',
-    textColor: 'white',
-    title: 'Searchability',
-    text: 'You can easily find your document by using keywords or metadata.',
-    icon: 'fa-magnifying-glass',
-    borderOn: true
-  },
+  id: 0,
+  bgColor: '#151516',
+  textColor: 'white',
+  title: 'Searchability',
+  text: 'You can easily find your document by using keywords or metadata.',
+  icon: 'fa-magnifying-glass',
+  borderOn: true
+},
   {
     id: 1,
     bgColor: 'white',
@@ -60,31 +60,31 @@ export const advantageData = [{
 ]
 
 export const serviceData = [{
-    id: 0,
-    img: ServicePic1,
-    title: "Creating Electronic Documents",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur placerat posuere. Vestibulum tempor venenatis mauris vel pellentesque. Mauris blandit eros non orci mattis sodales. Donec eleifend arcu sit amet commodo varius",
-    btnText: "create a document"
-  },
+  id: 0,
+  img: ServicePic1,
+  title: "Creating Electronic Documents",
+  desc: "Efficiently create electronic documents with our streamlined tools. Our platform offers user-friendly templates, customizable fields, and a seamless interface to ensure your documents are professionally crafted and ready for any purpose. Save time and enhance productivity by generating digital documents quickly and accurately.",
+  btnText: "create a document"
+},
   {
     id: 1,
     img: ServicePic2,
     title: "Signing Electronic Documents",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur placerat posuere. Vestibulum tempor venenatis mauris vel pellentesque. Mauris blandit eros non orci mattis sodales. Donec eleifend arcu sit amet commodo varius",
+    desc: "Securely sign your electronic documents with our advanced digital signature solutions. Our platform integrates seamlessly with NCALayer and the SIGEX.kz API, allowing multiple signatures and QR code verification. Ensure the authenticity and integrity of your documents with ease and compliance.",
     btnText: "sign documents"
   },
   {
     id: 2,
     img: ServicePic3,
     title: "Storing Electronic Documents",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur placerat posuere. Vestibulum tempor venenatis mauris vel pellentesque. Mauris blandit eros non orci mattis sodales. Donec eleifend arcu sit amet commodo varius",
+    desc: "Safely store your electronic documents in our robust and encrypted digital storage system. Our platform provides reliable and secure storage solutions, ensuring your documents are easily accessible and protected against unauthorized access. Manage your document repository with confidence and peace of mind.",
     btnText: "store documents"
   },
   {
     id: 3,
     img: ServicePic4,
     title: "Managing Electronic Documents",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur placerat posuere. Vestibulum tempor venenatis mauris vel pellentesque. Mauris blandit eros non orci mattis sodales. Donec eleifend arcu sit amet commodo varius",
+    desc: "Streamline your document management processes with our EDMS. Organize, track, and retrieve your documents effortlessly, while maintaining version control and ensuring regulatory compliance. Enhance your workflow efficiency and document governance with our powerful management tools.",
     btnText: "manage documents"
   }
 ]

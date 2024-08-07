@@ -15,8 +15,8 @@ const About = () => {
               exchange documents online
             </h1>
             <p className="small">
-              Digital solutions to manage, sign and exchange documents online. Lorem ipsum dolor sit amet, consectetur
-              adipisicing elit. Cumque, ipsum?
+              Our comprehensive suite of digital solutions is designed to streamline your document workflows, enhance
+              productivity, and ensure the highest levels of security and compliance.
             </p>
             <div className="d-xxl-inline-flex d-none btn-group w-75 mt-3" role="group">
               <button
@@ -31,7 +31,7 @@ const About = () => {
                 className="btn btn-primary rounded-pill"
                 onClick={() => navigate('/register')}
               >
-                Sign-up
+                Sign up
               </button>
             </div>
             <div className={"d-xxl-none d-block fs-5 text-warning"}>
