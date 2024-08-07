@@ -1,7 +1,8 @@
 import {Route, Routes} from 'react-router-dom'
 import {observer} from "mobx-react-lite";
 import Layout from "./Layout.jsx";
-import {publicRoutes} from "../router/routes.jsx";
+import Main from "../pages/Main.jsx";
+import SignIn from "../pages/SignIn.jsx";
 
 const AppRouter = observer(() => {
   // const {user} = useContext(AuthContext)
@@ -10,9 +11,11 @@ const AppRouter = observer(() => {
     <Routes>
       {/*{RenderRoutes({user})}*/}
       <Route path={'/'} element={<Layout/>}>
-        {publicRoutes.map(({id, path, element}) =>
-          <Route key={id} path={path} element={element}/>
-        )}
+        <Route index element={<Main/>}/>
+        <Route path={'login'} element={<SignIn/>}/>
+        {/*{publicRoutes.map(({id, path, element}) =>*/}
+        {/*  <Route key={id} path={path} element={element}/>*/}
+        {/*)}*/}
       </Route>
     </Routes>
   )
