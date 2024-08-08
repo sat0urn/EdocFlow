@@ -12,6 +12,7 @@ import {ADMIN, EMPLOYEE, INDEPENDENT_USER, OFFICE_MANAGER} from "../data/userRol
 
 const RenderRoutes = ({user}) => {
   if (!user.isAuth) {
+    console.log("this happened")
     return (
       <Route path={'/'} element={<Layout/>}>
         {publicRoutes.map(({id, path, element}) =>
