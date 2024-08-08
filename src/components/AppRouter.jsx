@@ -7,6 +7,8 @@ import {AuthContext} from "../context/index.js";
 const AppRouter = observer(() => {
   const {user} = useContext(AuthContext)
 
+  console.log(RenderRoutes({user}))
+
   return (
     <Routes>
       {RenderRoutes({user})}

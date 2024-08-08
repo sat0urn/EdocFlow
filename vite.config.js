@@ -6,7 +6,7 @@ export default ({mode}) => {
   // process.env = {...process.env, ...loadEnv(mode, process.cwd(), '')};
 
   return defineConfig({
-    plugins: [react()],
+    plugins: [react(),],
     // # for github-pages deployment purpose
     base: '/edoc_flow',
     server: {
