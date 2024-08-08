@@ -11,7 +11,7 @@ const AppRouter = () => {
   return (
     <Routes>
       <Route path={'/'} element={<Layout/>}>
-        <Route index element={<Main title={"Main"}/>}/>
+        <Route index element={<Main/>}/>
         <Route path={'recover'} element={<Recover title={"Recover"}/>}/>
         <Route path={'*'} element={<Navigate to={'/'}/>}/>
       </Route>
