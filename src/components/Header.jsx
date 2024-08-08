@@ -28,22 +28,22 @@ const Header = () => {
         <div className={"collapse navbar-collapse justify-content-end"} id={"navbarSupportedContent"}>
           <ul className={"navbar-nav mx-xxl-auto mx-0 align-items-center mb-2 mb-lg-0"}>
             <li className={"nav-item"}>
-              <a href="/#about" className={"nav-link px-3 link-dark"}>
+              <a href="#about" className={"nav-link px-3 link-dark"}>
                 About Us
               </a>
             </li>
             <li className={"nav-item"}>
-              <a href="/#service" className={"nav-link px-3 link-dark"}>
+              <a href="#service" className={"nav-link px-3 link-dark"}>
                 Services
               </a>
             </li>
             <li className={"nav-item"}>
-              <a href="/#advantage" className={"nav-link px-3 link-dark"}>
+              <a href="#advantage" className={"nav-link px-3 link-dark"}>
                 Advantages
               </a>
             </li>
             <li className={"nav-item"}>
-              <a href="/#contact" className={"nav-link px-3 link-dark"}>
+              <a href="#contact" className={"nav-link px-3 link-dark"}>
                 Contact Us
               </a>
             </li>
