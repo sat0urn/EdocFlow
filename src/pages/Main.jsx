@@ -7,7 +7,7 @@ import {useEffect} from "react";
 
 const Main = ({title}) => {
   useEffect(() => {
-    console.log("hello i am working!!!")
+    console.log("hello i am working!!!", title)
   }, []);
   return (
     <>
