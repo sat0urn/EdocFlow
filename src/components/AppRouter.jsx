@@ -12,8 +12,7 @@ const AppRouter = () => {
     <Routes>
       <Route path={'/'} element={<Layout/>}>
         <Route index element={<Main/>}/>
-        <Route path={'recover'} element={<Recover title={"Recover"}/>}/>
-        <Route path={'*'} element={<Navigate to={'/'}/>}/>
+        <Route path={'recover'} element={<Recover />}/>
       </Route>
     </Routes>
   )

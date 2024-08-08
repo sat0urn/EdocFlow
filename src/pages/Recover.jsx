@@ -3,7 +3,7 @@ import {useState} from "react";
 import {forgetPasswordUpdate, validateEmailToSend, verifyCodeToEnter} from "../http/userApi.js";
 import {useNavigate} from "react-router-dom";
 
-const Recover = ({title}) => {
+const Recover = () => {
   const navigate = useNavigate()
 
   const [email, setEmail] = useState('')
@@ -112,7 +112,7 @@ const Recover = ({title}) => {
 
   return (
     <>
-      <PageTitle title={title}/>
+      {/*<PageTitle title={title}/>*/}
       <section className={"d-flex min-vh-100"}>
         <div className={"container my-auto"}>
           <div className={"d-flex justify-content-center"}>
