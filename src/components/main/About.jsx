@@ -1,8 +1,11 @@
 import AboutPic from "../../assets/about_pic.png"
 import {useNavigate} from 'react-router-dom'
+import {useEffect} from "react";
 
 const About = () => {
   const navigate = useNavigate()
+
+  useEffect("cmon")
 
   return (
     <section id="about" className="d-flex align-items-center min-vh-100 bg-dark">
