@@ -30,7 +30,7 @@ const App = observer(() => {
   }
 
   return (
-    <BrowserRouter basename={"/edoc_flow"}>
+    <BrowserRouter>
       {!user.isAuth && <Header/>}
       <AppRouter/>
       {!user.isAuth && <Footer/>}
