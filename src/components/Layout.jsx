@@ -1,9 +1,9 @@
-import { Outlet } from "react-router-dom"
+import {Outlet} from "react-router-dom"
 
-function Layout() {
+const Layout = () => {
   return (
     <>
-      <Outlet />
+      <Outlet/>
     </>
   )
 }

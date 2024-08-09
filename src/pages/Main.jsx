@@ -10,7 +10,6 @@ const Main = () => {
   }, []);
   return (
     <>
-      {/*<PageTitle title={title}/>*/}
       <About/>
       <Service/>
       <Advantage/>
