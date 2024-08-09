@@ -1,8 +1,13 @@
 import logo from "../assets/logo.png"
 import {Link, useLocation} from 'react-router-dom'
+import {useEffect} from "react";
 
 const Header = () => {
   const location = useLocation()
+
+  useEffect(() => {
+    console.log(location)
+  }, [])
 
   return (
     <nav className={"navbar navbar-expand-lg border-bottom"}>
