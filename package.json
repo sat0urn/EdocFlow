@@ -12,6 +12,9 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
+  "overrides": {
+    "rollup": "4.15.0"
+  },
   "dependencies": {
     "axios": "^1.7.3",
     "bootstrap": "^5.3.3",
