@@ -1,13 +1,18 @@
-import {BrowserRouter} from 'react-router-dom'
+import {BrowserRouter, Route, Routes} from 'react-router-dom'
 import Header from "./components/Header"
 import Footer from "./components/Footer"
-import AppRouter from "./components/AppRouter.jsx";
+import Layout from "./components/Layout.jsx";
+import Main from "./components/Main.jsx";
 
 const App = () => {
   return (
     <BrowserRouter basename={"/edoc_flow"}>
       <Header/>
-      <AppRouter/>
+      <Routes>
+        <Route path={'/'} element={<Layout/>}>
+          <Route index element={<Main/>}/>
+        </Route>
+      </Routes>
       <Footer/>
     </BrowserRouter>
   )
