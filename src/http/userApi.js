@@ -35,12 +35,13 @@ const getAllEmails = async () => {
 }
 
 const validateEmailToSend = async (data) => {
-  const response = await $authHost.post('/users/validate-email', data)
+  const response = await $host.post('/users/validate-email', data)
+  console.log(response)
   return response.data
 }
 
 const verifyCodeToEnter = async (data) => {
-  const response = await $authHost.post('/users/verify-code', data)
+  const response = await $host.post('/users/verify-code', data)
   return response.data
 }
 
