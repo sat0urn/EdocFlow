@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {setAdminNotifications} from "../../http/adminApi.js";
+import {setAdminNotifications} from "../http/adminApi.js";
 
 const Contact = () => {
   const [contactRequest, setContactRequest] = useState({

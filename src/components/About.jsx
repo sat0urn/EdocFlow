@@ -1,4 +1,4 @@
-import AboutPic from "../../assets/about_pic.png"
+import AboutPic from "../assets/about_pic.png"
 import {useNavigate} from 'react-router-dom'
 import {useEffect} from "react";
 

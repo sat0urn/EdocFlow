@@ -1,9 +1,9 @@
 import {Navigate} from "react-router-dom"
-import Main from "../components/pages/Main"
-import SignIn from "../components/pages/SignIn"
-import SignUp from "../components/pages/SignUp"
-import Recover from "../components/pages/Recover"
-import RegisterBusiness from "../components/pages/RegisterBusiness.jsx";
+import Main from "../components/Main.jsx"
+import SignIn from "../components/SignIn.jsx"
+import SignUp from "../components/SignUp.jsx"
+import Recover from "../components/Recover.jsx"
+import RegisterBusiness from "../components/RegisterBusiness.jsx";
 
 export const publicRoutes = [
   {

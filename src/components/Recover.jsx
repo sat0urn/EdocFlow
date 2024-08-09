@@ -1,6 +1,6 @@
-import PageTitle from "../PageTitle.jsx";
+import PageTitle from "./PageTitle.jsx";
 import {useState} from "react";
-import {forgetPasswordUpdate, validateEmailToSend, verifyCodeToEnter} from "../../http/userApi.js";
+import {forgetPasswordUpdate, validateEmailToSend, verifyCodeToEnter} from "../http/userApi.js";
 import {useNavigate} from "react-router-dom";
 
 const Recover = () => {

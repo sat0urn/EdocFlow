@@ -1,9 +1,9 @@
 import {useContext, useState} from 'react'
 import {Link} from 'react-router-dom'
-import {AuthContext} from '../../context/index.js'
-import {login} from '../../http/userApi.js'
+import {AuthContext} from '../context/index.js'
+import {login} from '../http/userApi.js'
 import {observer} from "mobx-react-lite";
-import PageTitle from "../PageTitle.jsx";
+import PageTitle from "./PageTitle.jsx";
 
 const SignIn = observer(({title}) => {
   const {user} = useContext(AuthContext)
@@ -76,7 +76,7 @@ const SignIn = observer(({title}) => {
                     <label htmlFor="exampleInputPassword" className="form-label w-100">
                       <div className="d-flex flex-row justify-content-between opacity-75">
                         Password
-                        <Link to='/recover'>
+                        <Link to='/src/components/Recover'>
                           Forgot Password?
                         </Link>
                       </div>

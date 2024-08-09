@@ -1,4 +1,4 @@
-import {citiesOfKazakhstan} from "../../data/citiesOfKazakhstanData.js";
+import {citiesOfKazakhstan} from "../data/citiesOfKazakhstanData.js";
 
 const RegisterBusinessForm = ({businessForm, setBusinessForm}) => {
   return (

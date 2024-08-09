@@ -1,5 +1,5 @@
 import AdvantageP from "./AdvantageP.jsx"
-import {advantageData} from "../../data/mainPageData.js"
+import {advantageData} from "../data/mainPageData.js"
 
 const Advantage = () => {
 
