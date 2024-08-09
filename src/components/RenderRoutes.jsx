@@ -13,7 +13,7 @@ import Layout from "./Layout.jsx";
 const RenderRoutes = ({user}) => {
   if (!user.isAuth) {
     return (
-      <Route path='/' element={<Layout/>}>
+      <Route element={<Layout/>}>
         {publicRoutes.map(({id, path, element}) =>
           <Route key={id} path={path} element={element}/>
         )}
