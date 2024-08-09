@@ -1,4 +1,4 @@
-import {Navigate, Route} from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 import {
   adminRoutes,
   employeeRoutes,
@@ -12,11 +12,11 @@ import {ADMIN, EMPLOYEE, INDEPENDENT_USER, OFFICE_MANAGER} from "../data/userRol
 const RenderRoutes = ({user}) => {
   if (!user.isAuth) {
     return (
-      <>
+      <Route path={'/'} element={<Layout/>}>
         {publicRoutes.map(({id, path, element}) =>
           <Route key={id} path={path} element={element}/>
         )}
-      </>
+      </Route>
     )
   }
 
