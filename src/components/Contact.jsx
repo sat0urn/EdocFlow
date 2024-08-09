@@ -1,5 +1,4 @@
 import {useState} from "react";
-import {setAdminNotifications} from "../http/adminApi.js";
 
 const Contact = () => {
   const [contactRequest, setContactRequest] = useState({
@@ -21,7 +20,7 @@ const Contact = () => {
 
     let data
     try {
-      data = await setAdminNotifications(contactRequest)
+      data = "whooray"
       alert(data)
     } catch (e) {
       if (e.response.status === 400) {
