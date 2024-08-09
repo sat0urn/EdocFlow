@@ -1,15 +1,17 @@
-import {Route, Routes} from "react-router-dom";
-import Layout from "./Layout.jsx";
-import Main from "./Main.jsx";
+import {Routes} from 'react-router-dom'
+import RenderRoutes from "./RenderRoutes.jsx";
+import {useContext} from "react";
+import {AuthContext} from "../context/index.js";
+import {observer} from "mobx-react-lite";
 
-const AppRouter = () => {
+const AppRouter = observer(() => {
+  const {user} = useContext(AuthContext)
+
   return (
     <Routes>
-      <Route path={'/'} element={<Layout/>}>
-        <Route index element={<Main/>}/>
-      </Route>
+      {RenderRoutes({user})}
     </Routes>
   )
-}
+})
 
 export default AppRouter
