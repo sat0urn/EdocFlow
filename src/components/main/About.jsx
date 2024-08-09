@@ -5,10 +5,6 @@ import {useEffect} from "react";
 const About = () => {
   const navigate = useNavigate()
 
-  useEffect(() => {
-    console.log('cmon')
-  }, [])
-
   return (
     <section id="about" className="d-flex align-items-center min-vh-100 bg-dark">
       <div className="container">
