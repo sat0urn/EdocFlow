@@ -8,6 +8,7 @@ import {
 } from "../router/routes.jsx";
 import Profile from "../pages/Profile.jsx";
 import {ADMIN, EMPLOYEE, INDEPENDENT_USER, OFFICE_MANAGER} from "../data/userRolesData.js";
+import Layout from "./Layout.jsx";
 
 const RenderRoutes = ({user}) => {
   if (!user.isAuth) {
