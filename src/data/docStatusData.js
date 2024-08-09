@@ -1,5 +1,0 @@
-export const ACCEPTED = 'ACCEPTED'
-export const REJECTED = 'REJECTED'
-export const WAITING = 'WAITING'
-export const SIGNING = 'SIGNING'
-export const COMPLETED = 'COMPLETED'
