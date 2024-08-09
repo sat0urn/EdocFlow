@@ -50,8 +50,6 @@ public class SecurityConfig implements WebMvcConfigurer {
                                     "/api/users/verify-code",
                                     "/api/users/forget-password",
                                     "/api/admin/set"
-
-
                             )
                             .permitAll()
                             .anyRequest()
