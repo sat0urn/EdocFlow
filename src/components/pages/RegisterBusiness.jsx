@@ -1,10 +1,10 @@
 import {observer} from "mobx-react-lite";
 import {useContext, useState} from "react";
-import {AuthContext} from "../context/index.js";
-import {registerBusiness} from "../http/departmentApi.js";
-import RegisterBusinessForm from "../components/auth/RegisterBusinessForm.jsx";
-import OfficeManagerForm from "../components/auth/OfficeManagerForm.jsx";
-import PageTitle from "../components/PageTitle.jsx";
+import {AuthContext} from "../../context/index.js";
+import {registerBusiness} from "../../http/departmentApi.js";
+import RegisterBusinessForm from "../auth/RegisterBusinessForm.jsx";
+import OfficeManagerForm from "../auth/OfficeManagerForm.jsx";
+import PageTitle from "../PageTitle.jsx";
 
 const RegisterBusiness = observer(({title}) => {
   const {user} = useContext(AuthContext)

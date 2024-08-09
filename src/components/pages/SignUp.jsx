@@ -1,10 +1,10 @@
 import {useContext, useState} from "react"
-import {registration, validateEmailToSend, verifyCodeToEnter} from "../http/userApi"
+import {registration, validateEmailToSend, verifyCodeToEnter} from "../../http/userApi.js"
 import {Link} from 'react-router-dom'
-import {AuthContext} from "../context/index.js";
+import {AuthContext} from "../../context/index.js";
 import {observer} from "mobx-react-lite";
-import {citiesOfKazakhstan} from "../data/citiesOfKazakhstanData.js";
-import PageTitle from "../components/PageTitle.jsx";
+import {citiesOfKazakhstan} from "../../data/citiesOfKazakhstanData.js";
+import PageTitle from "../PageTitle.jsx";
 
 const SignUp = observer(({title}) => {
   const {user} = useContext(AuthContext)

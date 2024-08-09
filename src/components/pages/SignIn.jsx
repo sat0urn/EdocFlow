@@ -1,9 +1,9 @@
 import {useContext, useState} from 'react'
 import {Link} from 'react-router-dom'
-import {AuthContext} from '../context'
-import {login} from '../http/userApi'
+import {AuthContext} from '../../context/index.js'
+import {login} from '../../http/userApi.js'
 import {observer} from "mobx-react-lite";
-import PageTitle from "../components/PageTitle.jsx";
+import PageTitle from "../PageTitle.jsx";
 
 const SignIn = observer(({title}) => {
   const {user} = useContext(AuthContext)

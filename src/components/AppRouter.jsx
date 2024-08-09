@@ -1,6 +1,6 @@
 import {Route, Routes} from 'react-router-dom'
 import Layout from "./Layout.jsx";
-import Main from "../pages/Main.jsx";
+import Main from "./pages/Main.jsx";
 import {useEffect} from "react";
 
 const AppRouter = () => {
